@@ -46,7 +46,7 @@ class GoStub(GoBase):
         """
         if players != 2:
             raise ValueError(
-                "The stub implementation " "only supports two players"
+                "The stub implementation ", "only supports two players"
             )
 
         super().__init__(side, players, superko)
