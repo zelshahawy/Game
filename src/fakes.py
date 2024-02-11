@@ -156,4 +156,3 @@ class GoStub(GoBase):
 #
 # Your GoFake implementation goes here
 #
-
