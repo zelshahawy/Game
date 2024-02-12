@@ -16,6 +16,8 @@ class RandomBot(BaseBot):
         """
         """
         move = random.choice(self.game.available_moves)
+        while not self.game.legal_move(move):
+            move = random.choice(self.game.available_moves)
         self.game.apply_move(move)
         
 class Simulation(SimulateBots):
