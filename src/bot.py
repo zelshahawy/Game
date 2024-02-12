@@ -15,6 +15,7 @@ class RandomBot(BaseBot):
     """Bot that makes random legal moves in a Go game."""
 
     game: GoStub
+    
     def __init__(self, game: GoStub):
         """
         Initialize the bot with the game.
