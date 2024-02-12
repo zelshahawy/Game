@@ -1,7 +1,13 @@
 import sys
 import random
+from enum import IntEnum
 from fakes import GoStub
 from botbase import BaseBot, SimulateBots
+
+
+class Players(IntEnum):
+    PLAYER1 = 0
+    PLAYER2 = 1
 
 class RandomBot(BaseBot):
     """
@@ -11,7 +17,7 @@ class RandomBot(BaseBot):
         """
         """
         self.game = game
-        
+
     def make_move(self):
         """
         """
@@ -19,7 +25,7 @@ class RandomBot(BaseBot):
         while not self.game.legal_move(move):
             move = random.choice(self.game.available_moves)
         self.game.apply_move(move)
-        
+
 class Simulation(SimulateBots):
     """
     """
@@ -35,13 +41,14 @@ class Simulation(SimulateBots):
         for _ in range(num_of_games):
             self.game = GoStub(self.game.size, self.game.num_players)
             while not self.game.done:
-                if self.game.turn == 0:
+                if self.game.turn == Players.PLAYER1:
                     self.bot1.make_move()
                 else:
                     self.bot2.make_move()
                 self.game.pass_turn()
 
             results = self.game.outcome
+            print(results)
             if len(results) == 1:
                 result = results[0]
                 if result == 1:
