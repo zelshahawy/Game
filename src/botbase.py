@@ -23,12 +23,12 @@ class SimulateBots(ABC):
         """
         """
         raise NotImplementedError
-    
+
     @abstractmethod
     def update_results(self, results) -> None:
         raise NotImplementedError
-    
+
     @abstractmethod
     def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
-        raise NotImplementedError
-                
+        raise NotADirectoryError
+    

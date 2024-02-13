@@ -152,7 +152,11 @@ class GoStub(GoBase):
         """
         raise NotImplementedError
 
-
 #
 # Your GoFake implementation goes here
 #
+class GoFake(GoBase):
+    
+    def __init__(self, side: int, players: int, superko: bool = False):
+        super().__init__(side, players, superko)
+        self._grid = [[None] * side for _ in range(side)] 

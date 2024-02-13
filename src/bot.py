@@ -17,6 +17,8 @@ class RandomBot(BaseBot):
     game: GoStub
 
     def __init__(self, game: GoStub, player: Players):
+        pass
+    def __init__(self, game: GoStub):
         """
         Initialize the bot with the game.
 
