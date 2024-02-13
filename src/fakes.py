@@ -156,7 +156,135 @@ class GoStub(GoBase):
 # Your GoFake implementation goes here
 #
 class GoFake(GoBase):
-    
+    """
+    Fake implementation of GoBase
+    """
     def __init__(self, side: int, players: int, superko: bool = False):
+        """
+        See GoBase.__init__
+        """
+        if players != 2:
+            raise ValueError(
+                "The fake implementation ", "only supports two players"
+            )
+
+        if side < 4:
+            raise ValueError(
+                "Fake implementation only supports boards of size 4x4 and above"
+            )
+
         super().__init__(side, players, superko)
-        self._grid = [[None] * side for _ in range(side)] 
+
+        self._grid = [[None] * side for _ in range(side)]
+        self._grid[0][-1] = 1
+        self._grid[-1][0] = 1
+        self._grid[0][0] = 2
+        self._grid[-1][-1] = 2
+
+        self._turn = 1
+        self._num_moves = 0
+
+        self._previous_boards = []
+
+    @property
+    def grid(self) -> BoardGridType:
+        """
+        See GoBase.grid
+        """
+        return deepcopy(self._grid)
+
+    @property
+    def turn(self) -> int:
+        """
+        See GoBase.turn
+        """
+        return self._turn
+
+    @property
+    def available_moves(self) -> ListMovesType:
+        """
+        See GoBase.available_moves
+        """
+        moves = []
+        for r in range(self._side):
+            for c in range(self._side):
+                moves.append((r, c))
+
+        return moves
+
+    @property
+    def done(self) -> bool:
+        """
+        See GoBase.done
+        """
+        return self._num_moves == 4
+
+    @property
+    def outcome(self) -> list[int]:
+        """
+        See GoBase.outcome
+        """
+        if not self.done:
+            return []
+
+        if self._grid[0][1] is None:
+            return [1, 2]
+        else:
+            return [self._grid[0][1]]
+
+    def piece_at(self, pos: tuple[int, int]) -> int | None:
+        """
+        See GoBase.piece_at
+        """
+        r, c = pos
+        return self._grid[r][c]
+
+    def legal_move(self, pos: tuple[int, int]) -> bool:
+        """
+        See GoBase.legal_move
+        """
+
+        return True
+
+    def apply_move(self, pos: tuple[int, int]) -> None:
+        """
+        See GoBase.apply_move
+        """
+        r, c = pos
+        self._grid[r][c] = self._turn
+        if self._superko:
+            self._previous_boards.append(self._grid)
+        else:
+            self._previous_boards = [self._grid]
+        self.pass_turn()
+
+    def pass_turn(self) -> None:
+        """
+        See GoBase.pass_turn
+        """
+        self._turn = 2 if self._turn == 1 else 1
+        self._num_moves += 1
+
+    def scores(self) -> dict[int, int]:
+        """
+        See GoBase.scores
+        """
+        p1_score = len(
+            [piece for row in self._grid for piece in row if piece == "1"]
+        )
+        p2_score = len(
+            [piece for row in self._grid for piece in row if piece == "2"]
+        )
+        return {1: p1_score, 2: p2_score}
+
+    def load_game(self, turn: int, grid: BoardGridType) -> None:
+        """
+        See GoBase.load_game
+        """
+        raise NotImplementedError
+
+    def simulate_move(self, pos: tuple[int, int] | None) -> "GoBase":
+        """
+        See GoBase.simulate_move
+        """
+        raise NotImplementedError
