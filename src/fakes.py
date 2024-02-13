@@ -182,9 +182,9 @@ class GoFake(GoBase):
         self._num_moves = 0
 
         if self._superko:
-            self._previous_boards = [self._grid]
+            self._previous_boards = [self.grid]
         else:
-            self._previous_board = self._grid
+            self._previous_board = self.grid
 
     @property
     def grid(self) -> BoardGridType:
@@ -229,8 +229,7 @@ class GoFake(GoBase):
 
         if self._grid[0][1] is None:
             return [1, 2]
-        else:
-            return [self._grid[0][1]]
+        return [self._grid[0][1]]
 
     def piece_at(self, pos: tuple[int, int]) -> int | None:
         """
@@ -250,9 +249,11 @@ class GoFake(GoBase):
             )
         if self.piece_at(pos) is not None:
             return False
-        if self._superko and resulting_board in self._previous_boards:
-            return False
-        if resulting_board == self._previous_board:
+        if self._superko:
+            for board in self._previous_boards:
+                if resulting_board == board:
+                    return False
+        if not self._superko and resulting_board == self._previous_board:
             return False
         return True
 
@@ -262,14 +263,14 @@ class GoFake(GoBase):
         """
         r, c = pos
         self._grid[r][c] = self._turn
+        for adj_pos in self.adjacent_positions(pos):
+            if self.piece_at(adj_pos) is not None and \
+            self.piece_at(adj_pos) != self.turn:
+                self._grid[adj_pos[0]][adj_pos[1]] = None
         if self._superko:
             self._previous_boards.append(self.grid)
         else:
             self._previous_board = self.grid
-        for adj_pos in self.adjacent_positions(pos):
-            if self.piece_at(adj_pos) is not None and \
-            self.piece_at(adj_pos) != self.turn:
-                self._grid[adj_pos[0], adj_pos[1]] = None
         self.pass_turn()
 
     def adjacent_positions(self, pos: tuple[int, int]) -> list[int | None]:
@@ -282,9 +283,9 @@ class GoFake(GoBase):
         Returns: list of all adjacent positions
         """
         pieces = []
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for direction in directions:
-            potential_pos = pos + direction
+            potential_pos = tuple(map(sum, zip(pos, direction)))
             if 0 <= potential_pos[0] < self.size and \
                   0 <= potential_pos[1] < self.size:
                 pieces.append((potential_pos[0], potential_pos[1]))
