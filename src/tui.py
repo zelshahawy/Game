@@ -15,7 +15,20 @@ class GoTUI(GoUI):
         """
         See GoUI.display_board
         """
-        # ! TODO for milestone 1: implement box char grid display
+        size = self._go_game.size
+        for i, row in enumerate(self._go_game.grid):
+            
+
+#   1 2 3 4 5 6 7 8 9
+#9 ●─┬─┬─┬─┬─┬─┬─┬─○
+#8 ├─┼─┼─┼─┼─┼─┼─┼─┤
+#7 ├─┼─┼─┼─┼─┼─┼─┼─┤
+#6 ├─┼─┼─┼─┼─┼─┼─┼─┤
+#5 ├─┼─┼─┼─┼─┼─┼─┼─┤
+#4 ┼─┼─┼─┼─┼─┼─┼─┼─┤
+#3 ├─┼─┼─┼─┼─┼─┼─┼─┤
+#2 ├─┼─┼─┼─┼─┼─┼─┼─┤
+#1 └─┴─┴─┴─┴─┴─┴─┴─┘
 
     def get_move(self) -> tuple[int, int]:
         """
@@ -30,6 +43,7 @@ def main():
     side = int(sys.argv[1])
     go = GoStub(side, 2, False)
     go_tui = GoTUI(go)
+    go_tui.display_board()
     # ! TODO for milestone 1: IMPLEMENT BASIC EVENT LOOP
 
 if __name__ == "__main__":
