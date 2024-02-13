@@ -7,22 +7,38 @@ from botbase import BaseBot, SimulateBots
 
 class Players(IntEnum):
     """Enumeration for Player 1 and Player 2."""
-    PLAYER1 = 0
-    PLAYER2 = 1
+    BLACK = 1
+    WHITE = 2
 
 
 class RandomBot(BaseBot):
     """Bot that makes random legal moves in a Go game."""
 
     game: GoStub
-    
-    def __init__(self, game: GoStub):
+
+    def __init__(self, game: GoStub, player: Players):
         """
         Initialize the bot with the game.
 
         game: The game the bot will be playing.
         """
         self._game = game
+        self._player = player
+
+
+    def show_player(self) -> Players:
+        """
+        return the color of the bot
+        """
+        return self._player
+
+
+    def set_new_game(self, new_game : GoStub) -> None:
+        """
+        Set bot to a new game
+        """
+        self._game = new_game
+    
 
     def make_move(self) -> None:
         """
@@ -34,19 +50,22 @@ class RandomBot(BaseBot):
         self._game.apply_move(move)
 
 
-class RandomSimulation(SimulateBots):
+class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
 
     game: GoStub
-    def __init__(self, game: GoStub) -> None:
+    def __init__(self, game: GoStub, bots: set[BaseBot]) -> None:
         """
         Initialize the simulation with the game.
 
         game: The game the bots will be playing.
         """
         self._game = game
-        self._bot1 = self._bot2 = RandomBot(self._game)
-        self._bot1_wins = self._bot2_wins = self._ties = 0
+        self._bots = bots
+        self._wins = {player: 0 for player in Players}
+        self._ties = 0
+        
+    
 
     def simulate_games(self, num_of_games: int) -> tuple[float, float, float]:
         """
@@ -57,16 +76,31 @@ class RandomSimulation(SimulateBots):
         """
         for _ in range(num_of_games):
             while not self._game.done:
-                if self._game.turn == Players.PLAYER1:
-                    self._bot1.make_move()
-                else:
-                    self._bot2.make_move()
-
+                for bot in self._bots:
+                    if self._game.turn == bot.show_player():
+                        bot.make_move()
             self.update_results(self._game.outcome)
-            self._game = GoStub(self._game.size, self._game.num_players)
-            self._bot1 = RandomBot(self._game)
-            self._bot2 = RandomBot(self._game)
+            self.reset_game()
+            self.reset_bots(self._game)
         return self.calculate_percentages(num_of_games)
+
+
+    def reset_game(self) -> None:
+        """
+        Resets a game
+        """
+        self._game = GoStub(self._game.size, self._game.num_players)
+
+
+
+    def reset_bots(self, new_game: GoStub) -> None:
+        """
+        Reset the bots with a new game.
+
+        new_game: The new game the bots will be playing.
+         """
+        for bot in self._bots:
+            bot.set_new_game(new_game)
 
     def update_results(self, results) -> None:
         """
@@ -76,10 +110,11 @@ class RandomSimulation(SimulateBots):
         """
         if len(results) == 2:
             self._ties += 1
-        elif results[0] == 1:
-            self._bot1_wins += 1
-        elif results[0] == 2:
-            self._bot2_wins += 1
+        else:
+            for bot in self._bots:
+                if results[0] == bot.show_player():
+                    self._wins[bot.show_player()] += 1
+                    
 
     def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
         """
@@ -88,20 +123,22 @@ class RandomSimulation(SimulateBots):
         num_of_games: The number of games simulated.
         return: A tuple of the win percentages for bot1, bot2, and ties.
         """
-        wining_percentage_1 = (self._bot1_wins / num_of_games) * 100
-        wining_percentage_2 = (self._bot2_wins / num_of_games) * 100
+        wining_percentage_1 = (self._wins[Players.BLACK] / num_of_games) * 100
+        wining_percentage_2 = (self._wins[Players.WHITE] / num_of_games) * 100
         tie_percentage = (self._ties) / (num_of_games) * 100
         return (wining_percentage_1, wining_percentage_2, tie_percentage)
 
 
-def main(num_games):
+def random_main(num_games):
     """
     Run the simulation and print the results.
 
     num_games: The number of games to simulate.
     """
     current_game = GoStub(9, 2)
-    random_simulation = RandomSimulation(current_game)
+    bot1 = RandomBot(current_game, Players.BLACK)
+    bot2 = RandomBot(current_game, Players.WHITE)
+    random_simulation = Simulation(current_game, [bot1, bot2])
     player1_win_percentage, player2_win_percentage, ties_percentage = \
         random_simulation.simulate_games(num_games)
     print(f"Player 1 wins: {player1_win_percentage:.2f}%")
@@ -112,4 +149,4 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Error in the number of arguments. Usage: python3 src/bot.py NUM_GAMES")
         sys.exit(1)
-    main(int(sys.argv[1]))
+    random_main(int(sys.argv[1]))

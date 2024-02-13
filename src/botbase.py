@@ -30,5 +30,5 @@ class SimulateBots(ABC):
     
     @abstractmethod
     def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
-        raise NotADirectoryError
-    
+        raise NotImplementedError
+                
