@@ -165,28 +165,26 @@ class GoFake(GoBase):
         """
         if players != 2:
             raise ValueError(
-                "The fake implementation ", "only supports two players"
+                "The fake implementation only supports two players"
             )
 
         if side < 4:
             raise ValueError(
-                "Fake implementation only supports boards of size 4x4 and above"
+                "The fake implementation only supports boards of\
+                 size 4x4 and above"
             )
 
         super().__init__(side, players, superko)
 
         self._grid = [[None] * side for _ in range(side)]
-        self._grid[0][-1] = 1
-        self._grid[-1][0] = 1
-        self._grid[0][0] = 2
-        self._grid[-1][-1] = 2
 
         self._turn = 1
         self._num_moves = 0
+
         if self._superko:
-            self._previous_boards = []
+            self._previous_boards = [self._grid]
         else:
-            self._previous_board = None
+            self._previous_board = self._grid
 
     @property
     def grid(self) -> BoardGridType:
@@ -245,7 +243,17 @@ class GoFake(GoBase):
         """
         See GoBase.legal_move
         """
-
+        resulting_board = self.simulate_move(pos).grid
+        if pos not in self.available_moves:
+            raise ValueError(
+                "Move is outside bounds of the board"
+            )
+        if self.piece_at(pos) is not None:
+            return False
+        if self._superko and resulting_board in self._previous_boards:
+            return False
+        if resulting_board == self._previous_board:
+            return False
         return True
 
     def apply_move(self, pos: tuple[int, int]) -> None:
@@ -255,10 +263,32 @@ class GoFake(GoBase):
         r, c = pos
         self._grid[r][c] = self._turn
         if self._superko:
-            self._previous_boards.append(self._grid)
+            self._previous_boards.append(self.grid)
         else:
-            self._previous_boards = [self._grid]
+            self._previous_board = self.grid
+        for adj_pos in self.adjacent_positions(pos):
+            if self.piece_at(adj_pos) is not None and \
+            self.piece_at(adj_pos) != self.turn:
+                self._grid[adj_pos[0], adj_pos[1]] = None
         self.pass_turn()
+
+    def adjacent_positions(self, pos: tuple[int, int]) -> list[int | None]:
+        """
+        Returns all positions adjacent to a given position
+
+        Args:
+            pos: position to check positions adjacent to
+        
+        Returns: list of all adjacent positions
+        """
+        pieces = []
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for direction in directions:
+            potential_pos = pos + direction
+            if 0 <= potential_pos[0] < self.size and \
+                  0 <= potential_pos[1] < self.size:
+                pieces.append((potential_pos[0], potential_pos[1]))
+        return pieces
 
     def pass_turn(self) -> None:
         """
@@ -288,5 +318,35 @@ class GoFake(GoBase):
     def simulate_move(self, pos: tuple[int, int] | None) -> "GoBase":
         """
         See GoBase.simulate_move
+
+        Simulates the effect of making a move,
+        **without** altering the state of the game (instead,
+        returns a new object with the result of applying
+        the provided move).
+
+        The provided position is not required to be a legal
+        move, as this method could be used to check whether
+        making a move results in a board that violates the
+        ko rule.
+
+        Args:
+            pos: Position on the board, or None for a pass
+
+        Raises:
+            ValueError: If any of the specified position
+            is outside the bounds of the board.
+
+        Returns: An object of the same type as the object
+        the method was called on, reflecting the state
+        of the game after applying the provided move.
         """
-        raise NotImplementedError
+        if pos not in self.available_moves:
+            raise ValueError(
+                "Position is outside the bounds of the board"
+            )
+        if pos is None:
+            return self
+        new_board = GoFake(self._side, self._players, self._superko)
+        new_board._grid = self.grid
+        new_board._grid[pos[0]][pos[1]] = self._turn
+        return new_board

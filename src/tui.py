@@ -21,7 +21,7 @@ class GoTUI(GoUI):
         for i, row in enumerate(board):
             line = ""
             for j, intx in enumerate(row):
-                # First intx
+                # First intersection
                 if j == 0:
                     if i == 0:
                         line += "┌" if intx is None else str(intx)
@@ -29,7 +29,7 @@ class GoTUI(GoUI):
                         line += "├" if intx is None else str(intx)
                     else:
                         line += "└" if intx is None else str(intx)
-                # Last intx
+                # Last intersection
                 elif j == size - 1:
                     if i == 0:
                         line += "┐" if intx is None else str(intx)
@@ -37,7 +37,7 @@ class GoTUI(GoUI):
                         line += "┤" if intx is None else str(intx)
                     else:
                         line += "┘" if intx is None else str(intx)
-                # Middle intxs
+                # Middle intersections
                 else:
                     if i == 0:
                         line += "┬" if intx is None else str(intx)

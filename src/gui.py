@@ -49,7 +49,7 @@ class GoGUI(GoUI):
         """
         self.screen.fill(ORANGE)
 
-        for i in range(0,BOARD_SIZE):
+        for i in range(0, BOARD_SIZE):
             start_hori = (BOARD_PADDING, i * CELL_SIZE + BOARD_PADDING)
             end_hori = ((BOARD_SIZE - 1) * CELL_SIZE + BOARD_PADDING,\
                 i * CELL_SIZE + BOARD_PADDING)
@@ -65,7 +65,7 @@ class GoGUI(GoUI):
         See GoUI.get_move
         """
 
-    def on_click(self, pos_click : tuple[int,int]) -> None:
+    def on_click(self, pos_click : tuple[int, int]) -> None:
         """handles on_click interactions with the GUI"""
         return
 
@@ -118,7 +118,7 @@ class GoGUI(GoUI):
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.on_click(event.pos)
-            
+
             self.draw_window()
             pygame.display.update()
             self.clock_timer.tick(REFRESH_RATE)
@@ -128,4 +128,3 @@ if __name__ == "__main__":
     go = GoStub(BOARD_SIZE, 2, False)
     goGUI = GoGUI(go)
     goGUI.gui_loop()
-
