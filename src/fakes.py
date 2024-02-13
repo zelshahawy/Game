@@ -183,8 +183,10 @@ class GoFake(GoBase):
 
         self._turn = 1
         self._num_moves = 0
-
-        self._previous_boards = []
+        if self._superko:
+            self._previous_boards = []
+        else:
+            self._previous_board = None
 
     @property
     def grid(self) -> BoardGridType:

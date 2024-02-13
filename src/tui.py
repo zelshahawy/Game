@@ -56,18 +56,18 @@ class GoTUI(GoUI):
         """
         move = None
         while move is None:
-            move_input = input("SO, WHATS YO MOVE? (X Y) ")
+            move_input = input("ENTER MOVE (X Y) ")
             try:
                 coordinates = move_input.split()
                 if len(coordinates) != 2:
-                    print("BUDDY, THAT IS NOT VALID")
+                    print("INVALID INPUT")
                 else:
                     move = (int(coordinates[0]), int(coordinates[1]))
                 if not self._go_game.legal_move(move):
-                    print("BUDDY, THAT IS NOT VALID")
+                    print("INVALID INPUT")
                     move = None
             except ValueError:
-                print("INVALID INPUT FORMAT")
+                print("INVALID INPUT")
         return move
 
 
@@ -84,8 +84,6 @@ def main():
         go.apply_move(move)
         os.system("clear")
         go_tui.display_board()
-
-
 
 
 if __name__ == "__main__":
