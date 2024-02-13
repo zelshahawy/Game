@@ -54,7 +54,7 @@ class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
 
     game: GoStub
-    def __init__(self, game: GoStub, bots: set[BaseBot]) -> None:
+    def __init__(self, game: GoStub, bots: list[BaseBot]) -> None:
         """
         Initialize the simulation with the game.
 
@@ -128,7 +128,7 @@ class Simulation(SimulateBots):
         return (wining_percentage_1, wining_percentage_2, tie_percentage)
 
 
-def random_main(num_games):
+def random_main(num_games) -> None:
     """
     Run the simulation and print the results.
 
