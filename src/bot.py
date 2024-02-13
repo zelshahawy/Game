@@ -38,7 +38,7 @@ class RandomBot(BaseBot):
         Set bot to a new game
         """
         self._game = new_game
-    
+
 
     def make_move(self) -> None:
         """
@@ -64,8 +64,7 @@ class Simulation(SimulateBots):
         self._bots = bots
         self._wins = {player: 0 for player in Players}
         self._ties = 0
-        
-    
+
 
     def simulate_games(self, num_of_games: int) -> tuple[float, float, float]:
         """
@@ -114,7 +113,7 @@ class Simulation(SimulateBots):
             for bot in self._bots:
                 if results[0] == bot.show_player():
                     self._wins[bot.show_player()] += 1
-                    
+          
 
     def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
         """
