@@ -17,46 +17,33 @@ class GoTUI(GoUI):
         """
         size = self._go_game.size
         board = self._go_game.grid
-
-        # First row
-        first_row = ""
-        for i, intersection in enumerate(board[0]):
-            if i == 0:
-                first_row += "┌" if intersection is None else str(intersection) + "─"
-            elif intersection is None:
-                first_row += "┬─"
-            elif intersection is not None:
-                first_row += str(intersection)
-            elif i == size - 1:
-                first_row += "┐" if intersection is None else str(intersection)
-        print(first_row)
-
-        # Middle rows
-        for row in board[1:-1]:
-            disp_row = ""
-            for i, intersection in enumerate(row):
-                if i == 0:
-                    disp_row += "├─" if intersection is None else str(intersection) + "─"
-                elif i < size - 1 and intersection is None:
-                    disp_row += "┼─"
-                elif i < size - 1 and intersection is not None:
-                    disp_row += str(intersection) + "─"
-                elif i == size - 1:
-                    disp_row += "┤" if intersection is None else str(intersection)
-            print(disp_row)
-
-        # Final row
-        last_row = ""
-        for i, intersection in enumerate(board[-1]):
-            if i == 0:
-                last_row += "└" if intersection is None else str(intersection) + "─"
-            elif intersection is None:
-                last_row += "┴─"
-            elif intersection is not None:
-                last_row += str(intersection)
-            elif i == size - 1:
-                last_row += "┘" if intersection is None else str(intersection)
-        print(last_row)
+        for i, row in enumerate(board):
+            line = ""
+            for j, intersection in enumerate(row):
+                if j == 0:
+                    if i == 0:
+                        line += "┌" if intersection is None else str(intersection)
+                    elif i < size - 1:
+                        line += "├" if intersection is None else str(intersection)
+                    else:
+                        line += "└" if intersection is None else str(intersection)
+                elif j == size - 1:
+                    if i == 0:
+                        line += "┐" if intersection is None else str(intersection)
+                    elif i < size - 1:
+                        line += "┤" if intersection is None else str(intersection)
+                    else:
+                        line += "┘" if intersection is None else str(intersection)
+                else:
+                    if i == 0:
+                        line += "┬" if intersection is None else str(intersection)
+                    elif i < size - 1:
+                        line += "┼" if intersection is None else str(intersection)
+                    else:
+                        line += "┴" if intersection is None else str(intersection)
+                if j < size -1:
+                    line += "─"
+            print(line)
 
     def get_move(self) -> tuple[int, int]:
         """

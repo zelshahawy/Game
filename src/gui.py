@@ -9,15 +9,15 @@ from ui import GoUI
 
 BOARD_SIZE = int(sys.argv[1])
 
-CELL_SIZE = 600//BOARD_SIZE
-PLAYER_STONE_RADIUS = CELL_SIZE//3
+CELL_SIZE = 600 // BOARD_SIZE
+PLAYER_STONE_RADIUS = CELL_SIZE // 3
 BOARD_PADDING = 20
 WIDTH_DISPLAY = BOARD_SIZE * CELL_SIZE
 
 REFRESH_RATE = 24
 
 BLACK = (0, 0, 0)
-ORANGE = (230,165,0)
+ORANGE = (230, 165, 0)
 WHITE = (255, 255, 255)
 GREY = (100, 100, 100)
 
@@ -39,9 +39,9 @@ class GoGUI(GoUI):
 
 
         pygame.display.set_caption("GoGUI")
-        self.screen = \
-            pygame.display.set_mode((WIDTH_DISPLAY + 50 ,WIDTH_DISPLAY + 50 ))
-
+        self.screen = pygame.display.set_mode(
+            (WIDTH_DISPLAY+50, WIDTH_DISPLAY+50 )
+        )
 
     def display_board(self) -> None:
         """
@@ -50,26 +50,20 @@ class GoGUI(GoUI):
         self.screen.fill(ORANGE)
 
         for i in range(0,BOARD_SIZE):
-
             start_hori = (BOARD_PADDING, i * CELL_SIZE + BOARD_PADDING)
-
             end_hori = ((BOARD_SIZE - 1) * CELL_SIZE + BOARD_PADDING,\
                 i * CELL_SIZE + BOARD_PADDING)
-
             pygame.draw.aaline(self.screen, GREY, start_hori, end_hori,3)
 
             start_vert = (i * CELL_SIZE + BOARD_PADDING, BOARD_PADDING)
             end_vert = (i * CELL_SIZE + BOARD_PADDING,\
                 (BOARD_SIZE - 1) * CELL_SIZE + BOARD_PADDING)
-
             pygame.draw.aaline(self.screen, GREY, start_vert, end_vert, 3)
 
-    
     def get_move(self) -> tuple[int, int]:
         """
         See GoUI.get_move
         """
-
 
     def on_click(self, pos_click : tuple[int,int]) -> None:
         """handles on_click interactions with the GUI"""
@@ -80,12 +74,12 @@ class GoGUI(GoUI):
         """
         Draws a specific player stone on the board
         """
-        if board_pos == None or num_player == None:
+        if board_pos is None or num_player is None:
             return
-        x,y = board_pos
+        x, y = board_pos
 
-        stone_x = x * CELL_SIZE  + BOARD_PADDING
-        stone_y = y * CELL_SIZE  + BOARD_PADDING
+        stone_x = x * CELL_SIZE + BOARD_PADDING
+        stone_y = y * CELL_SIZE + BOARD_PADDING
 
         if num_player == 1:
             pygame.draw.circle(self.screen, WHITE, (stone_x, stone_y), PLAYER_STONE_RADIUS)
@@ -98,10 +92,10 @@ class GoGUI(GoUI):
         """
         grid_state = self._go_game.grid
 
-        for i,_ in enumerate(grid_state):
+        for i, _ in enumerate(grid_state):
             for j, _ in enumerate(grid_state[i]):
-                piece_at_pos  = self._go_game.piece_at((i,j))
-                self.draw_player_stone(piece_at_pos,(i,j))
+                piece_at_pos = self._go_game.piece_at((i, j))
+                self.draw_player_stone(piece_at_pos, (i, j))
 
 
     def draw_window(self) -> None:
