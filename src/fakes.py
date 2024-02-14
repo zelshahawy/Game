@@ -295,7 +295,13 @@ class GoFake(GoBase):
             self._previous_board = self.grid
 
         r, c = pos
+
         self._grid[r][c] = self._turn
+
+        if r == 0 and c == 0:
+            self.finish_game(self._turn)
+            return
+
         self._consecutive_passes = 0  # Reset the counter
 
         if pos == (0, 0):
@@ -310,6 +316,18 @@ class GoFake(GoBase):
                 self._grid[adj_pos[0]][adj_pos[1]] = None
 
         self.pass_turn()
+
+    def finish_game(self, turn : int) -> None:
+        """
+        Updates empty positions in board with current turn played at [0][0]
+
+        Args:
+            turn (int) - current player turn
+        """
+
+        for r, c in self.available_moves:
+            self._grid[r][c] = turn
+
 
     def in_bounds(self, pos: tuple[int, int]) -> bool:
         """
@@ -351,6 +369,7 @@ class GoFake(GoBase):
             self._consecutive_passes += 1
         elif not self._superko and self.grid == self._previous_board:
             self._consecutive_passes += 1
+
         self._turn = 2 if self._turn == 1 else 1
         self._num_moves += 1
 
