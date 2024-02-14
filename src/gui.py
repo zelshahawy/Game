@@ -1,4 +1,6 @@
-"""GUI implementation for Go stub"""
+"""
+GUI implementation for Go stub
+"""
 
 import sys
 from typing import Optional
@@ -64,10 +66,13 @@ class GoGUI(GoUI):
         """
         See GoUI.get_move
         """
+        raise NotImplementedError
 
     def on_click(self, pos_click : tuple[int, int]) -> None:
-        """handles on_click interactions with the GUI"""
-        return
+        """
+        Handles interactions with the GUI
+        """
+        raise NotImplementedError
 
     def draw_player_stone(self, num_player : Optional[int], board_pos : \
         Optional[tuple[int,int]]) -> None:
@@ -97,18 +102,15 @@ class GoGUI(GoUI):
                 piece_at_pos = self._go_game.piece_at((i, j))
                 self.draw_player_stone(piece_at_pos, (i, j))
 
-
     def draw_window(self) -> None:
         """Displays window"""
         self.display_board()
         self.draw_board_state()
 
-
     def gui_loop(self) -> None:
         """
         Handles display of change in game state, position, and players'moves
         """
-
         while True:
             py_events = pygame.event.get()
             for event in py_events:

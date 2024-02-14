@@ -233,16 +233,13 @@ class GoFake(GoBase):
         """
         if not self.done:
             return []
-        else:
-            dict_scores: dict[int, int] = self.scores()
-            max_score: int = max([val for val in dict_scores.values()])
-
-            lst_winners: list[int] = []
-            for key, val in dict_scores.items():
-                if val == max_score:
-                    lst_winners.append(key)
-
-            return lst_winners
+        scores = self.scores()
+        max_score = max(scores.values())
+        winners = []
+        for player, score in scores.items():
+            if score == max_score:
+                winners.append(player)
+        return winners
 
     def piece_at(self, pos: tuple[int, int]) -> int | None:
         """
@@ -250,7 +247,7 @@ class GoFake(GoBase):
         """
         if not self.in_bounds(pos):
             raise ValueError(
-                "Pos is outside bounds of the board"
+                "Position is outside bounds of the board"
             )
         r, c = pos
         return self._grid[r][c]

@@ -18,6 +18,7 @@ class GoTUI(GoUI):
         """
         size = self._go_game.size
         board = self._go_game.grid
+
         for i, row in enumerate(board):
             line = ""
             for j, intx in enumerate(row):

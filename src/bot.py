@@ -1,3 +1,7 @@
+"""
+Bot implementation for the Go game
+"""
+
 import sys
 import random
 from enum import IntEnum
@@ -26,20 +30,17 @@ class RandomBot(BaseBot):
         self._game = game
         self._player = player
 
-
     def show_player(self) -> Players:
         """
         return the color of the bot
         """
         return self._player
 
-
     def set_new_game(self, new_game : GoStub) -> None:
         """
         Set bot to a new game
         """
         self._game = new_game
-
 
     def make_move(self) -> None:
         """
@@ -55,6 +56,8 @@ class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
 
     game: GoStub
+    bots: list[BaseBot]
+
     def __init__(self, game: GoStub, bots: list[BaseBot]) -> None:
         """
         Initialize the simulation with the game.
@@ -65,7 +68,6 @@ class Simulation(SimulateBots):
         self._bots = bots
         self._wins = {player: 0 for player in Players}
         self._ties = 0
-
 
     def simulate_games(self, num_of_games: int) -> tuple[float, float, float]:
         """
@@ -84,14 +86,11 @@ class Simulation(SimulateBots):
             self.reset_bots(self._game)
         return self.calculate_percentages(num_of_games)
 
-
     def reset_game(self) -> None:
         """
         Resets a game
         """
         self._game = GoStub(self._game.size, self._game.num_players)
-
-
 
     def reset_bots(self, new_game: GoStub) -> None:
         """
@@ -114,7 +113,6 @@ class Simulation(SimulateBots):
             for bot in self._bots:
                 if results[0] == bot.show_player():
                     self._wins[bot.show_player()] += 1
-          
 
     def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
         """
