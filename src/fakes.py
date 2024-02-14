@@ -213,13 +213,6 @@ class GoFake(GoBase):
         return self._turn
 
     @property
-    def consecutive_passes(self) -> int:
-        """
-        Returns the number of consecutive passes
-        """
-        return self._consecutive_passes
-
-    @property
     def available_moves(self) -> ListMovesType:
         """
         See GoBase.available_moves
@@ -273,11 +266,10 @@ class GoFake(GoBase):
             return True
 
         if not self.in_bounds(pos):
-            raise ValueError(
-            "Move is outside bounds of the board"
-        )
+            raise ValueError("Move is outside bounds of the board")
 
         resulting_board = self.simulate_move(pos).grid
+
         if self._superko:
             for board in self._previous_boards:
                 if resulting_board == board:
@@ -404,7 +396,7 @@ class GoFake(GoBase):
         """
         new_board = GoFake(self._side, self._players, self._superko)
         new_board._grid = self.grid
-        new_board.consecutive_passes = self._consecutive_passes
+        new_board._consecutive_passes = self._consecutive_passes
 
         if pos is not None:
             if not self.in_bounds(pos):
