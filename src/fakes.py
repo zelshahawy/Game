@@ -304,12 +304,6 @@ class GoFake(GoBase):
 
         self._consecutive_passes = 0  # Reset the counter
 
-        if pos == (0, 0):
-            for row in self._grid:
-                for piece in row:
-                    piece = self._turn if piece is None else piece
-                    return
-
         for adj_pos in self.adjacent_positions(pos):
             if self.piece_at(adj_pos) is not None and \
             self.piece_at(adj_pos) != self.turn and pos:
