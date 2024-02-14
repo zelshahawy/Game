@@ -231,7 +231,7 @@ class GoFake(GoBase):
         """
         See GoBase.done
         """
-        return self._consecutive_passes == 2
+        return self._consecutive_passes == 2 or self.piece_at((0, 0)) is not None
 
     @property
     def outcome(self) -> list[int]:
@@ -284,6 +284,11 @@ class GoFake(GoBase):
         """
         See GoBase.apply_move
         """
+        if not self.in_bounds(pos):
+            raise ValueError(
+                "Move is outside bounds of the board"
+            )
+
         if self._superko:
             self._previous_boards.append(self.grid)
         else:
@@ -293,9 +298,15 @@ class GoFake(GoBase):
         self._grid[r][c] = self._turn
         self._consecutive_passes = 0  # Reset the counter
 
+        if pos == (0, 0):
+            for row in self._grid:
+                for piece in row:
+                    piece = self._turn if piece is None else piece
+                    return
+
         for adj_pos in self.adjacent_positions(pos):
             if self.piece_at(adj_pos) is not None and \
-            self.piece_at(adj_pos) != self.turn:
+            self.piece_at(adj_pos) != self.turn and pos:
                 self._grid[adj_pos[0]][adj_pos[1]] = None
 
         self.pass_turn()
