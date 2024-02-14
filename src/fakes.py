@@ -158,6 +158,11 @@ class GoStub(GoBase):
 class GoFake(GoBase):
     """
     Fake implementation of GoBase
+
+    _previous_boards: list[BoardGridType]
+    _previous_board: BoardGridType
+    _consecutive_passes: int
+
     """
     def __init__(self, side: int, players: int, superko: bool = False):
         """
@@ -180,6 +185,7 @@ class GoFake(GoBase):
 
         self._turn = 1
         self._num_moves = 0
+        self._consecutive_passes = 0
 
         if self._superko:
             self._previous_boards = [self.grid]
@@ -208,7 +214,8 @@ class GoFake(GoBase):
         moves = []
         for r in range(self._side):
             for c in range(self._side):
-                moves.append((r, c))
+                if self.piece_at((r, c)) is None:
+                    moves.append((r, c))
 
         return moves
 
@@ -217,7 +224,7 @@ class GoFake(GoBase):
         """
         See GoBase.done
         """
-        return self._num_moves == 4
+        return self._consecutive_passes == 2
 
     @property
     def outcome(self) -> list[int]:
@@ -235,6 +242,10 @@ class GoFake(GoBase):
         """
         See GoBase.piece_at
         """
+        if not self.in_bounds(pos):
+            raise ValueError(
+                "Pos is outside bounds of the board"
+            )
         r, c = pos
         return self._grid[r][c]
 
@@ -242,18 +253,20 @@ class GoFake(GoBase):
         """
         See GoBase.legal_move
         """
-        resulting_board = self.simulate_move(pos).grid
-        if pos not in self.available_moves:
+        if pos is None:
+            return True
+        if not self.in_bounds(pos):
             raise ValueError(
-                "Move is outside bounds of the board"
-            )
-        if self.piece_at(pos) is not None:
-            return False
+            "Move is outside bounds of the board"
+        )
+        resulting_board = self.simulate_move(pos).grid
         if self._superko:
             for board in self._previous_boards:
                 if resulting_board == board:
                     return False
-        if not self._superko and resulting_board == self._previous_board:
+        elif resulting_board == self._previous_board:
+            return False
+        if self.piece_at(pos) is not None:
             return False
         return True
 
@@ -261,17 +274,35 @@ class GoFake(GoBase):
         """
         See GoBase.apply_move
         """
-        r, c = pos
-        self._grid[r][c] = self._turn
-        for adj_pos in self.adjacent_positions(pos):
-            if self.piece_at(adj_pos) is not None and \
-            self.piece_at(adj_pos) != self.turn:
-                self._grid[adj_pos[0]][adj_pos[1]] = None
         if self._superko:
             self._previous_boards.append(self.grid)
         else:
             self._previous_board = self.grid
+
+        r, c = pos
+        self._grid[r][c] = self._turn
+        self._consecutive_passes = 0  # Reset the counter
+
+        for adj_pos in self.adjacent_positions(pos):
+            if self.piece_at(adj_pos) is not None and \
+            self.piece_at(adj_pos) != self.turn:
+                self._grid[adj_pos[0]][adj_pos[1]] = None
+
         self.pass_turn()
+
+    def in_bounds(self, pos: tuple[int, int]) -> bool:
+        """
+        Returns whether a position is inside the bounds of the board
+        
+        Args:
+            pos: position to check
+
+        Returns: whether the position is inside the bounds
+        """
+        r, c = pos
+        if 0 <= r < self._side and 0 <= c < self._side:
+            return True
+        return False
 
     def adjacent_positions(self, pos: tuple[int, int]) -> list[int | None]:
         """
@@ -295,6 +326,10 @@ class GoFake(GoBase):
         """
         See GoBase.pass_turn
         """
+        if self._superko and self.grid == self._previous_boards[-1]:
+            self._consecutive_passes += 1
+        elif not self._superko and self.grid == self._previous_board:
+            self._consecutive_passes += 1
         self._turn = 2 if self._turn == 1 else 1
         self._num_moves += 1
 
@@ -302,12 +337,14 @@ class GoFake(GoBase):
         """
         See GoBase.scores
         """
+
         p1_score = len(
-            [piece for row in self._grid for piece in row if piece == "1"]
+            [piece for row in self.grid for piece in row if piece == 1]
         )
         p2_score = len(
-            [piece for row in self._grid for piece in row if piece == "2"]
+            [piece for row in self.grid for piece in row if piece == 2]
         )
+
         return {1: p1_score, 2: p2_score}
 
     def load_game(self, turn: int, grid: BoardGridType) -> None:
@@ -341,13 +378,14 @@ class GoFake(GoBase):
         the method was called on, reflecting the state
         of the game after applying the provided move.
         """
-        if pos not in self.available_moves:
+        new_board = GoFake(self._side, self._players, self._superko)
+        new_board._grid = self.grid
+        if pos is None:
+            new_board.pass_turn()
+            return new_board
+        if not self.in_bounds(pos):
             raise ValueError(
                 "Position is outside the bounds of the board"
             )
-        if pos is None:
-            return self
-        new_board = GoFake(self._side, self._players, self._superko)
-        new_board._grid = self.grid
-        new_board._grid[pos[0]][pos[1]] = self._turn
+        new_board.apply_move(pos)
         return new_board

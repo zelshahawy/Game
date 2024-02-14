@@ -70,10 +70,9 @@ class GoTUI(GoUI):
                 print("INVALID INPUT")
         return move
 
-
 def main():
     """
-    Main TUI loop
+    Main TUI loop, asks user for moves and applies them
     """
     side = int(sys.argv[1])
     go = GoStub(side, 2, False)
