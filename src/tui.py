@@ -70,7 +70,7 @@ class GoTUI(GoUI):
                 print("INVALID INPUT")
         return move
 
-def main():
+def main() -> None:
     """
     Main TUI loop, asks user for moves and applies them
     """

@@ -13,9 +13,6 @@ class Go(GoBase):
     Class representing the game Go
     """
 
-    def __init__(self, side: int, players: int, superko: bool = False):
-        super().__init__(side, players, superko)
-
     @property
     def grid(self) -> BoardGridType:
         """

@@ -10,7 +10,13 @@ class GoUI(ABC):
     """
     _go_game: GoStub
 
-    def __init__(self, go_game):
+    def __init__(self, go_game) -> None:
+        """
+        Constructor
+
+        Args:
+            go_game: The Go game to display and interact with
+        """
         self._go_game = go_game
 
     @abstractmethod
