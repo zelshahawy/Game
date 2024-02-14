@@ -226,10 +226,16 @@ class GoFake(GoBase):
         """
         if not self.done:
             return []
+        else:
+            dict_scores: dict[int, int] = self.scores()
+            max_score: int = max([val for val in dict_scores.values()])
 
-        if self._grid[0][1] is None:
-            return [1, 2]
-        return [self._grid[0][1]]
+            lst_winners: list[int] = []
+            for key, val in dict_scores.items():
+                if val == max_score:
+                    lst_winners.append(key)
+
+            return lst_winners
 
     def piece_at(self, pos: tuple[int, int]) -> int | None:
         """
@@ -279,7 +285,7 @@ class GoFake(GoBase):
 
         Args:
             pos: position to check positions adjacent to
-        
+
         Returns: list of all adjacent positions
         """
         pieces = []
