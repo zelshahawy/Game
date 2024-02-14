@@ -103,8 +103,7 @@ class GoStub(GoBase):
 
         if self._grid[0][1] is None:
             return [1, 2]
-        else:
-            return [self._grid[0][1]]
+        return [self._grid[0][1]]
 
     def piece_at(self, pos: tuple[int, int]) -> int | None:
         """
@@ -214,6 +213,13 @@ class GoFake(GoBase):
         return self._turn
 
     @property
+    def consecutive_passes(self) -> int:
+        """
+        Returns the number of consecutive passes
+        """
+        return self._consecutive_passes
+
+    @property
     def available_moves(self) -> ListMovesType:
         """
         See GoBase.available_moves
@@ -265,10 +271,12 @@ class GoFake(GoBase):
         """
         if pos is None:
             return True
+
         if not self.in_bounds(pos):
             raise ValueError(
             "Move is outside bounds of the board"
         )
+
         resulting_board = self.simulate_move(pos).grid
         if self._superko:
             for board in self._previous_boards:
@@ -276,8 +284,10 @@ class GoFake(GoBase):
                     return False
         elif resulting_board == self._previous_board:
             return False
+
         if self.piece_at(pos) is not None:
             return False
+
         return True
 
     def apply_move(self, pos: tuple[int, int]) -> None:
@@ -295,11 +305,10 @@ class GoFake(GoBase):
             self._previous_board = self.grid
 
         r, c = pos
-
         self._grid[r][c] = self._turn
 
-        if r == 0 and c == 0:
-            self.finish_game(self._turn)
+        if pos == (0, 0):
+            self.populate_positions()
             return
 
         self._consecutive_passes = 0  # Reset the counter
@@ -311,17 +320,14 @@ class GoFake(GoBase):
 
         self.pass_turn()
 
-    def finish_game(self, turn : int) -> None:
+    def populate_positions(self) -> None:
         """
-        Updates empty positions in board with current turn played at [0][0]
+        Populates all empty positions in board with the current player's pieces
 
-        Args:
-            turn (int) - current player turn
+        Returns: nothing
         """
-
         for r, c in self.available_moves:
-            self._grid[r][c] = turn
-
+            self._grid[r][c] = self._turn
 
     def in_bounds(self, pos: tuple[int, int]) -> bool:
         """
@@ -364,7 +370,6 @@ class GoFake(GoBase):
         elif not self._superko and self._grid == self._previous_board:
             self._consecutive_passes += 1
 
-        print(f"Consecutive passes of board {self} now :  {self._consecutive_passes}")
         self._turn = 2 if self._turn == 1 else 1
         self._num_moves += 1
 
@@ -396,36 +401,17 @@ class GoFake(GoBase):
     def simulate_move(self, pos: tuple[int, int] | None) -> "GoBase":
         """
         See GoBase.simulate_move
-
-        Simulates the effect of making a move,
-        **without** altering the state of the game (instead,
-        returns a new object with the result of applying
-        the provided move).
-
-        The provided position is not required to be a legal
-        move, as this method could be used to check whether
-        making a move results in a board that violates the
-        ko rule.
-
-        Args:
-            pos: Position on the board, or None for a pass
-
-        Raises:
-            ValueError: If any of the specified position
-            is outside the bounds of the board.
-
-        Returns: An object of the same type as the object
-        the method was called on, reflecting the state
-        of the game after applying the provided move.
         """
         new_board = GoFake(self._side, self._players, self._superko)
         new_board._grid = self.grid
-        if pos is None:
+        new_board.consecutive_passes = self._consecutive_passes
+
+        if pos is not None:
+            if not self.in_bounds(pos):
+                raise ValueError("Position is outside the bounds of the board")
+
+            new_board.apply_move(pos)
+        else:
             new_board.pass_turn()
-            return new_board
-        if not self.in_bounds(pos):
-            raise ValueError(
-                "Position is outside the bounds of the board"
-            )
-        new_board.apply_move(pos)
+
         return new_board
