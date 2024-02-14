@@ -7,7 +7,6 @@ import os
 from fakes import GoStub
 from ui import GoUI
 
-
 class GoTUI(GoUI):
     """
     Class for presenting TUI for a game of Go
