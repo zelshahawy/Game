@@ -7,13 +7,7 @@ import random
 from enum import IntEnum
 from fakes import GoStub
 from botbase import BaseBot, SimulateBots
-
-
-class Players(IntEnum):
-    """Enumeration for Player 1 and Player 2."""
-    BLACK = 1
-    WHITE = 2
-
+from botbase import Players
 
 class RandomBot(BaseBot):
     """Bot that makes random legal moves in a Go game."""

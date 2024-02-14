@@ -4,7 +4,14 @@ Base class for the bot implementation
 
 from abc import ABC, abstractmethod
 from fakes import GoStub
-from bot import Players
+from enum import IntEnum
+
+
+class Players(IntEnum):
+    """Enumeration for Player 1 and Player 2."""
+    BLACK = 1
+    WHITE = 2
+
 
 class BaseBot(ABC):
     """
@@ -19,7 +26,7 @@ class BaseBot(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def show_player(self) -> Players:
+    def show_player(self) -> "Players":
         """
         reveals the color of a players
         """
@@ -70,7 +77,7 @@ class SimulateBots(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
+    def calculate_percentages(self, num_of_games) -> tuple[float, float, float]:
         """
         Calculate the win/tie percentages.
 
