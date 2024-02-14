@@ -359,13 +359,19 @@ class GoFake(GoBase):
         """
         See GoBase.pass_turn
         """
-        if self._superko and self.grid == self._previous_boards[-1]:
+        if self._superko and self._grid == self._previous_boards[-1]:
             self._consecutive_passes += 1
-        elif not self._superko and self.grid == self._previous_board:
+        elif not self._superko and self._grid == self._previous_board:
             self._consecutive_passes += 1
 
+        print(f"Consecutive passes of board {self} now :  {self._consecutive_passes}")
         self._turn = 2 if self._turn == 1 else 1
         self._num_moves += 1
+
+        if self._superko:
+            self._previous_boards.append(self.grid)
+        else:
+            self._previous_board = self.grid
 
     def scores(self) -> dict[int, int]:
         """
