@@ -12,12 +12,11 @@ class Go(GoBase):
     """
     Class representing the game Go
     """
-    #was there any point to add the innit if it inherits from go base. also the specification of properties
-    #docstrings
 
     def __init__(self, side: int, players: int, superko: bool = False):
         super().__init__(side, players, superko)
 
+    @property
     def grid(self) -> BoardGridType:
         """
         See GoBase.grid

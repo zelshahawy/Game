@@ -193,6 +193,13 @@ class GoFake(GoBase):
             self._previous_board = self.grid
 
     @property
+    def num_moves(self) -> int:
+        """
+        Returns the number of moves
+        """
+        return self._num_moves
+
+    @property
     def grid(self) -> BoardGridType:
         """
         See GoBase.grid
