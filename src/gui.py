@@ -87,9 +87,19 @@ class GoGUI(GoUI):
         stone_y = y * CELL_SIZE + BOARD_PADDING
 
         if num_player == 1:
-            pygame.draw.circle(self.screen, WHITE, (stone_x, stone_y), PLAYER_STONE_RADIUS)
+            pygame.draw.circle(
+                self.screen,
+                WHITE,
+                (stone_x, stone_y),
+                PLAYER_STONE_RADIUS
+            )
         elif num_player == 2:
-            pygame.draw.circle(self.screen, BLACK, (stone_x, stone_y), PLAYER_STONE_RADIUS)
+            pygame.draw.circle(
+                self.screen,
+                BLACK,
+                (stone_x, stone_y),
+                PLAYER_STONE_RADIUS
+            )
 
     def draw_board_state(self) -> None:
         """

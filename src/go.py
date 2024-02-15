@@ -12,7 +12,6 @@ class Go(GoBase):
     """
     Class representing the game Go
     """
-
     @property
     def grid(self) -> BoardGridType:
         """
