@@ -10,7 +10,7 @@ class GoUI(ABC):
     """
     _go_game: GoStub
 
-    def __init__(self, go_game) -> None:
+    def __init__(self, go_game: GoStub) -> None:
         """
         Constructor
 
