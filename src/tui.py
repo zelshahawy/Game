@@ -60,8 +60,12 @@ class GoTUI(GoUI):
         move = None
         while move is None:
             time.sleep(0.2)
-            move_input = input(Fore.GREEN + f"> It is player {self._go_game.turn}'s turn."+\
-                                " Please enter a move [press Enter to pass]:\n" + Style.RESET_ALL)
+            move_input = input(
+                Fore.GREEN +
+                f"> It is player {self._go_game.turn}'s turn." +
+                " Please enter a move [press Enter to pass]:\n" +
+                Style.RESET_ALL
+            )
             if move_input == "":
                 self._go_game.pass_turn()
             else:
@@ -78,7 +82,7 @@ def main() -> None:
     Main TUI event loop
     """
     os.system("clear")
-    # Weclome message, to be enabled later
+    # Weclome message, to be enabled later for milestone 2
     #welcome = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n"\
     #                + Style.RESET_ALL)
     #if welcome:
