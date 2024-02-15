@@ -380,12 +380,10 @@ class GoFake(GoBase):
 
         Returns: list of all adjacent positions
         """
-        r, c = pos
         pieces = []
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for direction in directions:
-            x, y = direction
-            potential_pos =  ((x + r), (y + c))
+            potential_pos = (pos[0] + direction[0], pos[1] + direction[1])
             if self.in_bounds(potential_pos):
                 pieces.append(potential_pos)
         return pieces
