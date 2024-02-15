@@ -2,7 +2,7 @@
 Tests for Milestone 1
 """
 import pytest
-from go import *
+from go import Go
 
 
 def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
@@ -26,7 +26,7 @@ def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
     return game
 
 @pytest.mark.parametrize("side", [i for i in range(4, 20)])
-def test_board_construction(side) -> None:
+def test_board_construction(side: int) -> None:
     """
     Tests the construction of a Go game. Constructs boards of different sizes
     and verify that they were constructed correctly. Assume just two players.
@@ -47,7 +47,7 @@ def test_board_size() -> None:
     assert all(len(row) == 19 for row in game.grid)
 
 @pytest.mark.parametrize("players", [n for n in range(2, 9)])
-def test_num_players(players) -> None:
+def test_num_players(players: int) -> None:
     """
     Test the number of players in the game
     """
