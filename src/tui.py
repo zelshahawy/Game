@@ -20,35 +20,35 @@ class GoTUI(GoUI):
 
         for i, row in enumerate(board):
             line = ""
-            for j, intx in enumerate(row):
+            for j, intersection in enumerate(row):
+                first_intersection = (
+                    "┌" if i == 0 else ("├" if i < size - 1 else "└")
+                )
+                last_intersection = (
+                    "┐" if i == 0 else ("┤" if i < size - 1 else "┘")
+                )
+                middle_intersection = (
+                    "┬" if i == 0 else ("┼" if i < size - 1 else "┴")
+                )
+
                 # First intersection
                 if j == 0:
-                    if i == 0:
-                        line += "┌" if intx is None else str(intx)
-                    elif i < size - 1:
-                        line += "├" if intx is None else str(intx)
-                    else:
-                        line += "└" if intx is None else str(intx)
+                    line += first_intersection if intersection is None \
+                          else str(intersection)
                 # Last intersection
                 elif j == size - 1:
-                    if i == 0:
-                        line += "┐" if intx is None else str(intx)
-                    elif i < size - 1:
-                        line += "┤" if intx is None else str(intx)
-                    else:
-                        line += "┘" if intx is None else str(intx)
+                    line += last_intersection if intersection is None \
+                          else str(intersection)
                 # Middle intersections
                 else:
-                    if i == 0:
-                        line += "┬" if intx is None else str(intx)
-                    elif i < size - 1:
-                        line += "┼" if intx is None else str(intx)
-                    else:
-                        line += "┴" if intx is None else str(intx)
+                    line += middle_intersection if intersection is None \
+                          else str(intersection)
+
                 # Add horizontal separator for all intersections except last
                 if j < size - 1:
                     line += "─"
             print(line)
+
 
     def get_move(self) -> tuple[int, int]:
         """
@@ -78,11 +78,11 @@ def main() -> None:
     go = GoStub(side, 2, False)
     go_tui = GoTUI(go)
     go_tui.display_board()
-    while True:
-        move = go_tui.get_move()
-        go.apply_move(move)
-        os.system("clear")
-        go_tui.display_board()
+    #while True:
+        #move = go_tui.get_move()
+        #go.apply_move(move)
+        #os.system("clear")
+        #go_tui.display_board()
 
 
 if __name__ == "__main__":

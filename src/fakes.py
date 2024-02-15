@@ -273,7 +273,9 @@ class GoFake(GoBase):
         """
         See GoBase.done
         """
-        return self._consecutive_passes == 2 or self.piece_at((0, 0)) is not None
+        return (
+            self._consecutive_passes == 2 or self.piece_at((0, 0)) is not None
+        )
 
     @property
     def outcome(self) -> list[int]:
@@ -295,9 +297,8 @@ class GoFake(GoBase):
         See GoBase.piece_at
         """
         if not self.in_bounds(pos):
-            raise ValueError(
-                "Position is outside bounds of the board"
-            )
+            raise ValueError("Position is outside bounds of the board")
+
         r, c = pos
         return self._grid[r][c]
 
@@ -313,11 +314,9 @@ class GoFake(GoBase):
 
         resulting_board = self.simulate_move(pos).grid
 
-        if self._superko:
-            for board in self._previous_boards:
-                if resulting_board == board:
-                    return False
-        elif resulting_board == self._previous_board:
+        if self._superko and resulting_board in self._previous_boards:
+            return False
+        if resulting_board == self._previous_board:
             return False
 
         if self.piece_at(pos) is not None:
@@ -330,14 +329,7 @@ class GoFake(GoBase):
         See GoBase.apply_move
         """
         if not self.in_bounds(pos):
-            raise ValueError(
-                "Move is outside bounds of the board"
-            )
-
-        if self._superko:
-            self._previous_boards.append(self.grid)
-        else:
-            self._previous_board = self.grid
+            raise ValueError("Move is outside bounds of the board")
 
         r, c = pos
         self._grid[r][c] = self._turn
@@ -374,9 +366,7 @@ class GoFake(GoBase):
         Returns: whether the position is inside the bounds
         """
         r, c = pos
-        if 0 <= r < self._side and 0 <= c < self._side:
-            return True
-        return False
+        return 0 <= r < self._side and 0 <= c < self._side
 
     def adjacent_positions(self, pos: tuple[int, int]) -> list[int | None]:
         """
