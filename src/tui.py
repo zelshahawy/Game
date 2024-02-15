@@ -2,7 +2,7 @@
 TUI implementation for GoStub
 """
 import sys
-import os
+#import os
 
 from fakes import GoStub
 from ui import GoUI
