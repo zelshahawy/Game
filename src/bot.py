@@ -11,9 +11,9 @@ from botbase import Players
 class RandomBot(BaseBot):
     """Bot that makes random legal moves in a Go game."""
 
-    game: GoStub
+    player: Players
 
-    def __init__(self, player):
+    def __init__(self, player: Players) -> None:
 
         """
         Initialize the bot with the game.
@@ -28,7 +28,7 @@ class RandomBot(BaseBot):
         """
         return self._player
 
-    def make_move(self, game) -> None:
+    def make_move(self, game: GoStub) -> None:
         """
         Make a random legal move in the game.
         """
@@ -55,7 +55,7 @@ class Simulation(SimulateBots):
         self._wins = {player: 0 for player in Players}
         self._ties = 0
 
-    def reset_game(self):
+    def reset_game(self) -> None:
         """
         resets a game to its default, beginning state
         """
@@ -79,7 +79,7 @@ class Simulation(SimulateBots):
             self.reset_game()
         return self.calculate_percentages(num_of_games)
 
-    def update_results(self, results) -> None:
+    def update_results(self, results: list[int]) -> None:
         """
         Update the win/tie counts based on the outcome of a game.
 
@@ -92,7 +92,7 @@ class Simulation(SimulateBots):
                 if results[0] == bot.show_player():
                     self._wins[bot.show_player()] += 1
 
-    def calculate_percentages(self, num_of_games) ->tuple[float, float, float]:
+    def calculate_percentages(self, num_of_games: int) ->tuple[float, float, float]:
         """
         Calculate the win/tie percentages.
 
@@ -105,7 +105,7 @@ class Simulation(SimulateBots):
         return (wining_percentage_1, wining_percentage_2, tie_percentage)
 
 
-def random_main(num_games) -> None:
+def random_main(num_games: int) -> None:
     """
     Run the simulation and print the results.
 

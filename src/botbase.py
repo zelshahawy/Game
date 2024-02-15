@@ -3,8 +3,9 @@ Base class for the bot implementation
 """
 
 from abc import ABC, abstractmethod
-from fakes import GoStub
 from enum import IntEnum
+from fakes import GoStub
+
 
 
 class Players(IntEnum):
@@ -19,14 +20,14 @@ class BaseBot(ABC):
     """
 
     @abstractmethod
-    def make_move(self, game) -> None:
+    def make_move(self, game: GoStub) -> None:
         """
         perform a move in a game of go
         """
         raise NotImplementedError
 
     @abstractmethod
-    def show_player(self) -> "Players":
+    def show_player(self) -> Players:
         """
         reveals the color of a players
         """
@@ -46,7 +47,7 @@ class SimulateBots(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update_results(self, results) -> None:
+    def update_results(self, results: list[int]) -> None:
         """
         Update the win/tie counts based on the outcome of a game.
 
@@ -55,7 +56,7 @@ class SimulateBots(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def calculate_percentages(self, num_of_games) -> tuple[float, float, float]:
+    def calculate_percentages(self, num_of_games: int) -> tuple[float, float, float]:
         """
         Calculate the win/tie percentages.
 
