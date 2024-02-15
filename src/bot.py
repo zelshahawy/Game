@@ -18,7 +18,7 @@ class RandomBot(BaseBot):
         """
         Initialize the bot with the game.
 
-        game: The game the bot will be playing.
+        Player: color of the bot on the boat to identify bot.
         """
         self._player = player
 
