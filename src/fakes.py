@@ -326,12 +326,8 @@ class GoFake(GoBase):
         """
         See GoBase.apply_move
         """  # Reset the counter
-        if self._superko:
-            self._previous_boards.append((self.grid))
-            self._previous_board = self.grid
-        else:
-            self._previous_boards.append((self.grid))
-            self._previous_board = self.grid
+        self._previous_boards.append((self.grid))
+        self._previous_board = self.grid
         if not self.in_bounds(pos):
             raise ValueError("Move is outside bounds of the board")
         r, c = pos
