@@ -2,7 +2,10 @@
 TUI implementation for GoStub
 """
 import sys
-#import os
+import os
+import time
+
+from colorama import Fore, Style
 
 from fakes import GoStub
 from ui import GoUI
@@ -56,33 +59,49 @@ class GoTUI(GoUI):
         """
         move = None
         while move is None:
-            move_input = input("ENTER MOVE (X Y) ")
-            try:
-                coordinates = move_input.split()
-                if len(coordinates) != 2:
-                    print("INVALID INPUT")
-                else:
-                    move = (int(coordinates[0]), int(coordinates[1]))
-                if not self._go_game.legal_move(move):
-                    print("INVALID INPUT")
+            time.sleep(0.2)
+            move_input = input(Fore.GREEN + f"> It is player {self._go_game.turn}'s turn."+\
+                                " Please enter a move [press Enter to pass]:\n" + Style.RESET_ALL)
+            if move_input == "":
+                self._go_game.pass_turn()
+            else:
+                try:
+                    move = tuple(map(int, move_input.split()))
+                    if move not in self._go_game.available_moves:
+                        move = None
+                except ValueError:
                     move = None
-            except ValueError:
-                print("INVALID INPUT")
         return move
 
 def main() -> None:
     """
-    Main TUI loop, asks user for moves and applies them
+    Main TUI event loop
     """
+    os.system("clear")
+    welcome = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n"\
+                     + Style.RESET_ALL)
+    if welcome:
+        os.system("clear")
     side = int(sys.argv[1])
     go = GoStub(side, 2, False)
     go_tui = GoTUI(go)
     go_tui.display_board()
-    #while True:
-        #move = go_tui.get_move()
-        #go.apply_move(move)
-        #os.system("clear")
-        #go_tui.display_board()
+    while True:
+        move = go_tui.get_move()
+        if go.done:
+            print(Fore.GREEN + "Game is over")
+            for _ in range(3):
+                print(".", end="", flush=True)
+                time.sleep(0.4)
+
+            if len(go.outcome) > 1:
+                print(f"It's a {Fore.CYAN}tie!")
+            else:
+                print(f"Player {go.outcome[0]} wins!")
+            sys.exit(0)
+        go.apply_move(move)
+        os.system("clear")
+        go_tui.display_board()
 
 
 if __name__ == "__main__":
