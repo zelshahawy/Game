@@ -4,7 +4,6 @@ Fake implementations of GoBase.
 We provide a GoStub implementation, and you must
 implement a GoFake implementation.
 """
-from typing import Optional
 from copy import deepcopy
 from base import GoBase, BoardGridType, ListMovesType
 
