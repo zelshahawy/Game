@@ -186,9 +186,9 @@ class GoFake(GoBase):
         self._consecutive_passes = 0
 
         if self._superko:
-            self._previous_boards = [self.grid]
+            self._previous_boards: list[BoardGridType] = []
         else:
-            self._previous_board = self.grid
+            self._previous_board: BoardGridType | None = None
 
     @property
     def num_moves(self) -> int:
