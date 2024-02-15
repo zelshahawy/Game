@@ -205,12 +205,55 @@ class GoFake(GoBase):
         """
         return deepcopy(self._grid)
 
+    @grid.setter
+    def grid(self, new_grid: BoardGridType) -> None:
+        """
+        Sets the grid to a new grid
+
+        Args:
+            new_grid: new grid to set the grid to
+
+        Returns: nothing
+        """
+        self._grid = new_grid
+
     @property
     def turn(self) -> int:
         """
         See GoBase.turn
         """
         return self._turn
+
+    @turn.setter
+    def turn(self, new_turn: int) -> None:
+        """
+        Sets the turn to a new turn
+
+        Args:
+            new_turn: new turn to set the turn to
+
+        Returns: nothing
+        """
+        self._turn = new_turn
+
+    @property
+    def consecutive_passes(self) -> int:
+        """
+        Returns the number of consecutive passes
+        """
+        return self._consecutive_passes
+
+    @consecutive_passes.setter
+    def consecutive_passes(self, new_consecutive_passes: int) -> None:
+        """
+        Sets the consecutive passes to a new number
+
+        Args:
+            new_consecutive_passes: new number to set the consecutive passes to
+
+        Returns: nothing
+        """
+        self._consecutive_passes = new_consecutive_passes
 
     @property
     def available_moves(self) -> ListMovesType:
@@ -348,9 +391,8 @@ class GoFake(GoBase):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for direction in directions:
             potential_pos = tuple(map(sum, zip(pos, direction)))
-            if 0 <= potential_pos[0] < self.size and \
-                  0 <= potential_pos[1] < self.size:
-                pieces.append((potential_pos[0], potential_pos[1]))
+            if self.in_bounds(potential_pos):
+                pieces.append(potential_pos)
         return pieces
 
     def pass_turn(self) -> None:
@@ -394,9 +436,9 @@ class GoFake(GoBase):
         See GoBase.simulate_move
         """
         new_go = GoFake(self._side, self._players, self._superko)
-        new_go._grid = self.grid
-        new_go._turn = self.turn
-        new_go._consecutive_passes = self._consecutive_passes
+        new_go.grid = self.grid
+        new_go.turn = self.turn
+        new_go.consecutive_passes = self._consecutive_passes
 
         if pos is not None:
             if not self.in_bounds(pos):
