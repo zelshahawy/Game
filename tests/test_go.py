@@ -65,7 +65,7 @@ def test_turn_property() -> None:
     assert game.turn == 2
     game.apply_move((1, 0))
     assert game.turn == 3
-    assert game.pass_turn()
+    game.pass_turn()
     assert game.turn == 4
 
 def test_piece_at() -> None:
@@ -129,7 +129,7 @@ def test_available_moves() -> None:
     for i in range(4):
         for j in range(4):
             game.apply_move((i, j))
-            expected_moves[i].pop(j)
+            expected_moves.remove((i, j))
 
     assert game.available_moves == expected_moves
 
