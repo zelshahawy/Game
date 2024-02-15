@@ -7,14 +7,14 @@ from go import Go
 
 def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
     """
-    Creates a board s x s and plays some moves in it
+    Creates a board n x n and plays some moves in it
 
     Inputs:
         n [int]: the size of the board
         players [int]: number of players
         superko [bool]: superko rule status
 
-    Returns Go: The game witb some moves playes
+    Returns Go: The game with some moves playes
     """
     game = Go(n, players, superko)
     pieces_positions = [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
@@ -39,7 +39,7 @@ def test_board_construction(side: int) -> None:
 
 def test_board_size() -> None:
     """
-    Tests the size of the board
+    Tests the size of the 19 x 19 board
     """
     game = create_board_with_pieces(19, players=2)
 
@@ -96,7 +96,7 @@ def test_legal_move() -> None:
             if pos in [(0, 0), (0, 18), (18, 0), (18, 18), (9, 0), (0, 9),
                        (18, 9), (9, 18)]:
                 assert not legal
-            elif 0 <= i < 19 and 0 <= j < 19:
+            else:
                 assert legal
 
     with pytest.raises(ValueError):
@@ -115,7 +115,6 @@ def test_legal_move() -> None:
 def test_available_moves() -> None:
     """
     Checks available_moves when the game is started and when moves are made.
-
     """
     game = Go(19, 4)
 
@@ -179,7 +178,7 @@ def test_apply_move_end() -> None:
 
     game.apply_move((0, 1))
     game.apply_move((10, 1))
-    game.apply_move((20, 16))
+    game.apply_move((12, 3))
 
     game.pass_turn()
     game.pass_turn()
