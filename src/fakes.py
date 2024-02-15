@@ -374,7 +374,6 @@ class GoFake(GoBase):
         """
         See GoBase.scores
         """
-
         p1_score = len(
             [piece for row in self.grid for piece in row if piece == 1]
         )
@@ -394,16 +393,17 @@ class GoFake(GoBase):
         """
         See GoBase.simulate_move
         """
-        new_board = GoFake(self._side, self._players, self._superko)
-        new_board._grid = self.grid
-        new_board._consecutive_passes = self._consecutive_passes
+        new_go = GoFake(self._side, self._players, self._superko)
+        new_go._grid = self.grid
+        new_go._turn = self.turn
+        new_go._consecutive_passes = self._consecutive_passes
 
         if pos is not None:
             if not self.in_bounds(pos):
                 raise ValueError("Position is outside the bounds of the board")
 
-            new_board.apply_move(pos)
+            new_go.apply_move(pos)
         else:
-            new_board.pass_turn()
+            new_go.pass_turn()
 
-        return new_board
+        return new_go
