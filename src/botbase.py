@@ -19,7 +19,7 @@ class BaseBot(ABC):
     """
 
     @abstractmethod
-    def make_move(self) -> None:
+    def make_move(self, game) -> None:
         """
         perform a move in a game of go
         """
@@ -29,13 +29,6 @@ class BaseBot(ABC):
     def show_player(self) -> "Players":
         """
         reveals the color of a players
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_new_game(self, new_game : GoStub) -> None:
-        """
-        set the robot to a new game
         """
         raise NotImplementedError
 
@@ -50,21 +43,6 @@ class SimulateBots(ABC):
         """
         sunulate a game between a list of robots
         """
-        raise NotImplementedError
-
-    @abstractmethod
-    def reset_game(self) -> None:
-        """
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def reset_bots(self, new_game: GoStub) -> None:
-        """
-        Reset the bots with a new game.
-
-        new_game: The new game the bots will be playing.
-         """
         raise NotImplementedError
 
     @abstractmethod

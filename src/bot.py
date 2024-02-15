@@ -4,7 +4,6 @@ Bot implementation for the Go game
 
 import sys
 import random
-from enum import IntEnum
 from fakes import GoStub
 from botbase import BaseBot, SimulateBots
 from botbase import Players
@@ -14,14 +13,13 @@ class RandomBot(BaseBot):
 
     game: GoStub
 
-    def __init__(self, game: GoStub, player):
+    def __init__(self, player):
 
         """
         Initialize the bot with the game.
 
         game: The game the bot will be playing.
         """
-        self._game = game
         self._player = player
 
     def show_player(self) -> Players:
@@ -30,20 +28,14 @@ class RandomBot(BaseBot):
         """
         return self._player
 
-    def set_new_game(self, new_game : GoStub) -> None:
-        """
-        Set bot to a new game
-        """
-        self._game = new_game
-
-    def make_move(self) -> None:
+    def make_move(self, game) -> None:
         """
         Make a random legal move in the game.
         """
-        move = random.choice(self._game.available_moves)
-        while not self._game.legal_move(move):
-            move = random.choice(self._game.available_moves)
-        self._game.apply_move(move)
+        move = random.choice(game.available_moves)
+        while not game.legal_move(move):
+            move = random.choice(game.available_moves)
+        game.apply_move(move)
 
 
 class Simulation(SimulateBots):
@@ -63,6 +55,14 @@ class Simulation(SimulateBots):
         self._wins = {player: 0 for player in Players}
         self._ties = 0
 
+    def reset_game(self):
+        """
+        resets a game to its default, beginning state
+        """
+        size = self._game.size
+        num_of_players = self._game.num_players
+        self._game = GoStub(size, num_of_players)
+
     def simulate_games(self, num_of_games: int) -> tuple[float, float, float]:
         """
         Simulate a number of games and return the win percentages.
@@ -74,26 +74,10 @@ class Simulation(SimulateBots):
             while not self._game.done:
                 for bot in self._bots:
                     if self._game.turn == bot.show_player():
-                        bot.make_move()
+                        bot.make_move(self._game)
             self.update_results(self._game.outcome)
             self.reset_game()
-            self.reset_bots(self._game)
         return self.calculate_percentages(num_of_games)
-
-    def reset_game(self) -> None:
-        """
-        Resets a game
-        """
-        self._game = GoStub(self._game.size, self._game.num_players)
-
-    def reset_bots(self, new_game: GoStub) -> None:
-        """
-        Reset the bots with a new game.
-
-        new_game: The new game the bots will be playing.
-         """
-        for bot in self._bots:
-            bot.set_new_game(new_game)
 
     def update_results(self, results) -> None:
         """
@@ -128,8 +112,8 @@ def random_main(num_games) -> None:
     num_games: The number of games to simulate.
     """
     current_game = GoStub(9, 2)
-    bot1 = RandomBot(current_game, Players.BLACK)
-    bot2 = RandomBot(current_game, Players.WHITE)
+    bot1 = RandomBot(Players.BLACK)
+    bot2 = RandomBot(Players.WHITE)
     random_simulation = Simulation(current_game, [bot1, bot2])
     player1_win_percentage, player2_win_percentage, ties_percentage = \
         random_simulation.simulate_games(num_games)
