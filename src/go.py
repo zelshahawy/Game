@@ -1,9 +1,8 @@
 """
-Module providing a Go class
+Module providing the Go class
 """
 from base import GoBase
 
-#Description available in base.py
 BoardGridType = list[list[int | None]]
 ListMovesType = list[tuple[int, int]]
 
@@ -12,7 +11,6 @@ class Go(GoBase):
     """
     Class representing the game Go
     """
-
     @property
     def grid(self) -> BoardGridType:
         """

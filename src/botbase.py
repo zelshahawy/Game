@@ -56,7 +56,8 @@ class SimulateBots(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def calculate_percentages(self, num_of_games: int) -> tuple[float, float, float]:
+    def calculate_percentages(self, num_of_games: int) ->\
+        tuple[float, float, float]:
         """
         Calculate the win/tie percentages.
 

@@ -4,7 +4,6 @@ Fake implementations of GoBase.
 We provide a GoStub implementation, and you must
 implement a GoFake implementation.
 """
-from typing import Optional
 from copy import deepcopy
 from base import GoBase, BoardGridType, ListMovesType
 
@@ -180,14 +179,16 @@ class GoFake(GoBase):
 
         super().__init__(side, players, superko)
 
-        self._grid: list[list[Optional[int]]] = [[None] * side for _ in range(side)]
+        self._grid: BoardGridType = [[None] * side for _ in range(side)]
 
         self._turn = 1
         self._num_moves = 0
         self._consecutive_passes = 0
 
-        self._previous_boards = []
-        self._previous_board = None
+        if self._superko:
+            self._previous_boards: list[BoardGridType] = []
+        else:
+            self._previous_board: BoardGridType | None = None
 
     @property
     def num_moves(self) -> int:
@@ -325,9 +326,12 @@ class GoFake(GoBase):
     def apply_move(self, pos: tuple[int, int]) -> None:
         """
         See GoBase.apply_move
-        """  # Reset the counter
-        self._previous_boards.append((self.grid))
-        self._previous_board = self.grid
+        """
+        if self._superko:
+            self._previous_boards.append((self.grid))
+        else:
+            self._previous_board = self.grid
+
         if not self.in_bounds(pos):
             raise ValueError("Move is outside bounds of the board")
         r, c = pos
@@ -336,6 +340,7 @@ class GoFake(GoBase):
         if pos == (0, 0):
             self.populate_positions()
             return
+
         for adj_pos in self.adjacent_positions(pos):
             if self.piece_at(adj_pos) is not None and \
             self.piece_at(adj_pos) != self.turn and pos:
@@ -374,12 +379,10 @@ class GoFake(GoBase):
 
         Returns: list of all adjacent positions
         """
-        r, c = pos
         pieces = []
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for direction in directions:
-            x, y = direction
-            potential_pos =  ((x + r), (y + c))
+            potential_pos = (pos[0] + direction[0], pos[1] + direction[1])
             if self.in_bounds(potential_pos):
                 pieces.append(potential_pos)
         return pieces

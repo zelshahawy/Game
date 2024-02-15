@@ -92,7 +92,8 @@ class Simulation(SimulateBots):
                 if results[0] == bot.show_player():
                     self._wins[bot.show_player()] += 1
 
-    def calculate_percentages(self, num_of_games: int) ->tuple[float, float, float]:
+    def calculate_percentages(self, num_of_games: int) -> \
+        tuple[float, float, float]:
         """
         Calculate the win/tie percentages.
 
@@ -123,6 +124,9 @@ def random_main(num_games: int) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Error in the number of arguments. Usage: python3 src/bot.py NUM_GAMES")
+        print(
+            "Error in the number of arguments." +
+            " Usage: python3 src/bot.py NUM_GAMES"
+        )
         sys.exit(1)
     random_main(int(sys.argv[1]))

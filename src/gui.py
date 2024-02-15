@@ -33,7 +33,7 @@ class GoGUI(GoUI):
     clock_timer: pygame.time.Clock
     board_padding : int
 
-    def __init__(self, go_game : GoStub) -> None:
+    def __init__(self, go_game: GoStub) -> None:
         super().__init__(go_game)
 
         pygame.init()
@@ -66,13 +66,13 @@ class GoGUI(GoUI):
         """
         See GoUI.get_move
         """
-        raise NotImplementedError
+        return (0, 0)
 
     def on_click(self, pos_click : tuple[int, int]) -> None:
         """
         Handles interactions with the GUI
         """
-        print(pos_click)
+        return None
 
     def draw_player_stone(self, num_player : Optional[int], board_pos : \
         Optional[tuple[int,int]]) -> None:
@@ -87,11 +87,19 @@ class GoGUI(GoUI):
         stone_y = y * CELL_SIZE + BOARD_PADDING
 
         if num_player == 1:
-            pygame.draw.circle(self.screen, WHITE, (stone_x, stone_y),\
-            PLAYER_STONE_RADIUS)
+            pygame.draw.circle(
+                self.screen,
+                WHITE,
+                (stone_x, stone_y),
+                PLAYER_STONE_RADIUS
+            )
         elif num_player == 2:
-            pygame.draw.circle(self.screen, BLACK, (stone_x, stone_y),\
-            PLAYER_STONE_RADIUS)
+            pygame.draw.circle(
+                self.screen,
+                BLACK,
+                (stone_x, stone_y),
+                PLAYER_STONE_RADIUS
+            )
 
     def draw_board_state(self) -> None:
         """
