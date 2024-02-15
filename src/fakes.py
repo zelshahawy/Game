@@ -4,8 +4,8 @@ Fake implementations of GoBase.
 We provide a GoStub implementation, and you must
 implement a GoFake implementation.
 """
+from typing import Optional
 from copy import deepcopy
-
 from base import GoBase, BoardGridType, ListMovesType
 
 
@@ -158,7 +158,7 @@ class GoFake(GoBase):
     """
     Fake implementation of GoBase
 
-    _previous_boards: list[BoardGridType]
+    _previous_boards: BoardGridType
     _previous_board: BoardGridType
     _consecutive_passes: int
 
@@ -180,16 +180,14 @@ class GoFake(GoBase):
 
         super().__init__(side, players, superko)
 
-        self._grid = [[None] * side for _ in range(side)]
+        self._grid: list[list[Optional[int]]] = [[None] * side for _ in range(side)]
 
         self._turn = 1
         self._num_moves = 0
         self._consecutive_passes = 0
 
-        if self._superko:
-            self._previous_boards = [self.grid]
-        else:
-            self._previous_board = self.grid
+        self._previous_boards = []
+        self._previous_board = None
 
     @property
     def num_moves(self) -> int:
@@ -327,25 +325,28 @@ class GoFake(GoBase):
     def apply_move(self, pos: tuple[int, int]) -> None:
         """
         See GoBase.apply_move
-        """
+        """  # Reset the counter
+        if self._superko:
+            self._previous_boards.append((self.grid))
+            self._previous_board = self.grid
+        else:
+            self._previous_boards.append((self.grid))
+            self._previous_board = self.grid
         if not self.in_bounds(pos):
             raise ValueError("Move is outside bounds of the board")
-
         r, c = pos
         self._grid[r][c] = self._turn
 
         if pos == (0, 0):
             self.populate_positions()
             return
-
-        self._consecutive_passes = 0  # Reset the counter
-
         for adj_pos in self.adjacent_positions(pos):
             if self.piece_at(adj_pos) is not None and \
             self.piece_at(adj_pos) != self.turn and pos:
                 self._grid[adj_pos[0]][adj_pos[1]] = None
 
         self.pass_turn()
+        self._consecutive_passes = 0
 
     def populate_positions(self) -> None:
         """
@@ -368,7 +369,7 @@ class GoFake(GoBase):
         r, c = pos
         return 0 <= r < self._side and 0 <= c < self._side
 
-    def adjacent_positions(self, pos: tuple[int, int]) -> list[int | None]:
+    def adjacent_positions(self, pos: tuple[int, int]) -> list[tuple[int, int]]:
         """
         Returns all positions adjacent to a given position
 
@@ -377,10 +378,12 @@ class GoFake(GoBase):
 
         Returns: list of all adjacent positions
         """
+        r, c = pos
         pieces = []
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for direction in directions:
-            potential_pos = tuple(map(sum, zip(pos, direction)))
+            x, y = direction
+            potential_pos =  ((x + r), (y + c))
             if self.in_bounds(potential_pos):
                 pieces.append(potential_pos)
         return pieces
@@ -389,18 +392,10 @@ class GoFake(GoBase):
         """
         See GoBase.pass_turn
         """
-        if self._superko and self._grid == self._previous_boards[-1]:
-            self._consecutive_passes += 1
-        elif not self._superko and self._grid == self._previous_board:
-            self._consecutive_passes += 1
-
+        self._consecutive_passes += 1
         self._turn = 2 if self._turn == 1 else 1
         self._num_moves += 1
 
-        if self._superko:
-            self._previous_boards.append(self.grid)
-        else:
-            self._previous_board = self.grid
 
     def scores(self) -> dict[int, int]:
         """
