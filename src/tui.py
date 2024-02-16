@@ -7,7 +7,7 @@ import time
 
 from colorama import Fore, Style
 
-from fakes import GoStub
+from fakes import GoFake
 from ui import GoUI
 
 class GoTUI(GoUI):
@@ -66,15 +66,22 @@ class GoTUI(GoUI):
                 " Please enter a move [press Enter to pass]:\n" +
                 Style.RESET_ALL
             )
-            if move_input == "":
-                self._go_game.pass_turn()
-            else:
-                try:
-                    move = tuple(map(int, move_input.split()))
-                    if move not in self._go_game.available_moves:
-                        move = None
-                except ValueError:
+            # Handle pass
+            if move_input.strip() == "":
+                return None
+            try:
+                move = tuple(map(int, move_input.split()))
+                if move not in self._go_game.available_moves or \
+                    not self._go_game.legal_move(move):
                     move = None
+                    print(Fore.RED + "Invalid move. Please try again." +\
+                            Style.RESET_ALL)
+                    time.sleep(0.4)
+            except ValueError:
+                print(Fore.RED + "Invalid move. Please try again." +\
+                               Style.RESET_ALL)
+                time.sleep(0.4)
+                move = None
         return move
 
 def main() -> None:
@@ -82,19 +89,16 @@ def main() -> None:
     Main TUI event loop
     """
     os.system("clear")
-    # Weclome message, to be enabled later for milestone 2
-    #welcome = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n"\
-    #                + Style.RESET_ALL)
-    #if welcome:
-    #   os.system("clear")
-
+    # Welcome message
+    _ = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n"\
+                    + Style.RESET_ALL)
+    os.system("clear")
     side = int(sys.argv[1])
-    go = GoStub(side, 2, False)
+    go = GoFake(side, 2)
     go_tui = GoTUI(go)
 
     go_tui.display_board()
     while True:
-        move = go_tui.get_move()
         if go.done:
             time.sleep(0.4)
             print(Fore.GREEN + "Game is over")
@@ -102,12 +106,17 @@ def main() -> None:
                 print(".", end="", flush=True)
                 time.sleep(0.4)
             if len(go.outcome) > 1:
-                print(f"It's a {Fore.CYAN}tie{Fore.GREEN}!")
+                print(f"It's a {Fore.CYAN}tie{Fore.GREEN}! ({go.scores()[1]} vs\
+                    {go.scores()[2]}){Style.RESET_ALL}")
             else:
-                print(f"Player {go.outcome[0]} wins!")
+                print(f"Player {go.outcome[0]} wins! ({go.scores()[1]} vs\
+                    {go.scores()[2]})")
             sys.exit(0)
-
-        go.apply_move(move)
+        move = go_tui.get_move()
+        if move is None:
+            go.pass_turn()
+        else:
+            go.apply_move(move)
         os.system("clear")
         go_tui.display_board()
 
