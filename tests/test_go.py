@@ -5,7 +5,7 @@ import pytest
 from go import Go
 
 
-###Fixtures
+####Fixtures####
 @pytest.fixture
 def game() -> Go:
     """
@@ -36,11 +36,9 @@ def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
 
     return game
 
-
-###################
-#Tests Milestone 1#
-###################
-
+########
+##Tests#
+########
 @pytest.mark.parametrize("side", [i for i in range(4, 20)])
 def test_board_construction_1(side: int) -> None:
     """
@@ -80,19 +78,21 @@ def test_turn_property_1(game: Go) -> None:
     game.pass_turn()
     assert game.turn == 4
 
-def test_piece_legal_1() -> None:
+@pytest.mark.parametrize("n", [19, 9, 13])
+def test_piece_legal_2(n: Go) -> None:
     """
-    Test piece_at and legal_move_method in a 19 x 19 board
+    Constructs a 9x9, 13x13 and 19x19 Go game and test the piece_at and
+    legal move
     """
-    game = create_board_with_pieces(19, 2)
+    game = create_board_with_pieces(n, 2)
 
-    for i in range(19):
-        for j in range(19):
+    for i in range(n):
+        for j in range(n):
             pos = (i, j)
             legal = game.legal_move(pos)
             piece = game.piece_at(pos)
-            if (i, j) in [(0, 0), (0, 18), (18, 0), (18, 18), (9, 0), (0, 9),
-                          (18, 9), (9, 18)]:
+            if (i, j) in [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
+                        (0, n//2), (n-1, n//2), (n//2, n-1)]:
                 assert piece is not None
                 assert not legal
             else:
@@ -106,17 +106,17 @@ def test_piece_legal_1() -> None:
         game.legal_move((0, -1))
 
     with pytest.raises(ValueError):
-        game.legal_move((19, 0))
+        game.legal_move((n, 0))
 
     with pytest.raises(ValueError):
-        game.legal_move((0, 19))
+        game.legal_move((0, n))
 
-
-def test_available_moves_1(game: Go) -> None:
+@pytest.mark.parametrize("n", [19, 9, 13])
+def test_available_moves_2(n: int) -> None:
     """
-    Checks available_moves when the game is started and when moves are made in a
-    19 x 19 board
+    constructs a 19x19, 9x9 and 13x13 Go game and test the available_moves
     """
+    game = Go(n, 2)
     expected_moves: list[tuple[int, int]] = []
     for i in range(game.size):
         for j in range(game.size):
@@ -146,7 +146,6 @@ def test_apply_move_1(game: Go) -> None:
     assert all(game.piece_at((i, j)) is None for i in range(19) for j in
                range(19) if (i, j) != legal_position)
 
-
 def test_game_in_progress_1(game: Go) -> None:
     """
     Verifies that done and outcome return values consistent with a game
@@ -163,7 +162,6 @@ def test_game_in_progress_1(game: Go) -> None:
     assert not game.done
     assert game.outcome == []
 
-
 def test_apply_move_end_1(game: Go) -> None:
     """
     Tests apply_move a few times in a way that won't result in any captures.
@@ -179,149 +177,68 @@ def test_apply_move_end_1(game: Go) -> None:
     assert game.done
     assert game.outcome == [1]
 
-
-###################
-#Tests Milestone 2#
-###################
-
-def test_construction_properties_2() -> None:
+@pytest.mark.parametrize("size", [9, 13])
+def test_construction_properties_2(size: int) -> None:
     """
-    Constructs a 9x9 Go game and test the size, num_players, and turn properties
+    Constructs a 9x9 and a 13x13 game and test the size, num_players, and turn
     """
-    game = create_board_with_pieces(9, 3)
+    game = create_board_with_pieces(size, 3)
 
-    assert len(game.grid) == 9
-    assert all(len(row) == 9 for row in game.grid)
+    assert len(game.grid) == size
+    assert all(len(row) == size for row in game.grid)
     assert game.num_players == 3
     assert game.turn == 3
 
-def test_piece_legal_9x9() -> None:
+###the following tests will consits of 19x19 board in different scenarios
+def test_legal_available_19(game: Go) -> None:
     """
-    constructs a 9x9 Go game and test the piece_at and legal move
+    constructs a 19x19 Go game and verifies that legal_move and available_moves
+    allow moves in any position of the board.
     """
-    game = create_board_with_pieces(9, 2)
+    for i in range(19):
+        for j in range(19):
+            assert game.legal_move((i, j))
+            assert (i, j) in game.available_moves
 
-    for i in range(9):
-        for j in range(9):
-            pos = (i, j)
-            legal = game.legal_move(pos)
-            piece = game.piece_at(pos)
-            if (i, j) in [(0, 0), (0, 8), (8, 0), (8, 8), (4, 0), (0, 4),
-                          (8, 4), (4, 8)]:
-                assert piece is not None
-                assert not legal
-            else:
-                assert piece is None
-                assert legal
-
-    with pytest.raises(ValueError):
-        game.legal_move((-1, 0))
-
-    with pytest.raises(ValueError):
-        game.legal_move((0, -1))
-
-    with pytest.raises(ValueError):
-        game.legal_move((9, 0))
-
-    with pytest.raises(ValueError):
-        game.legal_move((0, 9))
-
-
-#start from here##################################################################
-def test_available_moves_9x9() -> None:
+def test_moves_19(game: Go) -> None:
     """
-    constructs a 9x9 Go game and test the legal_move
+    Makes two moves and verifies that the pieces were placed on the board, and
+    that the turn has been updated correctly after each move.
     """
-    game = Go(9, 2)
+    game.apply_move((3, 2))
+    assert game.piece_at((3,2)) == 1
+    assert game.turn == 2
+    game.apply_move((7, 3))
+    assert game.piece_at((7, 3)) == 2
+    assert game.turn == 1
 
-    expected_moves: list[tuple[int, int]] = []
-    for i in range(game.size):
-        for j in range(game.size):
-            expected_moves.append((i, j))                                 #helper function needed
-
-    assert game.available_moves == expected_moves
-
-    for i in range(4):
-        for j in range(4):
-            game.apply_move((i, j))
-            expected_moves.remove((i, j))
-
-    assert game.available_moves == expected_moves
-
-
-############room for so many helpers. 13X13####################################
-def test_construction_properties_13x13() -> None:
+def test_legal_19(game: Go) -> None:
     """
-    Constructs a 13x13 Go game and test the size, num_players, and turn
-    properties.
+    Makes a move, and verifies that the position of that move is no longer a
+    legal move.
     """
-    game = create_board_with_pieces(13, 3)
+    game.apply_move((5, 5))
+    assert not game.legal_move((5, 5))
 
-    assert len(game.grid) == 13                                                  #parametarize
-    assert all(len(row) == 13 for row in game.grid)
-    assert game.num_players == 3
-    assert game.turn == 3
-
-def test_piece_at_13x13() -> None:
+def test_pass_19(game: Go) -> None:
     """
-    constructs a 13x13 Go game and test the piece_at
+    Makes a move, then passes. Verifies that the turn is updated correctly.
     """
-    game = create_board_with_pieces(13, 2)
+    game.apply_move((9, 6))
+    game.pass_turn()
+    assert game.turn == 1
 
-    for i in range(13):
-        for j in range(13):
-            piece = game.piece_at((i, j))                                      #kinda repeated code. can i use helper tests?
-            if (i, j) in [(0, 0), (0, 12), (12, 0), (12, 12), (6, 0), (0, 6),
-                          (12, 6), (6, 12)]:
-                assert piece is not None
-            else:
-                assert piece is None
-
-def test_legal_move_13x13() -> None:
+def test_pass_twice_19(game: Go) -> None:
     """
-    constructs a 13x13 Go game and test the legal_move
+    Makes a move, then passes twice. Verifies that the game ends.
     """
-    game = create_board_with_pieces(13, 2)
+    game.apply_move((8, 4))
+    game.pass_turn()
+    game.pass_turn()
+    assert game.done
 
-    for i in range(13):
-        for j in range(13):
-            pos = (i, j)
-            legal = game.legal_move(pos)
-            if pos in [(0, 0), (0, 12), (12, 0), (12, 12), (6, 0), (0, 6),
-                        (12, 6), (6, 12)]:
-                assert not legal
-            else:
-                assert legal                                                #very repeated code. i just have to learn how to use a test helper
-
-    with pytest.raises(ValueError):
-        game.legal_move((-1, 0))
-
-    with pytest.raises(ValueError):
-        game.legal_move((0, -1))
-
-    with pytest.raises(ValueError):
-        game.legal_move((13, 0))
-
-    with pytest.raises(ValueError):
-        game.legal_move((0, 13))
-
-
-def test_available_moves_13x13() -> None:
+def test_capture_19(game: Go) -> None:
     """
-    constructs a 9x9 Go game and test the legal_move
+    Makes moves that will result in one piece being captured. Verifies that the
+    piece is indeed captured.
     """
-    game = Go(13, 2)
-
-    expected_moves: list[tuple[int, int]] = []
-    for i in range(game.size):
-        for j in range(game.size):
-            expected_moves.append((i, j))                                 #helper function needed
-
-    assert game.available_moves == expected_moves
-
-    for i in range(4):
-        for j in range(4):
-            game.apply_move((i, j))
-            expected_moves.remove((i, j))
-
-    assert game.available_moves == expected_moves
