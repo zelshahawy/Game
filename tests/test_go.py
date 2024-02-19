@@ -9,9 +9,16 @@ from go import Go
 @pytest.fixture
 def game() -> Go:
     """
-    Returns a 19 x 19 Go game with two players
+    Returns a 19x19 Go game with two players
     """
     return Go(19, 2)
+
+@pytest.fixture
+def game_3() -> Go:
+    """
+    Returns a 19x19 Go game with three players
+    """
+    return Go(19, 3)
 
 ##################
 #Helper Functions#
@@ -39,15 +46,15 @@ def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
 ########
 ##Tests#
 ########
-@pytest.mark.parametrize("side", [i for i in range(4, 20)])
-def test_board_construction_1(side: int) -> None:
+@pytest.mark.parametrize("size", [i for i in range(4, 20)])
+def test_board_construction_1(size: int) -> None:
     """
     Tests the construction of a Go game. Constructs boards of different sizes
     and verify that they were constructed correctly. Assume just two players.
     """
-    game = Go(side, players = 2, superko = False)
+    game = Go(size, 2)
 
-    assert game.grid == [[None] * side for _ in range(side)]
+    assert game.grid == [[None] * size for _ in range(size)]
     assert game.num_players == 2
     assert game.turn == 1
 
@@ -74,12 +81,12 @@ def test_turn_property_1(game: Go) -> None:
     game.apply_move((0, 1))
     assert game.turn == 2
     game.apply_move((1, 0))
-    assert game.turn == 3
+    assert game.turn == 1
     game.pass_turn()
-    assert game.turn == 4
+    assert game.turn == 2
 
 @pytest.mark.parametrize("n", [19, 9, 13])
-def test_piece_legal_2(n: Go) -> None:
+def test_piece_legal_2(n: int) -> None:
     """
     Constructs a 9x9, 13x13 and 19x19 Go game and test the piece_at and
     legal move
@@ -182,12 +189,12 @@ def test_construction_properties_2(size: int) -> None:
     """
     Constructs a 9x9 and a 13x13 game and test the size, num_players, and turn
     """
-    game = create_board_with_pieces(size, 3)
+    game = Go(size, 2)
 
     assert len(game.grid) == size
     assert all(len(row) == size for row in game.grid)
-    assert game.num_players == 3
-    assert game.turn == 3
+    assert game.num_players == 2
+    assert game.turn == 1
 
 ###the following tests will consits of 19x19 board in different scenarios
 def test_legal_available_19(game: Go) -> None:
@@ -242,3 +249,118 @@ def test_capture_19(game: Go) -> None:
     Makes moves that will result in one piece being captured. Verifies that the
     piece is indeed captured.
     """
+    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
+                                    (6, 6), (10, 6), (5, 7)]
+
+    for move in moves:
+        game.apply_move(move)
+
+    assert game.piece_at((5, 6)) == None
+
+def test_multiple_capture_19(game: Go) -> None:
+    """
+    Makes moves that will result in multiple pieces being captured. Verifies
+    that all the pieces were indeed captured.
+    """
+    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
+                                    (6, 6), (10, 6), (6, 7), (5, 7), (5, 8),
+                                    (10, 7), (4, 7)]
+
+    for move in moves:
+        game.apply_move(move)
+
+    assert game.piece_at((5, 6)) == None
+    assert game.piece_at((5, 7)) == None
+
+def test_ko_19(game: Go) -> None:
+    """
+    Makes moves in such a way that there will end up being a move that would
+    violate the ko rule. Checks that legal_move identifies the move as illegal.
+    """
+    moves: list[tuple[int, int]] = [(5, 6), (5, 5), (4, 7), (4, 6), (6, 7),
+                                    (6, 6), (5, 8), (5, 7)]
+
+    for move in moves:
+        game.apply_move(move)
+
+    assert not game.legal_move((5, 6))
+
+def test_superko_19() -> None:
+    """
+    Makes moves in such a way that there will end up being a move that would
+    violate the super ko rule. Checks that legal_move identifies the move as
+    illegal.
+    """
+    game: Go = Go(19, 2, True)
+    moves: list[tuple[int, int]] = [(5, 6), (5, 5), (4, 7), (4, 6), (6, 7),
+                                    (6, 6), (5, 8), (5, 7), (10, 5), (10, 9)]
+
+    for move in moves:
+        game.apply_move(move)
+
+    assert not game.legal_move((5, 6))
+
+def test_scores_zero_19() -> None:
+    """
+    Makes several moves that don't result in any territories being created, and
+    verifies that scores returns the correct values.
+    """
+    game: Go = create_board_with_pieces(19, 2)
+
+    assert game.scores() == {1: 0, 2: 0}
+
+def test_scores_territories_19(game: Go) -> None:
+    """
+    Makes several moves that will result in one territory being created, and
+    verifies that scores returns the correct values.
+    """
+    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
+                                    (6, 6), (10, 6), (5, 7)]
+
+    for move in moves:
+        game.apply_move(move)
+
+    assert game.scores() == {1: 3, 2: 5}
+
+def test_scores_territories_19(game: Go) -> None:
+    """
+    Makes several moves that will result in one territory being created. Ends
+    the game and, verifies the outcome.
+    """
+    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
+                                    (6, 6), (10, 6), (5, 7)]
+
+    for move in moves:
+        game.apply_move(move)
+
+    game.pass_turn()
+    game.pass_turn()
+
+    assert game.outcome == [2]
+
+def test_verify_moves_3(game_3: Go) -> None:
+    """
+    Makes three moves, and verifies that the pieces were placed on the board,
+    and that the turn has been updated correctly after each move.
+    """
+    game_3.apply_move((0, 3))
+    assert game_3.piece_at((0, 3)) == 1
+    assert game_3.turn == 2
+    game_3.apply_move((10, 11))
+    assert game_3.piece_at((10, 11)) == 2
+    assert game_3.turn == 3
+    game_3.apply_move((5, 9))
+    assert game_3.piece_at((5, 9)) == 3
+    assert game_3.turn == 1
+
+def test_end_3player(game_3: Go) -> None:
+    """
+    Makes a move, then passes three times. Verifies that the game ends.
+    """
+    game_3.apply_move((0, 1))
+    game_3.pass_turn()
+    game_3.pass_turn()
+    game_3.pass_turn()
+
+    assert game_3.done
+
