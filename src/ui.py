@@ -2,15 +2,15 @@
 Abstract class for graphical and text user interface
 """
 from abc import ABC, abstractmethod
-from fakes import GoStub
+from fakes import GoFake, GoStub
 
 class GoUI(ABC):
     """
     Abstract class for Go graphical and text user interface
     """
-    _go_game: GoStub
+    _go_game: GoFake
 
-    def __init__(self, go_game: GoStub) -> None:
+    def __init__(self, go_game: GoFake) -> None:
         """
         Constructor
 

@@ -5,15 +5,15 @@ GUI implementation for Go stub
 import sys
 from typing import Optional
 import pygame
-from fakes import GoStub
+from fakes import GoFake, GoStub
 from ui import GoUI
 
 
 BOARD_SIZE = int(sys.argv[1])
 
-CELL_SIZE = 600 // BOARD_SIZE
+CELL_SIZE = 700 // BOARD_SIZE
 PLAYER_STONE_RADIUS = CELL_SIZE // 3
-BOARD_PADDING = 20
+BOARD_PADDING = 50
 WIDTH_DISPLAY = BOARD_SIZE * CELL_SIZE
 
 REFRESH_RATE = 24
@@ -32,12 +32,14 @@ class GoGUI(GoUI):
     screen: pygame.surface.Surface
     clock_timer: pygame.time.Clock
     board_padding : int
+    all_pos : dict[tuple[int,int], tuple[int,int]]
 
-    def __init__(self, go_game: GoStub) -> None:
+    def __init__(self, go_game: GoFake) -> None:
         super().__init__(go_game)
 
         pygame.init()
         self.clock_timer= pygame.time.Clock()
+        self.all_pos = {}
 
 
         pygame.display.set_caption("GoGUI")
@@ -68,23 +70,38 @@ class GoGUI(GoUI):
         """
         return (0, 0)
 
-    def on_click(self, pos_click : tuple[int, int]) -> None:
+    def _on_click(self, pos_click : tuple[int, int]) -> None:
         """
         Handles interactions with the GUI
         """
-        return None
+        x_click,y_click = pos_click
 
-    def draw_player_stone(self, num_player : Optional[int], board_pos : \
+        for board_pos, center_coord in self.all_pos.items():
+            x_center, y_center = center_coord
+            euclid_sq = (x_click - x_center )**2 + (y_click - y_center)**2
+            euclid_dist = euclid_sq**0.5
+
+            if euclid_dist <= PLAYER_STONE_RADIUS:
+                self._go_game.apply_move(board_pos)             
+
+
+    def _draw_player_stone(self, num_player : Optional[int], board_pos : \
         Optional[tuple[int,int]]) -> None:
         """
         Draws a specific player stone on the board
+
+        For empty positions, a circle indicator is shown around the nearest
+        line intersection to guide player where to click on next
+
         """
-        if board_pos is None or num_player is None:
+        if board_pos is None:
             return
         x, y = board_pos
 
         stone_x = x * CELL_SIZE + BOARD_PADDING
         stone_y = y * CELL_SIZE + BOARD_PADDING
+
+        self.all_pos[(x,y)] = (stone_x, stone_y)
 
         if num_player == 1:
             pygame.draw.circle(
@@ -100,8 +117,40 @@ class GoGUI(GoUI):
                 (stone_x, stone_y),
                 PLAYER_STONE_RADIUS
             )
+        elif num_player is None:
+            self._hover_board_pos(pygame.mouse.get_pos())          
+    
+    def _hover_board_pos(self, pos_hoaver : tuple[int,int]) -> None:
+        """
+        highlights a position on the board where a player can click to 
+        play his turn
 
-    def draw_board_state(self) -> None:
+        Args : pos_hoaver (tuple[int,int]) -  the position where the mouse is 
+            hoavering over the screen
+
+        """
+
+        x_hoaver,y_hoaver = pos_hoaver
+
+        for center_coord in self.all_pos.values():
+            x_center, y_center = center_coord
+            euclid_sq = (x_hoaver - x_center )**2 + (y_hoaver - y_center)**2
+            euclid_dist = euclid_sq**0.5
+
+            if euclid_dist <= PLAYER_STONE_RADIUS:
+
+                pygame.draw.circle(
+                self.screen,
+                GREY,
+                (x_center, y_center),
+                PLAYER_STONE_RADIUS,
+                width = 1)
+
+                return
+            
+
+
+    def _draw_board_state(self) -> None:
         """
         Draws all stones on board 
         """
@@ -110,12 +159,13 @@ class GoGUI(GoUI):
         for i, _ in enumerate(grid_state):
             for j, _ in enumerate(grid_state[i]):
                 piece_at_pos = self._go_game.piece_at((i, j))
-                self.draw_player_stone(piece_at_pos, (i, j))
+                self._draw_player_stone(piece_at_pos, (i, j))
 
-    def draw_window(self) -> None:
+    def _draw_window(self) -> None:
         """Displays window"""
         self.display_board()
-        self.draw_board_state()
+        self._draw_board_state()
+
 
     def gui_loop(self) -> None:
         """
@@ -129,14 +179,14 @@ class GoGUI(GoUI):
                     sys.exit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.on_click(event.pos)
+                    self._on_click(event.pos)
 
-            self.draw_window()
+            self._draw_window()
             pygame.display.update()
             self.clock_timer.tick(REFRESH_RATE)
 
 
 if __name__ == "__main__":
-    go = GoStub(BOARD_SIZE, 2, False)
+    go = GoFake(BOARD_SIZE, 2, False)
     goGUI = GoGUI(go)
     goGUI.gui_loop()
