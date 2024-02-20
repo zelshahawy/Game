@@ -1,6 +1,7 @@
 """
 TUI implementation for GoFake
 """
+from typing import Optional
 import sys
 import time
 
@@ -82,10 +83,10 @@ class GoTUI(GoUI):
             )
             # Handle pass
             if move_input.strip() == "":
-                return None
+                return (-1, -1)
             try:
                 move = tuple(map(int, move_input.split()))
-                if move not in self._go.available_moves or \
+                if len (move) != 2 or move not in self._go.available_moves or \
                     not self._go.legal_move(move):
                     raise ValueError
                 return move
@@ -115,7 +116,7 @@ class GoTUI(GoUI):
                    f"({self._go.scores()[1]} vs" +
                    f" {self._go.scores()[2]})")
 
-    def main_loop(self):
+    def main_loop(self) -> None:
         """
         Main event loop for the game, retrieves moves and displays board
 
@@ -132,7 +133,7 @@ class GoTUI(GoUI):
                 self.display_game_over_msg()
                 sys.exit(0)
             move = self.get_move()
-            if move is None:
+            if move == (-1, -1):
                 self._go.pass_turn()
             else:
                 self._go.apply_move(move)
