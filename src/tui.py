@@ -32,8 +32,8 @@ class GoTUI(GoUI):
         """
         See GoUI.display_board
         """
-        size = self._go_game.size
-        board = self._go_game.grid
+        size = self._go.size
+        board = self._go.grid
 
         for i, row in enumerate(board):
             line = ""
@@ -76,7 +76,7 @@ class GoTUI(GoUI):
             time.sleep(0.2)
             move_input = input(
                 Fore.GREEN +
-                f"> It is player {self._go_game.turn}'s turn." +
+                f"> It is player {self._go.turn}'s turn." +
                 " Please enter a move [press Enter to pass]:\n" +
                 Style.RESET_ALL
             )
@@ -85,8 +85,8 @@ class GoTUI(GoUI):
                 return None
             try:
                 move = tuple(map(int, move_input.split()))
-                if move not in self._go_game.available_moves or \
-                    not self._go_game.legal_move(move):
+                if move not in self._go.available_moves or \
+                    not self._go.legal_move(move):
                     raise ValueError
                 return move
             except ValueError:
@@ -97,48 +97,50 @@ class GoTUI(GoUI):
 
     def display_game_over_msg(self) -> None:
         """
-        Display game over message
+        Displays game over message
+
+        Returns: nothing
         """
         time.sleep(0.4)
         print(Fore.GREEN + "Game is over")
         for _ in range(3):
             print(".", end="", flush=True)
             time.sleep(0.4)
-        if len(self._go_game.outcome) > 1:
+        if len(self._go.outcome) > 1:
             print(f"It's a {Fore.CYAN}tie{Fore.GREEN}! " +
-                  f"({self._go_game.scores()[1]} vs" +
-                  f"{self._go_game.scores()[2]}){Style.RESET_ALL}")
+                  f"({self._go.scores()[1]} vs" +
+                  f"{self._go.scores()[2]}){Style.RESET_ALL}")
         else:
-            print(f"Player {self._go_game.outcome[0]} wins! " +
-                   f"({self._go_game.scores()[1]} vs" +
-                   f" {self._go_game.scores()[2]})")
-        sys.exit(0)
+            print(f"Player {self._go.outcome[0]} wins! " +
+                   f"({self._go.scores()[1]} vs" +
+                   f" {self._go.scores()[2]})")
 
+    def main_loop(self):
+        """
+        Main event loop for the game, retrieves moves and displays board
 
-def main() -> None:
-    """
-    Main TUI event loop
-    """
-    side = int(sys.argv[1])
-    go = GoFake(side, 2)
-    go_tui = GoTUI(go)
-
-    print("\033c", end="")
-    _ = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n"\
-                    + Style.RESET_ALL)
-    print("\033c", end="")
-
-    go_tui.display_board()
-    while True:
-        if go.done:
-            go_tui.display_game_over_msg()
-        move = go_tui.get_move()
-        if move is None:
-            go.pass_turn()
-        else:
-            go.apply_move(move)
+        Returns: nothing
+        """
         print("\033c", end="")
-        go_tui.display_board()
+        _ = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n"\
+                        + Style.RESET_ALL)
+        print("\033c", end="")
+
+        self.display_board()
+        while True:
+            if self._go.done:
+                self.display_game_over_msg()
+                sys.exit(0)
+            move = self.get_move()
+            if move is None:
+                self._go.pass_turn()
+            else:
+                self._go.apply_move(move)
+            print("\033c", end="")
+            self.display_board()
+
 
 if __name__ == "__main__":
-    main()
+    side = sys.argv[1]
+    tui = GoTUI(GoFake(int(side), 2))
+    tui.main_loop()

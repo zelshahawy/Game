@@ -10,6 +10,7 @@ class Board:
     _rows: int
     _cols: int
     _grid: list[list[Optional[int]]]
+
     def __init__(self, rows, cols):
         self._rows = rows
         self._cols = cols
@@ -39,6 +40,10 @@ class Board:
         """
         Get the value of the board at a given position.
         """
-        if row < 0 or row >= self._rows or col < 0 or col >= self._cols:
-            raise ValueError("Position out of bounds")
         return self._grid[row][col]
+
+    def valid_position(self, row, col):
+        """
+        Check if the position is valid.
+        """
+        return 0 <= row < self._rows and 0 <= col < self._cols
