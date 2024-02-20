@@ -23,9 +23,10 @@ class RandomBot(BaseBot):
         """
         if len(game.available_moves) == 1 and game.available_moves[0] == (0,0):
             game.pass_turn()
-        move = random.choice(game.available_moves)
-        while not game.legal_move(move):
-            move = random.choice(game.available_moves)
+        available_moves = [move for move in game.available_moves if move != (0,0)]
+        move = random.choice(available_moves)
+        while (not game.legal_move(move)):
+            move = random.choice(available_moves)
         game.apply_move(move)
 
 class SmartBot(BaseBot):
@@ -52,7 +53,7 @@ class SmartBot(BaseBot):
                     if opp_move != (0,0):
                         opp_simulation = simulated_game.simulate_move(opp_move)
                         total_pieces += opp_simulation.scores()[self.show_player()]
-                average_pieces = total_pieces
+                average_pieces = total_pieces / len(opp_moves) if opp_moves else 0
                 if average_pieces > best_value:
                     best_move = move
                     best_value = average_pieces
