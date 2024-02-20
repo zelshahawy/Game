@@ -4,7 +4,7 @@ Base class for the bot implementation
 
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from fakes import GoStub
+from fakes import GoStub, GoFake
 
 
 
@@ -19,20 +19,28 @@ class BaseBot(ABC):
     Base class for a bot in a Go Game
     """
 
-    @abstractmethod
-    def make_move(self, game: GoStub) -> None:
-        """
-        perform a move in a game of go
-        """
-        raise NotImplementedError
+    def __init__(self, player: Players) -> None:
 
-    @abstractmethod
+        """
+        Initialize the bot with the game.
+
+        Player: color of the bot to identify bot.
+        """
+        self._player = player
+
     def show_player(self) -> Players:
         """
-        reveals the color of a players
+        return the color of the bot
+        """
+        return self._player
+
+
+    @abstractmethod
+    def make_move(self, game: GoFake) -> None:
+        """
+        Make a random legal move in the game.
         """
         raise NotImplementedError
-
 
 class SimulateBots(ABC):
     """
