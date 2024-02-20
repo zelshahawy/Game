@@ -33,6 +33,7 @@ class GoGUI(GoUI):
     clock_timer: pygame.time.Clock
     board_padding : int
     all_pos : dict[tuple[int,int], tuple[int,int]]
+    FONT : pygame.font.Font
 
     def __init__(self, go_game: GoFake) -> None:
         super().__init__(go_game)
@@ -40,6 +41,11 @@ class GoGUI(GoUI):
         pygame.init()
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
+
+        self.button_pass_rect = pygame.Rect(5, WIDTH_DISPLAY//2, 50, 30)
+
+        self.FONT = pygame.font.SysFont("Arial", 25)
+
 
         pygame.display.set_caption("GoGUI")
         self.screen = pygame.display.set_mode(
@@ -51,6 +57,8 @@ class GoGUI(GoUI):
         See GoUI.display_board
         """
         self.screen.fill(ORANGE)
+
+        pygame.draw.rect(self.screen, WHITE,self.button_pass_rect)
 
         for i in range(0, BOARD_SIZE):
             start_hori = (BOARD_PADDING, i * CELL_SIZE + BOARD_PADDING)
@@ -73,6 +81,11 @@ class GoGUI(GoUI):
         """
         Handles interactions with the GUI
         """
+
+        if self.button_pass_rect.collidepoint(pos_click):
+            self._go_game.pass_turn()
+            return
+
         x_click,y_click = pos_click
 
         for board_pos, center_coord in self.all_pos.items():
@@ -83,6 +96,16 @@ class GoGUI(GoUI):
             if euclid_dist <= PLAYER_STONE_RADIUS:
                 self._go_game.apply_move(board_pos)             
 
+    def _draw_button(self, rect, text):
+        """
+        Draws the pass button
+        """ 
+        pygame.draw.rect(self.screen, WHITE, rect)
+
+        if text:
+            text_surf = self.FONT.render(text, True, BLACK)
+            text_rect = text_surf.get_rect(center=rect.center)
+            self.screen.blit(text_surf, text_rect)
 
     def _draw_player_stone(self, num_player : Optional[int], board_pos : \
         Optional[tuple[int,int]]) -> None:
@@ -143,7 +166,29 @@ class GoGUI(GoUI):
                 GREY,
                 (x_center, y_center),
                 PLAYER_STONE_RADIUS,
-                width = 1)           
+                width = 1)
+
+                return
+
+    def display_texts(self) -> None:
+        """
+        Displays important information such as current player turn, final winner
+        and scores
+
+        """
+
+        if self._go_game.done:
+            winner = self._go_game.outcome
+
+            text = f" The winner(s) is(are) {winner} \
+            Game Scores : {self._go_game.scores()}"
+        else:
+            text =f" Current turn: Player {self._go_game.turn}" + \
+            f"  Game Scores : {self._go_game.scores()}"
+
+        img = self.FONT.render(text, True, BLACK)
+
+        self.screen.blit(img, (WIDTH_DISPLAY//4 , 30))
 
 
     def _draw_board_state(self) -> None:
@@ -160,8 +205,9 @@ class GoGUI(GoUI):
     def _draw_window(self) -> None:
         """Displays window"""
         self.display_board()
+        self._draw_button(self.button_pass_rect, "PASS")
+        self.display_texts()
         self._draw_board_state()
-
 
     def gui_loop(self) -> None:
         """
@@ -174,13 +220,15 @@ class GoGUI(GoUI):
                     pygame.quit()
                     sys.exit()
 
+                elif self._go_game.done:
+                    continue
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self._on_click(event.pos)
 
             self._draw_window()
             pygame.display.update()
             self.clock_timer.tick(REFRESH_RATE)
-
 
 if __name__ == "__main__":
     go = GoFake(BOARD_SIZE, 2, False)
