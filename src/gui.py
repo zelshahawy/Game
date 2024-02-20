@@ -12,8 +12,8 @@ from ui import GoUI
 BOARD_SIZE = int(sys.argv[1])
 
 CELL_SIZE = 700 // BOARD_SIZE
-PLAYER_STONE_RADIUS = CELL_SIZE // 3
-BOARD_PADDING = 50
+PLAYER_STONE_RADIUS = CELL_SIZE // 4
+BOARD_PADDING = 100
 WIDTH_DISPLAY = BOARD_SIZE * CELL_SIZE
 
 REFRESH_RATE = 24
@@ -41,10 +41,9 @@ class GoGUI(GoUI):
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
 
-
         pygame.display.set_caption("GoGUI")
         self.screen = pygame.display.set_mode(
-            (WIDTH_DISPLAY+50, WIDTH_DISPLAY+50 )
+            (WIDTH_DISPLAY+BOARD_PADDING, WIDTH_DISPLAY+BOARD_PADDING)
         )
 
     def display_board(self) -> None:
@@ -144,10 +143,7 @@ class GoGUI(GoUI):
                 GREY,
                 (x_center, y_center),
                 PLAYER_STONE_RADIUS,
-                width = 1)
-
-                return
-            
+                width = 1)           
 
 
     def _draw_board_state(self) -> None:
