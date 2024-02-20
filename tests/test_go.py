@@ -363,4 +363,3 @@ def test_end_3player(game_3: Go) -> None:
     game_3.pass_turn()
 
     assert game_3.done
-
