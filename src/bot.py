@@ -25,7 +25,6 @@ class RandomBot(BaseBot):
             print("passed turn random")
             game.pass_turn()
         available_moves = [move for move in game.available_moves if move != (0,0)]
-        print(available_moves)
         move = random.choice(available_moves)
         while (not game.legal_move(move)):
             move = random.choice(available_moves)
@@ -47,7 +46,6 @@ class SmartBot(BaseBot):
             game.pass_turn()
         for move in game.available_moves:
             if move != (0, 0):
-                print(move)
                 simulated_game = game.simulate_move(move)
                 opp_moves = simulated_game.available_moves
                 total_pieces = 0
@@ -60,8 +58,10 @@ class SmartBot(BaseBot):
         best_move_values = {move: value for move, value in move_values.items() if value == max(move_values.values())}
         if len(best_move_values) == 1:
             best_move = list(best_move_values.keys())[0]
+            print("smart plays")
             game.apply_move(best_move)
         else:
+            print("smart skips")
             game.pass_turn()
 
 class Simulation(SimulateBots):
@@ -116,14 +116,11 @@ class Simulation(SimulateBots):
         results: The outcome of a game.
         """
         if not results:
-            winner = None
-            prev_score = self._game.scores()[1]
-            for player, score in self._game.scores().items():
-                if score > prev_score:
-                    prev_score = score
-                    winner = player
-            if winner is not None:
-                self._wins[winner] += 1
+            scores = list(self._game.scores())
+            if scores[0] > scores[1]:
+                self._wins[Players.BLACK] += 1
+            elif scores[0] < scores[1]:
+                self._wins[Players.WHITE] += 1
             else:
                 self._ties += 1
             return
@@ -162,8 +159,8 @@ def random_main(num_games: int) -> None:
     random_simulation = Simulation(current_game, [bot1, bot2])
     player_black_win_percentage, player_white_win_percentage, ties_percentage, average_moves_per_game = \
         random_simulation.simulate_games(num_games)
-    print(f"Player 1 wins: {player_black_win_percentage:.2f}%")
-    print(f"Player 2 wins: {player_white_win_percentage:.2f}%")
+    print(f"Player 1 wins: {player_white_win_percentage:.2f}%")
+    print(f"Player 2 wins: {player_black_win_percentage:.2f}%")
     print(f"Ties: {ties_percentage:.2f}%")
     print(f"Average moves: {average_moves_per_game:.1f}")
 
