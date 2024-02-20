@@ -31,9 +31,9 @@ class GoGUI(GoUI):
     buttons: dict[str, tuple[int, int]]
     screen: pygame.surface.Surface
     clock_timer: pygame.time.Clock
-    board_padding : int
-    all_pos : dict[tuple[int,int], tuple[int,int]]
-    FONT : pygame.font.Font
+    board_padding: int
+    all_pos: dict[tuple[int,int], tuple[int,int]]
+    FONT: pygame.font.Font
 
     def __init__(self, go_game: GoFake) -> None:
         super().__init__(go_game)

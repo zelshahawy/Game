@@ -343,7 +343,7 @@ class GoFake(GoBase):
 
         for adj_pos in self.adjacent_positions(pos):
             if self.piece_at(adj_pos) is not None and \
-            self.piece_at(adj_pos) != self.turn and pos:
+            self.piece_at(adj_pos) != self.turn:
                 self._grid[adj_pos[0]][adj_pos[1]] = None
 
         self.pass_turn()

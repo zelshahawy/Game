@@ -13,9 +13,9 @@ class RandomBot(BaseBot):
 
     player: Players
 
-    #init method inhereted
+    #init method inherited
 
-    #show player inhereted
+    #show player inherited
 
     def make_move(self, game: GoFake) -> None:
         """

@@ -98,7 +98,7 @@ class GoTUI(GoUI):
 
     def display_game_over_msg(self) -> None:
         """
-        Displays game over message
+        Displays game over message alongside the outcome of the game
 
         Returns: nothing
         """
