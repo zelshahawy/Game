@@ -140,8 +140,8 @@ class GoGUI(GoUI):
                 PLAYER_STONE_RADIUS
             )
         elif num_player is None:
-            self._hover_board_pos(pygame.mouse.get_pos())          
-    
+            self._hover_board_pos(pygame.mouse.get_pos())
+
     def _hover_board_pos(self, pos_hoaver : tuple[int,int]) -> None:
         """
         highlights a position on the board where a player can click to 

@@ -173,8 +173,8 @@ class GoFake(GoBase):
 
         if side < 4:
             raise ValueError(
-                "The fake implementation only supports boards of\
-                 size 4x4 and above"
+                "The fake implementation only supports boards of "+
+                "size 4x4 and above"
             )
 
         super().__init__(side, players, superko)
