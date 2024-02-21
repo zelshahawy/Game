@@ -20,7 +20,7 @@ class Go(GoBase):
         super().__init__(side, players, superko)
         if side < 2:
             raise ValueError("Board size must be at least 2x2")
-        
+
         self._board = Board(side, side)
         self._turn = 1
         self._consecutive_passes = 0
@@ -106,7 +106,7 @@ class Go(GoBase):
         """
         if not self._board.valid_position(*pos):
             raise ValueError("Position is outside the bounds of the board.")
-        
+
         resulting_board = self.simulate_move(pos).grid
         if self._superko and resulting_board in self._previous_boards:
             return False
@@ -122,12 +122,12 @@ class Go(GoBase):
         """
         if not self._board.valid_position(*pos):
             raise ValueError("Position is outside the bounds of the board.")
-        
+
         if self._superko:
             self._previous_boards.append((self.grid))
         else:
             self._previous_board = self.grid
-            
+
         self._board.set(*pos, self._turn)
 
         # ! TODO: implement capturing pieces
@@ -186,4 +186,3 @@ class Go(GoBase):
         else:
             new_game.pass_turn()
         return new_game
-
