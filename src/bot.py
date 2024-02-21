@@ -26,7 +26,7 @@ class RandomBot(BaseBot):
             game.pass_turn()
         available_moves = [move for move in game.available_moves if move != (0,0)]
         move = random.choice(available_moves)
-        while (not game.legal_move(move)):
+        while (not game.legal_move(move)) or move == (0,0):
             move = random.choice(available_moves)
         game.apply_move(move)
 
@@ -42,8 +42,6 @@ class SmartBot(BaseBot):
 
     def make_move(self, game: GoFake) -> None:
         move_values = {}
-        if len(game.available_moves) == 1 and game.available_moves[0] == (0,0):
-            game.pass_turn()
         for move in game.available_moves:
             if move != (0, 0):
                 simulated_game = game.simulate_move(move)
@@ -56,12 +54,11 @@ class SmartBot(BaseBot):
                 average_pieces = total_pieces / len(opp_moves) if opp_moves else 0
                 move_values[move] = average_pieces
         best_move_values = {move: value for move, value in move_values.items() if value == max(move_values.values())}
-        if len(best_move_values) == 1:
-            best_move = list(best_move_values.keys())[0]
-            print("smart plays")
+        if best_move_values:
+            best_move = max(best_move_values, key=best_move_values.get)
             game.apply_move(best_move)
         else:
-            print("smart skips")
+            print("passed turn")
             game.pass_turn()
 
 class Simulation(SimulateBots):
