@@ -132,7 +132,6 @@ class Go(GoBase):
             self._previous_board = tuple(tuple(row) for row in self.grid)
         self._board.set(*pos, self._turn)
 
-
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
                 if self.piece_at(adjacent_pos) not in {None, self._turn}:
@@ -203,11 +202,11 @@ class Go(GoBase):
 
     def find_territory(
             self, pos: tuple[int, int],
-            territory: list[int] = None,
-            borders: list[int] = None
+            territory: list[tuple[int, int]] | None = None,
+            borders: list[int] | None = None
         ) -> tuple[list[tuple[int, int]], list[int]]:
         """
-        finds a territory in a pos and around it
+        Finds a territory in a pos and around it
         """
         if territory is None:
             territory = []
