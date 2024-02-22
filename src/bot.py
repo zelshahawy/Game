@@ -112,7 +112,7 @@ class Simulation(SimulateBots):
         """
         for _ in range(num_of_games):
             while not self._game.done:
-                if self._game.num_moves >= 256:
+                if self._game.num_moves == 256:
                     break
                 for bot in self._bots:
                     if self._game.turn == bot.show_player():
@@ -169,7 +169,7 @@ def main(num_games: int) -> None:
     current_game = GoFake(6, 2)
     bot_white = RandomBot(Players.WHITE)
     bot_black = SmartBot(Players.BLACK)
-    random_simulation = Simulation(current_game, [bot_black, bot_white])
+    random_simulation = Simulation(current_game, [bot_white, bot_black])
     player_white_win_percentage, player_black_win_percentage, ties_percentage, average_moves_per_game = \
         random_simulation.simulate_games(num_games)
     print(f"Player one (Random) wins: {player_white_win_percentage:.2f}%")

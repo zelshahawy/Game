@@ -4,14 +4,14 @@ Base class for the bot implementation
 
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from fakes import GoStub, GoFake
+from fakes import GoFake
 
 
 
 class Players(IntEnum):
     """Enumeration for Player 1 and Player 2."""
-    BLACK = 1
-    WHITE = 2
+    WHITE = 1
+    BLACK = 2
 
 
 class BaseBot(ABC):
