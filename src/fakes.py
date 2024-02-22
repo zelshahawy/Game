@@ -258,7 +258,7 @@ class GoFake(GoBase):
         r, c = pos
         return self._grid[r][c]
 
-    def legal_move(self, pos: tuple[int, int]) -> bool:
+    def legal_move(self, pos: tuple[int, int] | None) -> bool:
         """
         See GoBase.legal_move
         """
