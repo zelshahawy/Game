@@ -141,7 +141,13 @@ class Go(GoBase):
 
     def has_liberties(self, pos: tuple[int, int]) -> bool:
         """
-        Returns whether a group of stones has liberties.
+        Return whether a group of stones has liberties.
+
+        Args:
+            pos: The position of a stone in the group.
+
+        Returns:
+            A boolean indicating whether the group has liberties.        
         """
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos) and \
@@ -151,7 +157,12 @@ class Go(GoBase):
 
     def capture_group(self, pos: tuple[int, int]) -> None:
         """
-        Remove a group of stones from the board.
+        Capture a group of stones.
+
+        Args:
+            pos: The position of a stone in the group to capture.
+        
+        Returns: nothing
         """
         color = self._board.get(*pos)
         if color is None:
@@ -204,7 +215,15 @@ class Go(GoBase):
             borders: list[int] | None = None
         ) -> tuple[list[tuple[int, int]], list[int]]:
         """
-        Finds a territory in a pos and around it
+        Find the territory and borders of a group of empty positions.
+
+        Args:
+            pos: The position to start from.
+            territory (optional): The territory found so far.
+            borders (optional): The borders found so far.
+        
+        Returns:
+            A tuple containing the territory and borders, respectively.
         """
         if territory is None:
             territory = []
