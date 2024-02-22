@@ -466,7 +466,7 @@ def test_simulate_move_3(game: Go) -> None:
     assert game.turn == 2
 
     # Check that the move was applied in the new Go object
-    assert new_go.piece_at((5, 6)) is None
+    assert new_go.piece_at((5, 6)) == 1
     assert new_go.piece_at((5, 7)) == 2
     assert new_go.turn == 1
 
