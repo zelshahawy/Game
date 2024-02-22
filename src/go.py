@@ -142,8 +142,7 @@ class Go(GoBase):
         Calculates the liberties of each stone on the keyboard
         """
 
-        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
+        for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos) and self.piece_at(adjacent_pos) is None:
                 return True
         return False
@@ -162,8 +161,7 @@ class Go(GoBase):
             current_pos = stack.pop()
             group.add(current_pos)
 
-            for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-                adjacent_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
+            for adjacent_pos in self._board.adjacent_positions(current_pos):
                 if self._board.valid_position(*adjacent_pos) and self._board.get(*adjacent_pos) == color and adjacent_pos not in group:
                     stack.append(adjacent_pos)
 
