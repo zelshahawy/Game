@@ -209,7 +209,8 @@ class GoFake(GoBase):
         """
         returns number of turns in a game
         """
-        return self._num_moves
+        return self._num_move
+
     @grid.setter
     def grid(self, new_grid: BoardGridType) -> None:
         """

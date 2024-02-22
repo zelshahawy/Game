@@ -41,22 +41,25 @@ class SmartBot(BaseBot):
 
     #show player inhereted
     def make_move(self, game: GoFake) -> None:
+        passing = None
         possible_moves = [move for move in game.available_moves if move !=\
             (0,0) and game.legal_move(move)]
         if not possible_moves:
             print("passed turn")
             game.pass_turn()
             return
+        possible_moves.append(passing)
+
         max_value = -1
-        best_move = None
+        best_moves = []
 
         for move in possible_moves:
             game_copy = game.simulate_move(move)
             next_moves = game_copy.available_moves
-
+            next_moves.append(passing)
             total_pieces = 0
             for next_move in next_moves:
-                if next_move != (0,0):
+                if next_move != (0,0) and (next_move == passing or game_copy.legal_move(next_move)):
                     game_copy2 = game_copy.simulate_move(next_move)
                     total_pieces += game_copy2.scores()[self.show_player()]
 
@@ -64,14 +67,17 @@ class SmartBot(BaseBot):
 
             if value > max_value:
                 max_value = value
-                best_move = move
-
-        if best_move is not None:
-            game.apply_move(best_move)
-        else:
-            print("passed turn")
-            game.pass_turn(self._player)
-
+                best_moves = [move]
+            elif value == max_value:
+                best_moves.append(move)
+        print(best_moves)
+        if best_moves:
+            best_move = random.choice(best_moves)
+            if best_move == passing:
+                print("passed turn inside")
+                game.pass_turn()
+            else:
+                game.apply_move(best_move)
 
 class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
@@ -160,7 +166,7 @@ def main(num_games: int) -> None:
 
     num_games: The number of games to simulate.
     """
-    current_game = GoFake(4, 2)
+    current_game = GoFake(6, 2)
     bot_white = RandomBot(Players.WHITE)
     bot_black = SmartBot(Players.BLACK)
     random_simulation = Simulation(current_game, [bot_black, bot_white])
