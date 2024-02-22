@@ -115,6 +115,8 @@ class Go(GoBase):
             return False
         elif not self._superko and resulting_board == self._previous_board:
             return False
+        if not self.has_liberties(pos):
+            return False
         if self._board.get(*pos) is not None:
             return False
         return True
