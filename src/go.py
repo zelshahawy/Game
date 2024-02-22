@@ -191,7 +191,6 @@ class Go(GoBase):
             for col in range(self._side):
                 pos = (row, col)
                 piece = self.piece_at(pos)
-
                 if piece is not None:
                     scores[piece] += 1
                 elif pos not in visited:
@@ -200,10 +199,13 @@ class Go(GoBase):
                     if len(borders) == 1:
                         for player in borders:
                             scores[player] += len(territory)
-
         return scores
 
-    def find_territory(self, pos: tuple[int, int], territory: list[int] = None, borders: list[int] = None) -> tuple[list[tuple[int, int]], list[int]]:
+    def find_territory(
+            self, pos: tuple[int, int],
+            territory: list[int] = None,
+            borders: list[int] = None
+        ) -> tuple[list[tuple[int, int]], list[int]]:
         if territory is None:
             territory = set()
         if borders is None:
