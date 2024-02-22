@@ -41,28 +41,28 @@ class SmartBot(BaseBot):
 
     #show player inhereted
     def make_move(self, game: GoFake) -> None:
-        passing = None
-        possible_moves: list[Optional[tuple[int, int]]] = [move for move in game.available_moves if move !=\
-            (0,0) and game.legal_move(move)]
-        if not possible_moves:
+        possible_moves = [move for move in game.available_moves if game.legal_move(move)]
+        if len(possible_moves) == 1 and possible_moves[0] == (0,0):
             game.pass_turn()
             return
-        possible_moves.append(passing)
         max_value: float | int = -1
         best_moves = []
 
         for move in possible_moves:
-            game_copy = game.simulate_move(move)
-            next_moves: list[Optional[tuple[int, int]]] = game_copy.available_moves
-            next_moves.append(passing)
+            if move == (0,0):
+                game_copy = game.simulate_move(None)
+            else:
+                game_copy = game.simulate_move(move)
+            next_moves = [move for move in game_copy.available_moves if game.legal_move(move)]
             total_pieces = 0
             for next_move in next_moves:
-                if next_move != (0,0) and (next_move == passing or game_copy.legal_move(next_move)):
+                if next_move == (0,0):
+                    game_copy2 = game_copy.simulate_move(None)
+                else:
                     game_copy2 = game_copy.simulate_move(next_move)
                     total_pieces += game_copy2.scores()[self.show_player()]
 
             value = total_pieces / len(next_moves) if next_moves else 0
-
             if value > max_value:
                 max_value = value
                 best_moves = [move]
@@ -70,10 +70,12 @@ class SmartBot(BaseBot):
                 best_moves.append(move)
         if best_moves:
             best_move = random.choice(best_moves)
-            if best_move == passing:
+            if best_move == (0,0):
                 game.pass_turn()
             else:
                 game.apply_move(best_move)
+        else:
+            game.pass_turn()
 
 class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
@@ -139,7 +141,7 @@ class Simulation(SimulateBots):
             if max_score_count > 1:
                 self._ties += 1
             else:
-                max_score_player = max(scores, key=scores.get)
+                max_score_player = max(scores, key=lambda player: scores[player])
                 player = Players(max_score_player)
                 self._wins[player] += 1
     def calculate_percentages(self, num_of_games: int) -> \
