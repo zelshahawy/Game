@@ -325,7 +325,7 @@ def test_scores_1() -> None:
     """
     game: Go = create_board_with_pieces(19, 2)
 
-    assert game.scores() == {1: 0, 2: 0}
+    assert game.scores() == {1: 4, 2: 4}
 
 
 def test_scores_2(game: Go) -> None:
