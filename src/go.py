@@ -2,6 +2,7 @@
 Module providing the Go class
 """
 from copy import deepcopy
+from typing import Optional
 
 from base import GoBase
 from board import Board
@@ -130,9 +131,42 @@ class Go(GoBase):
 
         self._board.set(*pos, self._turn)
 
+        # ! TODO: implement capturing pieces
 
         self.pass_turn()
         self._consecutive_passes = 0
+
+    def has_liberties(self, pos :tuple [int, int]) -> bool:
+        """
+        Calculates the liberties of each stone on the keyboard
+        """
+        count :int = 0
+
+        for stone in self.adjacent_stones(pos):
+            if stone == self.piece_at(pos) or stone is None:
+                count += 1
+
+        return count > 0
+
+    def adjacent_stones(self, pos : tuple[int, int]) -> list[Optional[int]]:
+        """
+        Creates a list of adjacent stones near a stone at specific pos
+        """
+        adj_stones :list[Optional[int]] = []
+    
+        for pos in self._board.adjacent_positions(pos):
+            adj_stones.append(self.piece_at(pos))
+
+        return adj_stones
+
+    def capture_stones(self) -> None:
+        """
+        Removes a stone in the board if it lacks territories
+        """
+        for i in range(self.size):
+            for j in range(self.size):
+                if not self.has_liberties((i,j)):
+                    self._board.set(i ,j, None)     
 
     def pass_turn(self) -> None:
         """
@@ -185,3 +219,22 @@ class Go(GoBase):
         else:
             new_game.pass_turn()
         return new_game
+
+if __name__ == "__main__":
+    go = Go(6,2,False)
+    go.apply_move((3,2)) #white
+    go.apply_move((2,1)) #black
+    go.pass_turn()
+    go.apply_move((3,3)) #black
+    go.pass_turn() #white
+    go.apply_move((3,1)) #black
+    go.pass_turn()
+    go.apply_move((4,2)) #black
+    go.pass_turn()
+    go.apply_move((3,0)) #black
+    go.pass_turn()
+    go.apply_move((2,2)) #black
+
+
+    print(f"Stones at {go.piece_at((3,2))} ")
+    print(f"adjacent stones {go._board.adjacent_positions((3,2))} at 3, 2 is {go.adjacent_stones((3,2))}")

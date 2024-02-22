@@ -21,14 +21,15 @@ class RandomBot(BaseBot):
         """
         Make a random legal move in the game.
         """
-        if len(game.available_moves) == 1 and game.available_moves[0] == (0,0):
+        available_moves = [move for move in game.available_moves if move !=\
+            (0,0) and game.legal_move(move)]
+        if not available_moves:
             print("passed turn random")
             game.pass_turn()
-        available_moves = [move for move in game.available_moves if move != (0,0)]
+            return
         move = random.choice(available_moves)
-        while (not game.legal_move(move)):
-            move = random.choice(available_moves)
         game.apply_move(move)
+
 
 class SmartBot(BaseBot):
     """
@@ -39,30 +40,44 @@ class SmartBot(BaseBot):
     #init method inhereted
 
     #show player inhereted
-
     def make_move(self, game: GoFake) -> None:
-        move_values = {}
-        if len(game.available_moves) == 1 and game.available_moves[0] == (0,0):
+        passing = None
+        possible_moves = [move for move in game.available_moves if move !=\
+            (0,0) and game.legal_move(move)]
+        if not possible_moves:
+            print("passed turn")
             game.pass_turn()
-        for move in game.available_moves:
-            if move != (0, 0):
-                simulated_game = game.simulate_move(move)
-                opp_moves = simulated_game.available_moves
-                total_pieces = 0
-                for opp_move in opp_moves:
-                    if opp_move != (0,0):
-                        opp_simulation = simulated_game.simulate_move(opp_move)
-                        total_pieces += opp_simulation.scores()[self.show_player()]
-                average_pieces = total_pieces / len(opp_moves) if opp_moves else 0
-                move_values[move] = average_pieces
-        best_move_values = {move: value for move, value in move_values.items() if value == max(move_values.values())}
-        if len(best_move_values) == 1:
-            best_move = list(best_move_values.keys())[0]
-            print("smart plays")
-            game.apply_move(best_move)
-        else:
-            print("smart skips")
-            game.pass_turn()
+            return
+        possible_moves.append(passing)
+
+        max_value = -1
+        best_moves = []
+
+        for move in possible_moves:
+            game_copy = game.simulate_move(move)
+            next_moves = game_copy.available_moves
+            next_moves.append(passing)
+            total_pieces = 0
+            for next_move in next_moves:
+                if next_move != (0,0) and (next_move == passing or game_copy.legal_move(next_move)):
+                    game_copy2 = game_copy.simulate_move(next_move)
+                    total_pieces += game_copy2.scores()[self.show_player()]
+
+            value = total_pieces / len(next_moves) if next_moves else 0
+
+            if value > max_value:
+                max_value = value
+                best_moves = [move]
+            elif value == max_value:
+                best_moves.append(move)
+        print(best_moves)
+        if best_moves:
+            best_move = random.choice(best_moves)
+            if best_move == passing:
+                print("passed turn inside")
+                game.pass_turn()
+            else:
+                game.apply_move(best_move)
 
 class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
@@ -78,7 +93,7 @@ class Simulation(SimulateBots):
         """
         self._game = game
         self._bots = bots
-        self._wins = {player: 0 for player in Players}
+        self._wins = {bot.show_player(): 0 for bot in bots}
         self._ties = 0
         self.total_moves = 0
 
@@ -99,7 +114,7 @@ class Simulation(SimulateBots):
         """
         for _ in range(num_of_games):
             while not self._game.done:
-                if self._game._num_moves >= 256:
+                if self._game.game_turn >= 256:
                     break
                 for bot in self._bots:
                     if self._game.turn == bot.show_player():
@@ -115,22 +130,20 @@ class Simulation(SimulateBots):
 
         results: The outcome of a game.
         """
-        if not results:
-            scores = list(self._game.scores())
-            if scores[0] > scores[1]:
-                self._wins[Players.BLACK] += 1
-            elif scores[0] < scores[1]:
-                self._wins[Players.WHITE] += 1
-            else:
+        if results:
+            if len(results) == 2:
                 self._ties += 1
-            return
-        if len(results) == 2:
-            self._ties += 1
+            else:
+                self._wins[results[0]] += 1
         else:
-            for bot in self._bots:
-                if results[0] == bot.show_player():
-                    self._wins[bot.show_player()] += 1
-
+            scores = self._game.scores()
+            max_score = max(scores.values())
+            max_score_count = list(scores.values()).count(max_score)
+            if max_score_count > 1:
+                self._ties += 1
+            else:
+                max_score_player = max(scores, key=scores.get)
+                self._wins[max_score_player] += 1
     def calculate_percentages(self, num_of_games: int) -> \
         tuple[float, float, float]:
         """
@@ -139,28 +152,28 @@ class Simulation(SimulateBots):
         num_of_games: The number of games simulated.
         return: A tuple of the win percentages for bot1, bot2, and ties.
         """
-        wining_percentage_1 = (self._wins[Players.BLACK] / num_of_games) * 100
-        wining_percentage_2 = (self._wins[Players.WHITE] / num_of_games) * 100
+        wining_percentage_black = (self._wins[Players.BLACK] / num_of_games) * 100
+        wining_percentage_white = (self._wins[Players.WHITE] / num_of_games) * 100
         tie_percentage = (self._ties) / (num_of_games) * 100
         average_moves_per_game = (self.total_moves) / (num_of_games)
-        return (wining_percentage_1, wining_percentage_2, tie_percentage,
+        return (wining_percentage_white, wining_percentage_black, tie_percentage,
                 average_moves_per_game)
 
 
-def random_main(num_games: int) -> None:
+def main(num_games: int) -> None:
     """
     Run the simulation and print the results.
 
     num_games: The number of games to simulate.
     """
     current_game = GoFake(6, 2)
-    bot1 = RandomBot(Players.BLACK)
-    bot2 = SmartBot(Players.WHITE)
-    random_simulation = Simulation(current_game, [bot1, bot2])
-    player_black_win_percentage, player_white_win_percentage, ties_percentage, average_moves_per_game = \
+    bot_white = RandomBot(Players.WHITE)
+    bot_black = SmartBot(Players.BLACK)
+    random_simulation = Simulation(current_game, [bot_black, bot_white])
+    player_white_win_percentage, player_black_win_percentage, ties_percentage, average_moves_per_game = \
         random_simulation.simulate_games(num_games)
-    print(f"Player 1 wins: {player_white_win_percentage:.2f}%")
-    print(f"Player 2 wins: {player_black_win_percentage:.2f}%")
+    print(f"Player one (Random) wins: {player_white_win_percentage:.2f}%")
+    print(f"Player two (Smart) wins: {player_black_win_percentage:.2f}%")
     print(f"Ties: {ties_percentage:.2f}%")
     print(f"Average moves: {average_moves_per_game:.1f}")
 
@@ -171,4 +184,4 @@ if __name__ == "__main__":
             " Usage: python3 src/bot.py NUM_GAMES"
         )
         sys.exit(1)
-    random_main(int(sys.argv[1]))
+    main(int(sys.argv[1]))

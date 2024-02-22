@@ -204,6 +204,13 @@ class GoFake(GoBase):
         """
         return deepcopy(self._grid)
 
+    @property
+    def game_turn(self) -> int:
+        """
+        returns number of turns in a game
+        """
+        return self._num_moves
+
     @grid.setter
     def grid(self, new_grid: BoardGridType) -> None:
         """

@@ -210,11 +210,13 @@ class GoGUI(GoUI):
         """
         Handles display of change in game state, position, and players'moves
         """
-        while True:
+        loop = True
+
+        while loop:
             py_events = pygame.event.get()
             for event in py_events:
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    loop = False
                     sys.exit()
 
                 elif self._go.done:
