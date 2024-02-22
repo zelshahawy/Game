@@ -92,7 +92,8 @@ class GoGUI(GoUI):
             euclid_sq = (x_click - x_center ) ** 2 + (y_click - y_center) ** 2
             euclid_dist = euclid_sq ** 0.5
 
-            if euclid_dist <= PLAYER_STONE_RADIUS and self._go.legal_move(board_pos):
+            if euclid_dist <= PLAYER_STONE_RADIUS and \
+            self._go.legal_move(board_pos):
                 self._go.apply_move(board_pos)
 
     def _draw_button(self, rect, text):
@@ -184,7 +185,6 @@ class GoGUI(GoUI):
         img = self.FONT.render(text, True, BLACK)
 
         self.screen.blit(img, (WIDTH_DISPLAY//4 , 30))
-
 
     def _draw_board_state(self) -> None:
         """
