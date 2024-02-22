@@ -25,7 +25,6 @@ class RandomBot(BaseBot):
         available_moves = [move for move in game.available_moves if move !=\
             (0,0) and game.legal_move(move)]
         if not available_moves:
-            print("passed turn random")
             game.pass_turn()
             return
         move = random.choice(available_moves)
@@ -69,7 +68,6 @@ class SmartBot(BaseBot):
                 best_moves = [move]
             elif value == max_value:
                 best_moves.append(move)
-        print(best_moves)
         if best_moves:
             best_move = random.choice(best_moves)
             if best_move == passing:
