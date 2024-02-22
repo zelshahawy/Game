@@ -186,7 +186,7 @@ class GoFake(GoBase):
         self._consecutive_passes = 0
 
         if self._superko:
-            self._previous_boards: list[BoardGridType] = []
+            self._previous_boards: set[BoardGridType] = set()
         else:
             self._previous_board: BoardGridType | None = None
 
@@ -268,9 +268,10 @@ class GoFake(GoBase):
         if not self.in_bounds(pos):
             raise ValueError("Move is outside bounds of the board")
 
+        resulting_board_tup = tuple(tuple(row) for row in self.simulate_move(pos).grid)
         resulting_board = self.simulate_move(pos).grid
 
-        if self._superko and resulting_board in self._previous_boards:
+        if self._superko and resulting_board_tup in self._previous_boards:
             return False
         if resulting_board == self._previous_board:
             return False
@@ -285,7 +286,7 @@ class GoFake(GoBase):
         See GoBase.apply_move
         """
         if self._superko:
-            self._previous_boards.append((self.grid))
+            self._previous_boards.add(tuple(tuple(row) for row in self.grid))
         else:
             self._previous_board = self.grid
 

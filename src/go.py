@@ -193,8 +193,8 @@ class Go(GoBase):
             raise ValueError("Invalid turn number")
         if len(grid) != self._side:
             raise ValueError("Invalid grid size")
-        for row in range(len(grid)):
-            for col in range(len(grid)):
+        for row in range(self._side):
+            for col in range(self._side):
                 if grid[row][col] not in range(1, self._players+1):
                     raise ValueError(f"Invalid value in grid: {grid[row][col]}")
 
