@@ -31,7 +31,7 @@ class Board:
         Get the number of columns in the board.
         """
         return self._cols
-    
+
     @property
     def grid(self) -> BoardGridType:
         """
@@ -56,7 +56,7 @@ class Board:
         Check if the position is valid.
         """
         return 0 <= row < self._rows and 0 <= col < self._cols
-    
+
     def adjacent_positions(self, pos: tuple[int, int]) -> list[tuple[int, int]]:
         """
         Returns a list of all valid positions adjacent to the specified

@@ -72,7 +72,7 @@ class GoTUI():
             print(line)
             if i < size - 1:
                 print(separator_line)
-    
+
     def print_scores(self) -> None:
         """
         Displays the scores of each player
@@ -125,7 +125,7 @@ class GoTUI():
             print(".\n", end="", flush=True)
             time.sleep(0.4)
         if len(self._go.outcome) > 1:
-            print(f"It's a tie!\n")
+            print("It's a tie!\n")
             self.print_scores()
         else:
             print(f"Player {self._go.outcome[0]} wins!\n")
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         side = sys.argv[1]
     except IndexError as exc:
         raise ValueError("Please provide the side length of the board") from exc
-    
+
     tui = GoTUI(GoFake(int(side), 2))
     print("\033c", end="")
     # Welcome message

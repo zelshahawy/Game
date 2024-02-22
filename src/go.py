@@ -2,7 +2,6 @@
 Module providing the Go class
 """
 from copy import deepcopy
-from typing import Optional
 
 from base import GoBase, BoardGridType, ListMovesType
 from board import Board
@@ -113,9 +112,9 @@ class Go(GoBase):
         )
         if self._superko and resulting_board in self._previous_boards:
             return False
-        elif not self._superko and resulting_board == self._previous_board:
+        if not self._superko and resulting_board == self._previous_board:
             return False
-        
+
         if self._board.get(*pos) is not None:
             return False
         return True
@@ -169,9 +168,8 @@ class Go(GoBase):
                     self._board.get(*adjacent_pos) == color \
                     and adjacent_pos not in group:
                     stack.append(adjacent_pos)
-
-        for pos in group:
-            self._board.set(*pos, None)
+        for position in group:
+            self._board.set(*position, None)
 
     def pass_turn(self) -> None:
         """
@@ -234,10 +232,10 @@ class Go(GoBase):
             raise ValueError("Invalid turn number")
         if len(grid) != self._side:
             raise ValueError("Invalid grid size")
-        for row in range(len(grid)):
-            for col in range(len(grid)):
-                if grid[row][col] not in range(1, self._players+1):
-                    raise ValueError(f"Invalid value in grid: {grid[row][col]}")
+        for _, row in enumerate(grid):
+            for _, value in enumerate(row):
+                if value not in range(1, self._players+1):
+                    raise ValueError(f"Invalid value in grid: {value}")
 
         self._previous_boards = set()
         self._previous_board = None
