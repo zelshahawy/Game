@@ -109,12 +109,11 @@ class GoTUI(GoUI):
             time.sleep(0.4)
         if len(self._go.outcome) > 1:
             print(f"It's a {Fore.CYAN}tie{Fore.GREEN}! " +
-                  f"({self._go.scores()[1]} vs" +
+                  f"({self._go.scores()[1]} vs " +
                   f"{self._go.scores()[2]}){Style.RESET_ALL}")
         else:
             print(f"Player {self._go.outcome[0]} wins! " +
-                   f"({self._go.scores()[1]} vs" +
-                   f" {self._go.scores()[2]})")
+                   f"({self._go.scores()[self._go.outcome[0]]} stones)")
 
     def main_loop(self) -> None:
         """

@@ -26,7 +26,7 @@ class Go(GoBase):
         self._consecutive_passes = 0
 
         if self._superko:
-            self._previous_boards: list[Board] = {}
+            self._previous_boards: list[Board] = []
         else:
             self._previous_board: Board | None = None
 
@@ -110,7 +110,7 @@ class Go(GoBase):
         resulting_board = self.simulate_move(pos).grid
         if self._superko and resulting_board in self._previous_boards:
             return False
-        if resulting_board == self._previous_board:
+        elif not self._superko and resulting_board == self._previous_board:
             return False
         if self._board.get(*pos) is not None:
             return False
@@ -130,7 +130,6 @@ class Go(GoBase):
 
         self._board.set(*pos, self._turn)
 
-        # ! TODO: implement capturing pieces
 
         self.pass_turn()
         self._consecutive_passes = 0

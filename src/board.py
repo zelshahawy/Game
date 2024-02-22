@@ -2,6 +2,7 @@
 A class to represent a board.
 """
 from typing import Optional
+from base import BoardGridType
 
 class Board:
     """
@@ -9,7 +10,7 @@ class Board:
     """
     _rows: int
     _cols: int
-    _grid: list[list[Optional[int]]]
+    _grid: BoardGridType
 
     def __init__(self, rows, cols):
         self._rows = rows
