@@ -207,11 +207,11 @@ class Go(GoBase):
             borders: list[int] = None
         ) -> tuple[list[tuple[int, int]], list[int]]:
         if territory is None:
-            territory = set()
+            territory = []
         if borders is None:
             borders = []
-
-        territory.append(pos)
+        if pos not in territory:
+            territory.append(pos)
 
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
@@ -219,7 +219,8 @@ class Go(GoBase):
                 if piece is None and adjacent_pos not in territory:
                     self.find_territory(adjacent_pos, territory, borders)
                 elif piece is not None:
-                    borders.append(piece)
+                    if piece not in borders:
+                        borders.append(piece)
 
         return territory, borders
 
