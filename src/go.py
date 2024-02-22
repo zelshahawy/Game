@@ -125,17 +125,13 @@ class Go(GoBase):
             self._previous_boards.append(self.grid)
         else:
             self._previous_board = self.grid
-
-        if not self.has_liberties(pos):
-            self._board.set(*pos, None)
-            raise ValueError("move is not allowed as there are no liberities.")
         self._board.set(*pos, self._turn)
 
 
         for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
             adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
             if self._board.valid_position(*adjacent_pos):
-                if self.piece_at(adjacent_pos) not in [None, self._turn]:
+                if self.piece_at(adjacent_pos) not in {None, self._turn}:
                     if not self.has_liberties(adjacent_pos):
                         self.remove_group(adjacent_pos)
         self.pass_turn()
@@ -145,13 +141,12 @@ class Go(GoBase):
         """
         Calculates the liberties of each stone on the keyboard
         """
-        count :int = 0
 
-        for stone in self.adjacent_stones(pos):
-            if stone == self.piece_at(pos) or stone is None:
-                count += 1
-
-        return count > 0
+        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
+            if self._board.valid_position(*adjacent_pos) and self.piece_at(adjacent_pos) is None:
+                return True
+        return False
 
     def remove_group(self, pos: tuple[int, int]) -> None:
         """
@@ -161,14 +156,19 @@ class Go(GoBase):
         if color is None:
             return
 
+        group = set()
         stack = [pos]
         while stack:
             current_pos = stack.pop()
-            self._board.set(*current_pos, None)
+            group.add(current_pos)
+
             for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 adjacent_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
-                if self._board.valid_position(*adjacent_pos) and self._board.get(*adjacent_pos) == color:
+                if self._board.valid_position(*adjacent_pos) and self._board.get(*adjacent_pos) == color and adjacent_pos not in group:
                     stack.append(adjacent_pos)
+
+        for pos in group:
+            self._board.set(*pos, None)
 
     def adjacent_stones(self, pos : tuple[int, int]) -> list[Optional[int]]:
         """
