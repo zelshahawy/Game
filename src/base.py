@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 BoardGridType = list[list[int | None]]
 
 # Type for representing lists of moves on the board.
-ListMovesType = list[tuple[int, int]]
+ListMovesType = list[tuple[int, int]] | None
 
 
 class GoBase(ABC):

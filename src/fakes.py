@@ -223,7 +223,7 @@ class GoFake(GoBase):
             for c in range(self._side):
                 if self.piece_at((r, c)) is None:
                     moves.append((r, c))
-
+        assert moves is not None
         return moves
 
     @property
@@ -260,7 +260,7 @@ class GoFake(GoBase):
         r, c = pos
         return self._grid[r][c]
 
-    def legal_move(self, pos: tuple[int, int] | None) -> bool:
+    def legal_move(self, pos: tuple[int, int]) -> bool:
         """
         See GoBase.legal_move
         """
@@ -316,6 +316,7 @@ class GoFake(GoBase):
 
         Returns: nothing
         """
+        assert self.available_moves is not None
         for r, c in self.available_moves:
             self._grid[r][c] = self._turn
 

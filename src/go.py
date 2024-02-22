@@ -205,6 +205,9 @@ class Go(GoBase):
             territory: list[int] = None,
             borders: list[int] = None
         ) -> tuple[list[tuple[int, int]], list[int]]:
+        """
+        finds a territory in a pos and around it
+        """
         if territory is None:
             territory = []
         if borders is None:
