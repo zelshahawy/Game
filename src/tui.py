@@ -68,7 +68,6 @@ class GoTUI(GoUI):
             if i < size - 1:
                 print(separator_line)
 
-
     def get_move(self) -> tuple[int, int]:
         """
         See GoUI.get_move
@@ -96,7 +95,7 @@ class GoTUI(GoUI):
                                Style.RESET_ALL)
                 time.sleep(0.4)
 
-    def display_game_over_msg(self) -> None:
+    def end_game(self) -> None:
         """
         Displays game over message alongside the outcome of the game
 
@@ -129,7 +128,7 @@ class GoTUI(GoUI):
         self.display_board()
         while True:
             if self._go.done:
-                self.display_game_over_msg()
+                self.end_game()
                 sys.exit(0)
             move = self.get_move()
             if move == (-1, -1):

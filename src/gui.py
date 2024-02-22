@@ -95,7 +95,7 @@ class GoGUI(GoUI):
             if euclid_dist <= PLAYER_STONE_RADIUS:
                 self._go.apply_move(board_pos)
 
-    def _draw_button(self, rect, text):
+    def _draw_button(self, rect, text) -> None:
         """
         Draws the pass button
         """
