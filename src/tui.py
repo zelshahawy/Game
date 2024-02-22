@@ -95,6 +95,21 @@ class GoTUI(GoUI):
                                Style.RESET_ALL)
                 time.sleep(0.4)
 
+    def display_scores(self) -> None:
+        """
+        Displays the scores of the game
+
+        Returns: nothing
+        """
+        scores = self._go.scores()
+        print(Fore.WHITE + "Scores:")
+        for player, score in scores.items():
+            print(
+                f"{COLORS[player]} + Player {player}: {score} stones" + 
+                  f"{Style.RESET_ALL}"
+            )
+        print(Style.RESET_ALL)
+
     def end_game(self) -> None:
         """
         Displays game over message alongside the outcome of the game
@@ -107,12 +122,11 @@ class GoTUI(GoUI):
             print(".", end="", flush=True)
             time.sleep(0.4)
         if len(self._go.outcome) > 1:
-            print(f"It's a {Fore.CYAN}tie{Fore.GREEN}! " +
-                  f"({self._go.scores()[1]} vs " +
-                  f"{self._go.scores()[2]}){Style.RESET_ALL}")
+            print(f"It's a {Fore.CYAN}tie{Fore.GREEN}!\n")
+            self.display_scores()
         else:
-            print(f"Player {self._go.outcome[0]} wins! " +
-                   f"({self._go.scores()[self._go.outcome[0]]} stones)")
+            print(f"Player {self._go.outcome[0]} wins!\n")
+            self.display_scores()
 
     def main_loop(self) -> None:
         """
@@ -140,6 +154,9 @@ class GoTUI(GoUI):
 
 
 if __name__ == "__main__":
-    side = sys.argv[1]
+    try:
+        side = sys.argv[1]
+    except IndexError:
+        raise ValueError("Please provide the side length of the board")
     tui = GoTUI(GoFake(int(side), 2))
     tui.main_loop()
