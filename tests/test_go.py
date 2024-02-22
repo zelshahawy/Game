@@ -342,7 +342,7 @@ def test_scores_2(game: Go) -> None:
     assert game.scores() == {1: 3, 2: 5}
 
 
-def test_scores_3(game: Go) -> None:
+def test_outcome_4(game: Go) -> None:
     """
     Makes several moves that will result in one territory being created. Ends
     the game and, verifies the outcome.
