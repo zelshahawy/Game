@@ -1,6 +1,7 @@
 """
 A class to represent a board.
 """
+from copy import deepcopy
 from typing import Optional
 from base import BoardGridType
 
@@ -30,6 +31,13 @@ class Board:
         Get the number of columns in the board.
         """
         return self._cols
+    
+    @property
+    def grid(self) -> BoardGridType:
+        """
+        get a copy of the grid of the board.
+        """
+        return deepcopy(self._grid)
 
     def set(self, row: int, col: int, value: int | None) -> None:
         """
