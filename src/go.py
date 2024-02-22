@@ -197,18 +197,17 @@ class Go(GoBase):
                     territory, borders = self.find_territory(pos)
                     visited.update(territory)
                     if len(borders) == 1:
-                        for player in borders:
-                            scores[player] += len(territory)
+                            scores[borders[0]] += len(territory)
 
         return scores
 
     def find_territory(self, pos: tuple[int, int], territory: set = None, borders: set = None) -> tuple[set[tuple[int, int]], set[int]]:
         if territory is None:
-            territory = set()
+            territory = []
         if borders is None:
-            borders = set()
+            borders = []
 
-        territory.add(pos)
+        territory.append(pos)
 
         for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
             adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
@@ -217,7 +216,7 @@ class Go(GoBase):
                 if piece is None and adjacent_pos not in territory:
                     self.find_territory(adjacent_pos, territory, borders)
                 elif piece is not None:
-                    borders.add(piece)
+                    borders.append(piece)
 
         return territory, borders
 
