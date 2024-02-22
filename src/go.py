@@ -197,8 +197,7 @@ class Go(GoBase):
                     territory, borders = self.find_territory(pos)
                     visited.update(territory)
                     if len(borders) == 1:
-                        for player in borders:
-                            scores[player] += len(territory)
+                        scores[borders[0]] += 1
         return scores
 
     def find_territory(
