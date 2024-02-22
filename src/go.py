@@ -48,7 +48,7 @@ class Go(GoBase):
         """
         See GoBase.grid
         """
-        return deepcopy(self._board._grid)
+        return deepcopy(self._board.grid)
 
     @property
     def turn(self) -> int:
@@ -121,16 +121,23 @@ class Go(GoBase):
         """
         if not self._board.valid_position(*pos):
             raise ValueError("Position is outside the bounds of the board.")
-
         if self._superko:
             self._previous_boards.append(self.grid)
         else:
             self._previous_board = self.grid
 
+        if not self.has_liberties(pos):
+            self._board.set(*pos, None)
+            raise ValueError("move is not allowed as there are no liberities.")
         self._board.set(*pos, self._turn)
 
-        # ! TODO: implement capturing pieces
-
+        # Capture any surrounded enemy groups
+        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
+            if self._board.valid_position(*adjacent_pos):
+                if self.piece_at(adjacent_pos) not in [None, self._turn]:
+                    if not self.has_liberties(adjacent_pos):
+                        self.remove_group(adjacent_pos)
         self.pass_turn()
         self._consecutive_passes = 0
 
@@ -146,12 +153,29 @@ class Go(GoBase):
 
         return count > 0
 
+    def remove_group(self, pos: tuple[int, int]) -> None:
+        """
+        Remove a group of stones from the board.
+        """
+        color = self._board.get(*pos)
+        if color is None:
+            return
+
+        stack = [pos]
+        while stack:
+            current_pos = stack.pop()
+            self._board.set(*current_pos, None)
+            for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+                adjacent_pos = (current_pos[0] + direction[0], current_pos[1] + direction[1])
+                if self._board.valid_position(*adjacent_pos) and self._board.get(*adjacent_pos) == color:
+                    stack.append(adjacent_pos)
+
     def adjacent_stones(self, pos : tuple[int, int]) -> list[Optional[int]]:
         """
         Creates a list of adjacent stones near a stone at specific pos
         """
-        adj_stones :list[Optional[int]] = []
-    
+        adj_stones: list[Optional[int]] = []
+
         for pos in self._board.adjacent_positions(pos):
             adj_stones.append(self.piece_at(pos))
 
@@ -164,7 +188,7 @@ class Go(GoBase):
         for i in range(self.size):
             for j in range(self.size):
                 if not self.has_liberties((i,j)):
-                    self._board.set(i ,j, None)     
+                    self._board.set(i ,j, None)  
 
     def pass_turn(self) -> None:
         """
