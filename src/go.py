@@ -4,11 +4,9 @@ Module providing the Go class
 from copy import deepcopy
 from typing import Optional
 
-from base import GoBase
+from base import GoBase, BoardGridType, ListMovesType
 from board import Board
 
-BoardGridType = list[list[int | None]]
-ListMovesType = list[tuple[int, int]]
 
 class Go(GoBase):
     """
@@ -27,9 +25,9 @@ class Go(GoBase):
         self._consecutive_passes = 0
 
         if self._superko:
-            self._previous_boards: list[Board] = []
+            self._previous_boards: list[BoardGridType] = []
         else:
-            self._previous_board: Board | None = None
+            self._previous_board: BoardGridType | None = None
 
     @property
     def size(self) -> int:
@@ -125,7 +123,7 @@ class Go(GoBase):
             raise ValueError("Position is outside the bounds of the board.")
 
         if self._superko:
-            self._previous_boards.append((self.grid))
+            self._previous_boards.append(self.grid)
         else:
             self._previous_board = self.grid
 
@@ -195,8 +193,8 @@ class Go(GoBase):
             raise ValueError("Invalid turn number")
         if len(grid) != self._side:
             raise ValueError("Invalid grid size")
-        for row in grid:
-            for col in grid:
+        for row in range(len(grid)):
+            for col in range(len(grid)):
                 if grid[row][col] not in range(1, self._players+1):
                     raise ValueError(f"Invalid value in grid: {grid[row][col]}")
 

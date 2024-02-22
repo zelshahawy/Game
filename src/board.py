@@ -12,38 +12,38 @@ class Board:
     _cols: int
     _grid: BoardGridType
 
-    def __init__(self, rows, cols):
+    def __init__(self, rows: int, cols: int) -> None:
         self._rows = rows
         self._cols = cols
         self._grid = [[None for _ in range(cols)] for _ in range(rows)]
 
     @property
-    def rows(self):
+    def rows(self) -> int:
         """
         Get the number of rows in the board.
         """
         return self._rows
 
     @property
-    def cols(self):
+    def cols(self) -> int:
         """
         Get the number of columns in the board.
         """
         return self._cols
 
-    def set(self, row, col, value):
+    def set(self, row: int, col: int, value: int | None) -> None:
         """
         Set the value of the board at a given position.
         """
         self._grid[row][col] = value
 
-    def get(self, row, col):
+    def get(self, row: int, col: int) -> Optional[int]:
         """
         Get the value of the board at a given position.
         """
         return self._grid[row][col]
 
-    def valid_position(self, row, col):
+    def valid_position(self, row: int, col: int) -> bool:
         """
         Check if the position is valid.
         """
