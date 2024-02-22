@@ -279,8 +279,7 @@ class GoFake(GoBase):
         See GoBase.done
         """
         return (
-            self._consecutive_passes == 2 or self.piece_at((0, 0)) is not None or \
-                self._num_moves == 256
+            self._consecutive_passes == 2 or self.piece_at((0, 0)) is not None
         )
 
     @property

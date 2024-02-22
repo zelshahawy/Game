@@ -108,6 +108,8 @@ class Simulation(SimulateBots):
         """
         for _ in range(num_of_games):
             while not self._game.done:
+                if self._game.game_turn >= 256:
+                    break
                 for bot in self._bots:
                     if self._game.turn == bot.show_player():
                         bot.make_move(self._game)
@@ -127,6 +129,15 @@ class Simulation(SimulateBots):
                 self._ties += 1
             else:
                 self._wins[results[0]] += 1
+        else:
+            scores = self._game.scores()
+            max_score = max(scores.values())
+            max_score_count = list(scores.values()).count(max_score)
+            if max_score_count > 1:
+                self._ties += 1
+            else:
+                max_score_player = max(scores, key=scores.get)
+                self._wins[max_score_player] += 1
     def calculate_percentages(self, num_of_games: int) -> \
         tuple[float, float, float]:
         """
