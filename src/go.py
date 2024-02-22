@@ -131,7 +131,7 @@ class Go(GoBase):
             raise ValueError("move is not allowed as there are no liberities.")
         self._board.set(*pos, self._turn)
 
-        # Capture any surrounded enemy groups
+
         for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
             adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
             if self._board.valid_position(*adjacent_pos):
@@ -217,8 +217,8 @@ class Go(GoBase):
             raise ValueError("Invalid turn number")
         if len(grid) != self._side:
             raise ValueError("Invalid grid size")
-        for row in range(self._side):
-            for col in range(self._side):
+        for row in range(len(grid)):
+            for col in range(len(grid)):
                 if grid[row][col] not in range(1, self._players+1):
                     raise ValueError(f"Invalid value in grid: {grid[row][col]}")
 
