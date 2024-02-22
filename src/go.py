@@ -241,7 +241,6 @@ class Go(GoBase):
         self._turn = turn
         self._board._grid = grid
 
-
     def simulate_move(self, pos: tuple[int, int] | None) -> "GoBase":
         """
         See GoBase.simulate_move
