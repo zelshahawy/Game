@@ -8,7 +8,6 @@ import time
 from colorama import Fore, Style
 
 from fakes import GoFake
-from ui import GoUI
 
 COLORS = [
     Fore.RED,
@@ -25,13 +24,26 @@ STONES = {
     i : COLORS[i] + "●" + Style.RESET_ALL for i in range(8)
 }
 
-class GoTUI(GoUI):
+class GoTUI():
     """
     Class for presenting TUI for a game of Go
     """
+    go: GoFake
+
+    def __init__(self, go: GoFake) -> None:
+        """
+        Constructor
+
+        Args:
+            go: The Go game to display and interact with
+        """
+        self._go = go
+
     def display_board(self) -> None:
         """
-        See GoUI.display_board
+        Displays the current state of the board in the terminal
+
+        Returns: nothing
         """
         size = self._go.size
         board = self._go.grid
@@ -70,7 +82,9 @@ class GoTUI(GoUI):
 
     def get_move(self) -> tuple[int, int]:
         """
-        See GoUI.get_move
+        Retrieves and returns the current player's move
+
+        Returns: the move
         """
         while True:
             time.sleep(0.2)
@@ -97,7 +111,7 @@ class GoTUI(GoUI):
 
     def display_scores(self) -> None:
         """
-        Displays the scores of the game
+        Displays the scores of each player
 
         Returns: nothing
         """
@@ -130,7 +144,8 @@ class GoTUI(GoUI):
 
     def main_loop(self) -> None:
         """
-        Main event loop for the game, retrieves moves and displays board
+        Main event loop for the game, retrieves moves and displays board until
+        the game is over
 
         Returns: nothing
         """

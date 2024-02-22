@@ -6,7 +6,6 @@ import sys
 from typing import Optional
 import pygame
 from fakes import GoFake
-from ui import GoUI
 
 
 BOARD_SIZE = int(sys.argv[1])
@@ -23,11 +22,11 @@ ORANGE = (230, 165, 0)
 WHITE = (255, 255, 255)
 GREY = (100, 100, 100)
 
-class GoGUI(GoUI):
+class GoGUI():
     """
     Graphical version class for GoUI
     """
-
+    go: GoFake
     buttons: dict[str, tuple[int, int]]
     screen: pygame.surface.Surface
     clock_timer: pygame.time.Clock
@@ -35,8 +34,14 @@ class GoGUI(GoUI):
     all_pos: dict[tuple[int,int], tuple[int,int]]
     FONT: pygame.font.Font
 
-    def __init__(self, go_game: GoFake) -> None:
-        super().__init__(go_game)
+    def __init__(self, go: GoFake) -> None:
+        """
+        Constructor
+
+        Args:
+            go: The Go game to display and interact with
+        """
+        self._go = go
 
         pygame.init()
         self.clock_timer= pygame.time.Clock()
@@ -53,7 +58,9 @@ class GoGUI(GoUI):
 
     def display_board(self) -> None:
         """
-        See GoUI.display_board
+        Displays the current state of the board in the GUI
+
+        Returns: nothing
         """
         self.screen.fill(ORANGE)
 
@@ -69,12 +76,6 @@ class GoGUI(GoUI):
             end_vert = (i * CELL_SIZE + BOARD_PADDING,\
                 (BOARD_SIZE - 1) * CELL_SIZE + BOARD_PADDING)
             pygame.draw.aaline(self.screen, GREY, start_vert, end_vert, 3)
-
-    def get_move(self) -> tuple[int, int]:
-        """
-        See GoUI.get_move
-        """
-        return (0, 0)
 
     def _on_click(self, pos_click: tuple[int, int]) -> None:
         """
@@ -96,7 +97,7 @@ class GoGUI(GoUI):
             self._go.legal_move(board_pos):
                 self._go.apply_move(board_pos)
 
-    def _draw_button(self, rect, text):
+    def _draw_button(self, rect: pygame.rect.Rect, text: str) -> None:
         """
         Draws the pass button
         """
