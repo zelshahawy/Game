@@ -131,7 +131,7 @@ class Go(GoBase):
             self._previous_board = tuple(tuple(row) for row in self.grid)
         self._board.set(*pos, self._turn)
 
-
+        # TODO refactor into another method
         for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
             adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
             if self._board.valid_position(*adjacent_pos):
@@ -141,13 +141,13 @@ class Go(GoBase):
         self.pass_turn()
         self._consecutive_passes = 0
 
-    def has_liberties(self, pos :tuple [int, int]) -> bool:
+    def has_liberties(self, pos: tuple[int, int]) -> bool:
         """
-        Calculates the liberties of each stone on the keyboard
+        Returns whether a group of stones has liberties.
         """
-
         for adjacent_pos in self._board.adjacent_positions(pos):
-            if self._board.valid_position(*adjacent_pos) and self.piece_at(adjacent_pos) is None:
+            if self._board.valid_position(*adjacent_pos) and \
+                self.piece_at(adjacent_pos) is None:
                 return True
         return False
 
@@ -166,7 +166,9 @@ class Go(GoBase):
             group.add(current_pos)
 
             for adjacent_pos in self._board.adjacent_positions(current_pos):
-                if self._board.valid_position(*adjacent_pos) and self._board.get(*adjacent_pos) == color and adjacent_pos not in group:
+                if self._board.valid_position(*adjacent_pos) and \
+                    self._board.get(*adjacent_pos) == color \
+                    and adjacent_pos not in group:
                     stack.append(adjacent_pos)
 
         for pos in group:
