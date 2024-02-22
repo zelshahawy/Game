@@ -309,8 +309,8 @@ def test_superko_1() -> None:
     illegal.
     """
     game: Go = Go(19, 2, True)
-    moves: list[tuple[int, int]] = [(5, 6), (5, 5), (4, 7), (4, 6), (6, 7),
-                                    (6, 6), (5, 8), (5, 7), (10, 5), (10, 9)]
+    moves: list[tuple[int, int]] = [(10, 5), (10, 9), (5, 6), (5, 5), (4, 7),
+                                    (4, 6), (6, 7),(6, 6), (5, 8), (5, 7)]
 
     for move in moves:
         game.apply_move(move)
