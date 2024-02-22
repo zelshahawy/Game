@@ -182,7 +182,7 @@ class Go(GoBase):
 
     def scores(self) -> dict[int, int]:
         """
-        Calculate the scores for each player based on territories.
+        See GoBase.scores
         """
         scores = {player: 0 for player in range(1, self._players + 1)}
         visited = set()
