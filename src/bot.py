@@ -4,6 +4,7 @@ Bot implementation for the Go game
 
 import sys
 import random
+from typing import Optional
 from fakes import GoFake
 from botbase import BaseBot, SimulateBots
 from botbase import Players
@@ -42,20 +43,18 @@ class SmartBot(BaseBot):
     #show player inhereted
     def make_move(self, game: GoFake) -> None:
         passing = None
-        possible_moves = [move for move in game.available_moves if move !=\
+        possible_moves: list[Optional[tuple[int, int]]] = [move for move in game.available_moves if move !=\
             (0,0) and game.legal_move(move)]
         if not possible_moves:
-            print("passed turn")
             game.pass_turn()
             return
         possible_moves.append(passing)
-
-        max_value = -1
+        max_value: float | int = -1
         best_moves = []
 
         for move in possible_moves:
             game_copy = game.simulate_move(move)
-            next_moves = game_copy.available_moves
+            next_moves: list[Optional[tuple[int, int]]] = game_copy.available_moves
             next_moves.append(passing)
             total_pieces = 0
             for next_move in next_moves:
@@ -74,7 +73,6 @@ class SmartBot(BaseBot):
         if best_moves:
             best_move = random.choice(best_moves)
             if best_move == passing:
-                print("passed turn inside")
                 game.pass_turn()
             else:
                 game.apply_move(best_move)
@@ -105,7 +103,7 @@ class Simulation(SimulateBots):
         num_of_players = self._game.num_players
         self._game = GoFake(size, num_of_players)
 
-    def simulate_games(self, num_of_games: int) -> tuple[float, float, float]:
+    def simulate_games(self, num_of_games: int) -> tuple[float, float, float, float]:
         """
         Simulate a number of games and return the win percentages.
 
@@ -134,7 +132,8 @@ class Simulation(SimulateBots):
             if len(results) == 2:
                 self._ties += 1
             else:
-                self._wins[results[0]] += 1
+                player = Players(results[0])
+                self._wins[player] += 1
         else:
             scores = self._game.scores()
             max_score = max(scores.values())
@@ -143,9 +142,10 @@ class Simulation(SimulateBots):
                 self._ties += 1
             else:
                 max_score_player = max(scores, key=scores.get)
-                self._wins[max_score_player] += 1
+                player = Players(max_score_player)
+                self._wins[player] += 1
     def calculate_percentages(self, num_of_games: int) -> \
-        tuple[float, float, float]:
+        tuple[float, float, float, float]:
         """
         Calculate the win/tie percentages.
 

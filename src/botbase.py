@@ -48,7 +48,7 @@ class SimulateBots(ABC):
     """
 
     @abstractmethod
-    def simulate_games(self, num_of_games: int) -> tuple[float, float, float]:
+    def simulate_games(self, num_of_games: int) -> tuple[float, float, float, float]:
         """
         sunulate a game between a list of robots
         """
@@ -65,7 +65,7 @@ class SimulateBots(ABC):
 
     @abstractmethod
     def calculate_percentages(self, num_of_games: int) ->\
-        tuple[float, float, float]:
+        tuple[float, float, float, float]:
         """
         Calculate the win/tie percentages.
 
