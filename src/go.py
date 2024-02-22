@@ -25,9 +25,11 @@ class Go(GoBase):
         self._consecutive_passes = 0
 
         if self._superko:
-            self._previous_boards: list[BoardGridType] = []
+            self._previous_boards: set[tuple[tuple[int | None, ...], ...]] = \
+                set()
         else:
-            self._previous_board: BoardGridType | None = None
+            self._previous_board: tuple[tuple[int | None, ...], ...] | None = \
+                None
 
     @property
     def size(self) -> int:
@@ -106,7 +108,9 @@ class Go(GoBase):
         if not self._board.valid_position(*pos):
             raise ValueError("Position is outside the bounds of the board.")
 
-        resulting_board = self.simulate_move(pos).grid
+        resulting_board = tuple(
+            tuple(row) for row in self.simulate_move(pos).grid
+        )
         if self._superko and resulting_board in self._previous_boards:
             return False
         elif not self._superko and resulting_board == self._previous_board:
@@ -122,9 +126,9 @@ class Go(GoBase):
         if not self._board.valid_position(*pos):
             raise ValueError("Position is outside the bounds of the board.")
         if self._superko:
-            self._previous_boards.append(self.grid)
+            self._previous_boards.add(tuple(tuple(row) for row in self.grid))
         else:
-            self._previous_board = self.grid
+            self._previous_board = tuple(tuple(row) for row in self.grid)
         self._board.set(*pos, self._turn)
 
 
@@ -220,7 +224,7 @@ class Go(GoBase):
                 if grid[row][col] not in range(1, self._players+1):
                     raise ValueError(f"Invalid value in grid: {grid[row][col]}")
 
-        self._previous_boards = []
+        self._previous_boards = set()
         self._previous_board = None
         self._consecutive_passes = 0
         self._turn = turn
