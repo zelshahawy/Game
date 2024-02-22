@@ -205,61 +205,11 @@ class GoFake(GoBase):
         return deepcopy(self._grid)
 
     @property
-    def game_turn(self) -> int:
-        """
-        returns number of turns in a game
-        """
-        return self._num_moves
-
-    @grid.setter
-    def grid(self, new_grid: BoardGridType) -> None:
-        """
-        Sets the grid to a new grid
-
-        Args:
-            new_grid: new grid to set the grid to
-
-        Returns: nothing
-        """
-        self._grid = new_grid
-
-    @property
     def turn(self) -> int:
         """
         See GoBase.turn
         """
         return self._turn
-
-    @turn.setter
-    def turn(self, new_turn: int) -> None:
-        """
-        Sets the turn to a new turn
-
-        Args:
-            new_turn: new turn to set the turn to
-
-        Returns: nothing
-        """
-        self._turn = new_turn
-
-    @property
-    def consecutive_passes(self) -> int:
-        """
-        Returns the number of consecutive passes
-        """
-        return self._consecutive_passes
-
-    @consecutive_passes.setter
-    def consecutive_passes(self, new_consecutive_passes: int) -> None:
-        """
-        Sets the consecutive passes to a new number
-
-        Args:
-            new_consecutive_passes: new number to set the consecutive passes to
-
-        Returns: nothing
-        """
-        self._consecutive_passes = new_consecutive_passes
 
     @property
     def available_moves(self) -> ListMovesType:
@@ -426,17 +376,11 @@ class GoFake(GoBase):
         """
         See GoBase.simulate_move
         """
-        new_go = GoFake(self._side, self._players, self._superko)
-        new_go.grid = self.grid
-        new_go.turn = self.turn
-        new_go.consecutive_passes = self._consecutive_passes
-
+        if pos is not None and not self.in_bounds(pos):
+            raise ValueError("Position is outside the bounds of the board.")
+        new_game = deepcopy(self)
         if pos is not None:
-            if not self.in_bounds(pos):
-                raise ValueError("Position is outside the bounds of the board")
-
-            new_go.apply_move(pos)
+            new_game.apply_move(pos)
         else:
-            new_go.pass_turn()
-
-        return new_go
+            new_game.pass_turn()
+        return new_game

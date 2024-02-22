@@ -114,7 +114,7 @@ class Simulation(SimulateBots):
         """
         for _ in range(num_of_games):
             while not self._game.done:
-                if self._game.game_turn >= 256:
+                if self._game.num_moves >= 256:
                     break
                 for bot in self._bots:
                     if self._game.turn == bot.show_player():

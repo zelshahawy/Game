@@ -219,22 +219,3 @@ class Go(GoBase):
         else:
             new_game.pass_turn()
         return new_game
-
-if __name__ == "__main__":
-    go = Go(6,2,False)
-    go.apply_move((3,2)) #white
-    go.apply_move((2,1)) #black
-    go.pass_turn()
-    go.apply_move((3,3)) #black
-    go.pass_turn() #white
-    go.apply_move((3,1)) #black
-    go.pass_turn()
-    go.apply_move((4,2)) #black
-    go.pass_turn()
-    go.apply_move((3,0)) #black
-    go.pass_turn()
-    go.apply_move((2,2)) #black
-
-
-    print(f"Stones at {go.piece_at((3,2))} ")
-    print(f"adjacent stones {go._board.adjacent_positions((3,2))} at 3, 2 is {go.adjacent_stones((3,2))}")
