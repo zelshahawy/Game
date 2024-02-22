@@ -1,13 +1,14 @@
 """
 TUI implementation for GoFake
 """
-from typing import Optional
 import sys
 import time
 
 from colorama import Fore, Style
 
 from fakes import GoFake
+
+PASS_MOVE = (-1, -1)
 
 COLORS = [
     Fore.RED,
@@ -96,7 +97,7 @@ class GoTUI():
             )
             # Handle pass
             if move_input.strip() == "":
-                return (-1, -1)
+                return PASS_MOVE
             try:
                 move = tuple(map(int, move_input.split()))
                 if len (move) != 2 or move not in self._go.available_moves or \
@@ -171,7 +172,7 @@ class GoTUI():
 if __name__ == "__main__":
     try:
         side = sys.argv[1]
-    except IndexError:
-        raise ValueError("Please provide the side length of the board")
+    except IndexError as exc:
+        raise ValueError("Please provide the side length of the board") from exc
     tui = GoTUI(GoFake(int(side), 2))
     tui.main_loop()
