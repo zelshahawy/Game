@@ -172,26 +172,6 @@ class Go(GoBase):
         for pos in group:
             self._board.set(*pos, None)
 
-    def adjacent_stones(self, pos : tuple[int, int]) -> list[Optional[int]]:
-        """
-        Creates a list of adjacent stones near a stone at specific pos
-        """
-        adj_stones: list[Optional[int]] = []
-
-        for pos in self._board.adjacent_positions(pos):
-            adj_stones.append(self.piece_at(pos))
-
-        return adj_stones
-
-    def capture_stones(self) -> None:
-        """
-        Removes a stone in the board if it lacks territories
-        """
-        for i in range(self.size):
-            for j in range(self.size):
-                if not self.has_liberties((i,j)):
-                    self._board.set(i ,j, None)  
-
     def pass_turn(self) -> None:
         """
         See GoBase.pass_turn
