@@ -137,7 +137,7 @@ class Go(GoBase):
             if self._board.valid_position(*adjacent_pos):
                 if self.piece_at(adjacent_pos) not in {None, self._turn}:
                     if not self.has_liberties(adjacent_pos):
-                        self.remove_group(adjacent_pos)
+                        self.capture_group(adjacent_pos)
         self.pass_turn()
         self._consecutive_passes = 0
 
@@ -151,7 +151,7 @@ class Go(GoBase):
                 return True
         return False
 
-    def remove_group(self, pos: tuple[int, int]) -> None:
+    def capture_group(self, pos: tuple[int, int]) -> None:
         """
         Remove a group of stones from the board.
         """
@@ -183,15 +183,45 @@ class Go(GoBase):
 
     def scores(self) -> dict[int, int]:
         """
-        See GoBase.scores
+        Calculate the scores for each player based on territories.
         """
         scores = {player: 0 for player in range(1, self._players + 1)}
+        visited = set()
+
         for row in range(self._side):
             for col in range(self._side):
-                piece = self.piece_at((row, col))
+                pos = (row, col)
+                piece = self.piece_at(pos)
+
                 if piece is not None:
                     scores[piece] += 1
+                elif pos not in visited:
+                    territory, borders = self.find_territory(pos)
+                    visited.update(territory)
+                    if len(borders) == 1:
+                        for player in borders:
+                            scores[player] += len(territory)
+
         return scores
+
+    def find_territory(self, pos: tuple[int, int], territory: set = None, borders: set = None) -> tuple[set[tuple[int, int]], set[int]]:
+        if territory is None:
+            territory = set()
+        if borders is None:
+            borders = set()
+
+        territory.add(pos)
+
+        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
+            if self._board.valid_position(*adjacent_pos):
+                piece = self.piece_at(adjacent_pos)
+                if piece is None and adjacent_pos not in territory:
+                    self.find_territory(adjacent_pos, territory, borders)
+                elif piece is not None:
+                    borders.add(piece)
+
+        return territory, borders
 
     def load_game(self, turn: int, grid: BoardGridType) -> None:
         """
