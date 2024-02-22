@@ -132,8 +132,7 @@ class Go(GoBase):
         self._board.set(*pos, self._turn)
 
 
-        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
+        for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
                 if self.piece_at(adjacent_pos) not in {None, self._turn}:
                     if not self.has_liberties(adjacent_pos):
@@ -202,7 +201,7 @@ class Go(GoBase):
 
         return scores
 
-    def find_territory(self, pos: tuple[int, int], territory: list[int] = None, borders: list[int] = None) -> tuple[set[tuple[int, int]], set[int]]:
+    def find_territory(self, pos: tuple[int, int], territory: list[int] = None, borders: list[int] = None) -> tuple[list[tuple[int, int]], list[int]]:
         if territory is None:
             territory = set()
         if borders is None:
@@ -210,8 +209,7 @@ class Go(GoBase):
 
         territory.append(pos)
 
-        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
+        for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
                 piece = self.piece_at(adjacent_pos)
                 if piece is None and adjacent_pos not in territory:
