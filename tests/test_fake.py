@@ -576,7 +576,7 @@ def test_scores_1() -> None:
     Check the scores for an empty board (0 points per player)
     """
     go = GoFake(19, 2)
-
+    print(go._grid)
     scores = go.scores()
 
     assert scores[1] == 0
