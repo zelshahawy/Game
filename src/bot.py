@@ -4,7 +4,6 @@ Bot implementation for the Go game
 
 import sys
 import random
-from typing import Optional
 from fakes import GoFake
 from botbase import BaseBot, SimulateBots
 from botbase import Players
@@ -26,9 +25,9 @@ class RandomBot(BaseBot):
             (0,0) and game.legal_move(move)]
         if not available_moves:
             game.pass_turn()
-            return
-        move = random.choice(available_moves)
-        game.apply_move(move)
+        else:
+            move = random.choice(available_moves)
+            game.apply_move(move)
 
 
 class SmartBot(BaseBot):
