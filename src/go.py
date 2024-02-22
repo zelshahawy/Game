@@ -201,25 +201,23 @@ class Go(GoBase):
 
         return scores
 
-    def find_territory(self, pos: tuple[int, int], territory: set = None, borders: set = None) -> tuple[set[tuple[int, int]], set[int]]:
-        """
-        finds terrotry and returns the territory and what pieces does it border
-        """
+    def find_territory(self, pos: tuple[int, int], territory: list[int] = None, borders: list[int] = None) -> tuple[set[tuple[int, int]], set[int]]:
         if territory is None:
             territory = []
         if borders is None:
             borders = []
+        if pos not in territory:
+            territory.append(pos)
 
-        territory.append(pos)
-
-        for adjacent_pos in self._board.adjacent_positions(pos):
+        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            adjacent_pos = (pos[0] + direction[0], pos[1] + direction[1])
             if self._board.valid_position(*adjacent_pos):
                 piece = self.piece_at(adjacent_pos)
                 if piece is None and adjacent_pos not in territory:
                     self.find_territory(adjacent_pos, territory, borders)
                 elif piece is not None:
-                    borders.append(piece)
-
+                    if piece not in borders:
+                        borders.append(piece)
         return territory, borders
 
     def load_game(self, turn: int, grid: BoardGridType) -> None:
