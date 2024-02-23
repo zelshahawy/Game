@@ -40,9 +40,7 @@ class SmartBot(BaseBot):
 
     #show player inhereted
     def make_move(self, game: GoFake) -> None:
-        possible_moves = [
-            move for move in game.available_moves if game.legal_move(move)
-        ]
+        possible_moves = [move for move in game.available_moves if game.legal_move(move)]
         if len(possible_moves) == 1 and possible_moves[0] == (0,0):
             game.pass_turn()
             return
@@ -54,10 +52,7 @@ class SmartBot(BaseBot):
                 game_copy = game.simulate_move(None)
             else:
                 game_copy = game.simulate_move(move)
-            next_moves = [
-                move for move in game_copy.available_moves if \
-                game.legal_move(move)
-            ]
+            next_moves = [move for move in game_copy.available_moves if game.legal_move(move)]
             total_pieces = 0
             for next_move in next_moves:
                 if next_move == (0,0):
@@ -107,8 +102,7 @@ class Simulation(SimulateBots):
         num_of_players = self._game.num_players
         self._game = GoFake(size, num_of_players)
 
-    def simulate_games(self, num_of_games: int) -> \
-        tuple[float, float, float, float]:
+    def simulate_games(self, num_of_games: int) -> tuple[float, float, float, float]:
         """
         Simulate a number of games and return the win percentages.
 
@@ -146,9 +140,7 @@ class Simulation(SimulateBots):
             if max_score_count > 1:
                 self._ties += 1
             else:
-                max_score_player = max(
-                    scores, key=lambda player: scores[player]
-                )
+                max_score_player = max(scores, key=lambda player: scores[player])
                 player = Players(max_score_player)
                 self._wins[player] += 1
     def calculate_percentages(self, num_of_games: int) -> \
@@ -159,20 +151,12 @@ class Simulation(SimulateBots):
         num_of_games: The number of games simulated.
         return: A tuple of the win percentages for bot1, bot2, and ties.
         """
-        wining_percentage_black = (
-            self._wins[Players.BLACK] / num_of_games
-        ) * 100
-        wining_percentage_white = (
-            self._wins[Players.WHITE] / num_of_games
-        ) * 100
+        wining_percentage_black = (self._wins[Players.BLACK] / num_of_games) * 100
+        wining_percentage_white = (self._wins[Players.WHITE] / num_of_games) * 100
         tie_percentage = (self._ties) / (num_of_games) * 100
         average_moves_per_game = (self.total_moves) / (num_of_games)
-        return (
-            wining_percentage_white,
-            wining_percentage_black,
-            tie_percentage,
-            average_moves_per_game
-        )
+        return (wining_percentage_white, wining_percentage_black, tie_percentage,
+                average_moves_per_game)
 
 
 def main(num_games: int) -> None:
@@ -185,8 +169,8 @@ def main(num_games: int) -> None:
     bot_white = RandomBot(Players.WHITE)
     bot_black = SmartBot(Players.BLACK)
     random_simulation = Simulation(current_game, [bot_white, bot_black])
-    player_white_win_percentage, player_black_win_percentage, ties_percentage, \
-        average_moves_per_game = random_simulation.simulate_games(num_games)
+    player_white_win_percentage, player_black_win_percentage, ties_percentage, average_moves_per_game = \
+        random_simulation.simulate_games(num_games)
     print(f"Player one (Random) wins: {player_white_win_percentage:.2f}%")
     print(f"Player two (Smart) wins: {player_black_win_percentage:.2f}%")
     print(f"Ties: {ties_percentage:.2f}%")
