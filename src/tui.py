@@ -132,6 +132,7 @@ class GoTUI():
         else:
             print(f"Player {self._go.outcome[0]} wins!\n")
             self.print_scores()
+        print(Fore.GREEN + "\n>>THANKS FOR PLAYING!<<")
         sys.exit(0)
 
     def run_game(self) -> None:
@@ -167,10 +168,10 @@ def main(
     """
     go = Go(size, num_players, super_ko)
     tui = GoTUI(go)
-    tui.run_game()
-
-if __name__ == "__main__":
     print("\033c", end="")
     _ = input(Fore.GREEN + ">>WELCOME TO 碁! PRESS ANY KEY TO START<<\n")
     print("\033c", end="")
+    tui.run_game()
+
+if __name__ == "__main__":
     main()
