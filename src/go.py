@@ -21,6 +21,7 @@ class Go(GoBase):
 
         self._board = Board(side, side)
         self._turn = 1
+        self._num_of_moves = 0
         self._consecutive_passes = 0
 
         if self._superko:
@@ -57,7 +58,13 @@ class Go(GoBase):
         See GoBase.turn
         """
         return self._turn
-
+    
+    @property
+    def num_of_turns(self) -> int:
+        """
+        returns current number of turns of a Go object
+        """
+        return self._num_of_moves
     @property
     def available_moves(self) -> ListMovesType:
         """
@@ -187,6 +194,7 @@ class Go(GoBase):
         See GoBase.pass_turn
         """
         self._consecutive_passes += 1
+        self._num_of_moves += 1
         self._turn = (self._turn % self._players) + 1
 
     def scores(self) -> dict[int, int]:
