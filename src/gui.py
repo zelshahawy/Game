@@ -241,7 +241,7 @@ def play_sound(sound_path):
     my_sound.play(-1)
 
 if __name__ == "__main__":
-    play_sound("src/Japanese_traditional_no_copyright")
+    play_sound("src/bgm")
     go = GoFake(BOARD_SIZE, 2, False)
     goGUI = GoGUI(go)
     goGUI.gui_loop()
