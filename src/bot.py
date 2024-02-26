@@ -2,9 +2,9 @@
 Bot implementation for the Go game
 """
 
-import sys
 import random
-from fakes import GoFake
+import click
+from go import Go
 from botbase import BaseBot, SimulateBots
 from botbase import Players
 
@@ -17,7 +17,7 @@ class RandomBot(BaseBot):
 
     #show player inherited
 
-    def make_move(self, game: GoFake) -> None:
+    def make_move(self, game: Go) -> None:
         """
         Make a random legal move in the game.
         """
@@ -39,7 +39,7 @@ class SmartBot(BaseBot):
     #init method inhereted
 
     #show player inhereted
-    def make_move(self, game: GoFake) -> None:
+    def make_move(self, game: Go) -> None:
         possible_moves = [
             move for move in game.available_moves if game.legal_move(move)
         ]
@@ -84,10 +84,10 @@ class SmartBot(BaseBot):
 class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
 
-    game: GoFake
+    game: Go
     bots: list[BaseBot]
 
-    def __init__(self, game: GoFake, bots: list[BaseBot]) -> None:
+    def __init__(self, game: Go, bots: list[BaseBot]) -> None:
         """
         Initialize the simulation with the game.
 
@@ -105,7 +105,7 @@ class Simulation(SimulateBots):
         """
         size = self._game.size
         num_of_players = self._game.num_players
-        self._game = GoFake(size, num_of_players)
+        self._game = Go(size, num_of_players)
 
     def simulate_games(self, num_of_games: int) -> \
         tuple[float, float, float, float]:
@@ -117,7 +117,7 @@ class Simulation(SimulateBots):
         """
         for _ in range(num_of_games):
             while not self._game.done:
-                if self._game.num_moves == 256:
+                if self._game.num_of_turns == 256:
                     break
                 for bot in self._bots:
                     if self._game.turn == bot.show_player():
@@ -174,29 +174,27 @@ class Simulation(SimulateBots):
             average_moves_per_game
         )
 
-
-def main(num_games: int) -> None:
+@click.command()
+@click.option('-n', '--num-games', default=20, help='Number of games to simulate.')
+@click.option('-s', '--size', default=6, help='Board size.')
+@click.option('-1', '--player1', default='random', help='Strategy for player 1 (random or smart).')
+@click.option('-2', '--player2', default='random', help='Strategy for player 2 (random or smart).')
+def main(num_games: int, size, player1: BaseBot, player2: BaseBot):
     """
     Run the simulation and print the results.
 
     num_games: The number of games to simulate.
     """
-    current_game = GoFake(6, 2)
-    bot_white = RandomBot(Players.WHITE)
-    bot_black = SmartBot(Players.BLACK)
+    current_game = Go(size, 2)
+    bot_white = RandomBot(Players.WHITE) if player1 == 'random' else SmartBot(Players.WHITE)
+    bot_black = RandomBot(Players.BLACK) if player2 == 'random' else SmartBot(Players.BLACK)
     random_simulation = Simulation(current_game, [bot_white, bot_black])
     player_white_win_percentage, player_black_win_percentage, ties_percentage, \
         average_moves_per_game = random_simulation.simulate_games(num_games)
-    print(f"Player one (Random) wins: {player_white_win_percentage:.2f}%")
-    print(f"Player two (Smart) wins: {player_black_win_percentage:.2f}%")
+    print(f"Player one ({player1.capitalize()}) wins: {player_white_win_percentage:.2f}%")
+    print(f"Player two ({player2.capitalize()}) wins: {player_black_win_percentage:.2f}%")
     print(f"Ties: {ties_percentage:.2f}%")
     print(f"Average moves: {average_moves_per_game:.1f}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(
-            "Error in the number of arguments." +
-            " Usage: python3 src/bot.py NUM_GAMES"
-        )
-        sys.exit(1)
-    main(int(sys.argv[1]))
+    main()

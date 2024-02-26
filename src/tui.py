@@ -3,7 +3,7 @@ TUI implementation for Go
 """
 import sys
 import time
-
+import pygame
 from colorama import Fore, Style
 import click
 
@@ -152,6 +152,24 @@ class GoTUI():
             self.print_scores()
         print(Fore.GREEN + "\n>>THANKS FOR PLAYING!<<")
         sys.exit(0)
+
+    def run_game(self) -> None:
+        """
+        Main event loop for the game, retrieves moves and displays board until
+        the game is over
+
+        Returns: nothing
+        """
+        self.print_board()
+        while not self._go.done:
+            move = self.get_move()
+            if move == PASS_MOVE:
+                self._go.pass_turn()
+            else:
+                self._go.apply_move(move)
+            print("\033c", end="")
+            self.print_board()
+        self.end_game()
 
 @click.command()
 @click.option("-n", "--num-players", default=2, help="Number of players")

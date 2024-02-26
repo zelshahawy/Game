@@ -230,7 +230,18 @@ class GoGUI():
             pygame.display.update()
             self.clock_timer.tick(REFRESH_RATE)
 
+def play_sound(sound_path):
+    """
+    given a path to a an audio file, plays it.
+    """
+    my_sound_mixer = pygame.mixer
+    my_sound_mixer.init()
+    my_sound = my_sound_mixer.Sound(sound_path)
+    my_sound.set_volume(1.0)
+    my_sound.play(-1)
+
 if __name__ == "__main__":
+    play_sound("src/Japanese_traditional_no_copyright")
     go = GoFake(BOARD_SIZE, 2, False)
     goGUI = GoGUI(go)
     goGUI.gui_loop()
