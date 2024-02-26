@@ -3,7 +3,7 @@ TUI implementation for Go
 """
 import sys
 import time
-
+import pygame
 from colorama import Fore, Style
 import click
 
@@ -153,6 +153,16 @@ class GoTUI():
             self.print_board()
         self.end_game()
 
+def play_sound(sound_path):
+    """
+    given a path to a an audio file, plays it.
+    """
+    my_sound_mixer = pygame.mixer
+    my_sound_mixer.init()
+    my_sound = my_sound_mixer.Sound(sound_path)
+    my_sound.set_volume(1.0)
+    my_sound.play(-1)
+
 @click.command()
 @click.option("-n", "--num-players", default=2, help="Number of players")
 @click.option("-s", "--size", default=19, help="Size of the board")
@@ -174,4 +184,5 @@ def main(
     tui.run_game()
 
 if __name__ == "__main__":
+    play_sound("src/Japanese_traditional_no_copyright")
     main()
