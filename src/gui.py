@@ -6,6 +6,7 @@ import sys
 from typing import Optional
 import pygame
 from fakes import GoFake
+from go import Go
 
 
 BOARD_SIZE = int(sys.argv[1])
@@ -33,8 +34,9 @@ class GoGUI():
     board_padding: int
     all_pos: dict[tuple[int,int], tuple[int,int]]
     FONT: pygame.font.Font
+    game_started : bool
 
-    def __init__(self, go: GoFake) -> None:
+    def __init__(self, go: Go) -> None:
         """
         Constructor
 
@@ -44,10 +46,13 @@ class GoGUI():
         self._go = go
 
         pygame.init()
+        self.game_started = False
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
 
         self.button_pass_rect = pygame.Rect(5, WIDTH_DISPLAY//2, 50, 30)
+        self. button_start_rect = pygame.Rect(WIDTH_DISPLAY//2 - 50,\
+        WIDTH_DISPLAY//2 + 100, 200, 50)
 
         self.FONT = pygame.font.SysFont("Arial", 25)
 
@@ -62,10 +67,6 @@ class GoGUI():
 
         Returns: nothing
         """
-        self.screen.fill(ORANGE)
-
-        pygame.draw.rect(self.screen, WHITE, self.button_pass_rect)
-
         for i in range(0, BOARD_SIZE):
             start_hori = (BOARD_PADDING, i * CELL_SIZE + BOARD_PADDING)
             end_hori = ((BOARD_SIZE - 1) * CELL_SIZE + BOARD_PADDING,\
@@ -85,6 +86,10 @@ class GoGUI():
         if self.button_pass_rect.collidepoint(pos_click):
             self._go.pass_turn()
             return
+        elif self.button_start_rect.collidepoint(pos_click):
+            self. button_start_rect = pygame.Rect(0,0,0,0)
+            self.game_started = True
+            return
 
         x_click, y_click = pos_click
 
@@ -97,14 +102,15 @@ class GoGUI():
             self._go.legal_move(board_pos):
                 self._go.apply_move(board_pos)
 
-    def _draw_button(self, rect: pygame.rect.Rect, text: str) -> None:
+    def _draw_button(self, font : pygame.font.Font, rect: \
+        pygame.rect.Rect, text: str) -> None:
         """
         Draws the pass button
         """
         pygame.draw.rect(self.screen, WHITE, rect)
 
         if text:
-            text_surf = self.FONT.render(text, True, BLACK)
+            text_surf = font.render(text, True, BLACK)
             text_rect = text_surf.get_rect(center=rect.center)
             self.screen.blit(text_surf, text_rect)
 
@@ -169,23 +175,14 @@ class GoGUI():
 
                 return
 
-    def display_texts(self) -> None:
+    def display_texts(self, text : str, font : pygame.font.Font, pos_text : \
+        tuple[int, int] = (WIDTH_DISPLAY//4 , 30)) -> None:
         """
         Displays important information such as current player turn, final winner
         and scores
         """
-        if self._go.done:
-            winner = self._go.outcome
-
-            text = f" The winner(s) is(are) {winner} \
-            Game Scores : {self._go.scores()}"
-        else:
-            text = f" Current turn: Player {self._go.turn}" + \
-            f"  Game Scores : {self._go.scores()}"
-
-        img = self.FONT.render(text, True, BLACK)
-
-        self.screen.blit(img, (WIDTH_DISPLAY//4 , 30))
+        img = font.render(text, True, BLACK)
+        self.screen.blit(img, pos_text)
 
     def _draw_board_state(self) -> None:
         """
@@ -202,17 +199,38 @@ class GoGUI():
         """
         Displays window
         """
-        self.display_board()
-        self._draw_button(self.button_pass_rect, "PASS")
-        self.display_texts()
-        self._draw_board_state()
+        self.screen.fill(ORANGE)
+
+        if self.game_started:
+            self.display_board()           
+            self._draw_button(self.FONT, self.button_pass_rect, "PASS")
+            self._draw_board_state()
+
+            if self._go.done:
+                winner = self._go.outcome
+
+                text = f" The winner(s) is(are) {winner} \
+                Game Scores : {self._go.scores()}"
+            else:
+                text = f" Current turn: Player {self._go.turn}" + \
+                f"  Game Scores : {self._go.scores()}"
+
+            self.display_texts(text,self.FONT)
+
+        else:
+            START_FONT = pygame.font.SysFont("Arial", 40)
+            GO_FONT = pygame.font.SysFont("Arial", 100)
+
+            self.display_texts("GO",GO_FONT, \
+            (WIDTH_DISPLAY//2, WIDTH_DISPLAY//2))
+            self._draw_button(START_FONT, self.button_start_rect,"START GAME")
+
 
     def gui_loop(self) -> None:
         """
         Handles display of change in game state, position, and players'moves
         """
         loop = True
-
         while loop:
             py_events = pygame.event.get()
             for event in py_events:
@@ -229,6 +247,8 @@ class GoGUI():
             self._draw_window()
             pygame.display.update()
             self.clock_timer.tick(REFRESH_RATE)
+    
+        pygame.quit()
 
 def play_sound(sound_path):
     """
@@ -242,6 +262,6 @@ def play_sound(sound_path):
 
 if __name__ == "__main__":
     play_sound("src/bgm")
-    go = GoFake(BOARD_SIZE, 2, False)
+    go = Go(19,2)
     goGUI = GoGUI(go)
     goGUI.gui_loop()
