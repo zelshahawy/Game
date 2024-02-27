@@ -214,14 +214,15 @@ class Go(GoBase):
                     territory, borders = self.find_territory(pos)
                     visited.update(territory)
                     if len(borders) == 1:
-                        scores[borders[0]] += 1
+                        player = borders.pop()
+                        scores[player] += 1
         return scores
 
     def find_territory(
             self, pos: tuple[int, int],
             territory: list[tuple[int, int]] | None = None,
-            borders: list[int] | None = None
-        ) -> tuple[list[tuple[int, int]], list[int]]:
+            borders: set[int] | None = None
+        ) -> tuple[list[tuple[int, int]], set[int]]:
         """
         Find the territory and borders of a group of empty positions.
 
@@ -236,7 +237,7 @@ class Go(GoBase):
         if territory is None:
             territory = []
         if borders is None:
-            borders = []
+            borders = set()
         if pos not in territory:
             territory.append(pos)
 
@@ -246,8 +247,7 @@ class Go(GoBase):
                 if piece is None and adjacent_pos not in territory:
                     self.find_territory(adjacent_pos, territory, borders)
                 elif piece is not None:
-                    if piece not in borders:
-                        borders.append(piece)
+                    borders.add(piece)
 
         return territory, borders
 
