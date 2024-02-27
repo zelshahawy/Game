@@ -23,26 +23,33 @@ def game_3() -> Go:
 ##################
 #Helper Functions#
 ##################
-def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
+def load_board_with_pieces(n: int, superko: bool = False) -> Go:
     """
-    Creates a board n x n and plays some moves in it
+    loads a n x n board with two players and sets some pieces on the sides of
+    the board
 
     Inputs:
         n [int]: the size of the board
-        players [int]: number of players
         superko [bool]: superko rule status
 
-    Returns Go: The game with some moves playes
+    Returns Go: loaded game with some moves played
     """
-    game = Go(n, players, superko)
     pieces_positions = [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
                         (0, n//2), (n-1, n//2), (n//2, n-1)]
 
-    for pos in pieces_positions:
-        game.apply_move(pos)
+    initial_grid = [[None for _ in range(n)] for _ in range(n)]
+
+    for p, pos in enumerate(pieces_positions):
+        i, j = pos
+        if p % 2 == 0:
+            initial_grid[i][j] = 1
+        else:
+            initial_grid[i][j] = 2
+
+    game = Go(n, 2)
+    game.load_game(1, initial_grid)
 
     return game
-
 ########
 ##Tests#
 ########
@@ -95,7 +102,7 @@ def test_piece_legal_1(n: int) -> None:
     Constructs a 9x9, 13x13 and 19x19 Go game and test the piece_at and
     legal move
     """
-    game = create_board_with_pieces(n, 2)
+    game = load_board_with_pieces(n)
 
     for i in range(n):
         for j in range(n):
@@ -323,7 +330,7 @@ def test_scores_1() -> None:
     Makes several moves that don't result in any territories being created, and
     verifies that scores returns the correct values.
     """
-    game: Go = create_board_with_pieces(19, 2)
+    game: Go = load_board_with_pieces(19)
 
     assert game.scores() == {1: 4, 2: 4}
 
