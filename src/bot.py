@@ -177,9 +177,15 @@ class Simulation(SimulateBots):
 @click.command()
 @click.option('-n', '--num-games', default=20, help='Number of games to simulate.')
 @click.option('-s', '--size', default=6, help='Board size.')
-@click.option('-1', '--player1', default='random', help='Strategy for player 1 (random or smart).')
-@click.option('-2', '--player2', default='random', help='Strategy for player 2 (random or smart).')
-def main(num_games: int, size, player1: BaseBot, player2: BaseBot):
+@click.option('-1', '--player1', default='random',
+              help='Strategy for player 1 (random or smart).')
+@click.option('-2', '--player2', default='random',
+              help='Strategy for player 2 (random or smart).')
+def main(
+    num_games: int,
+    size: int,
+    player1: BaseBot,
+    player2: BaseBot) -> None:
     """
     Run the simulation and print the results.
 
@@ -191,8 +197,8 @@ def main(num_games: int, size, player1: BaseBot, player2: BaseBot):
     random_simulation = Simulation(current_game, [bot_white, bot_black])
     player_white_win_percentage, player_black_win_percentage, ties_percentage, \
         average_moves_per_game = random_simulation.simulate_games(num_games)
-    print(f"Player one ({player1.capitalize()}) wins: {player_white_win_percentage:.2f}%")
-    print(f"Player two ({player2.capitalize()}) wins: {player_black_win_percentage:.2f}%")
+    print(f"Player one ({player1}) wins: {player_white_win_percentage:.2f}%")
+    print(f"Player two ({player2}) wins: {player_black_win_percentage:.2f}%")
     print(f"Ties: {ties_percentage:.2f}%")
     print(f"Average moves: {average_moves_per_game:.1f}")
 

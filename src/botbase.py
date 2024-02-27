@@ -4,7 +4,7 @@ Base class for the bot implementation
 
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from fakes import GoFake
+from go import Go
 
 
 
@@ -36,7 +36,7 @@ class BaseBot(ABC):
 
 
     @abstractmethod
-    def make_move(self, game: GoFake) -> None:
+    def make_move(self, game: Go) -> None:
         """
         Make a random legal move in the game.
         """
