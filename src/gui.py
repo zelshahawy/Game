@@ -18,11 +18,21 @@ WIDTH_DISPLAY = BOARD_SIZE * CELL_SIZE
 
 REFRESH_RATE = 24
 
-BLACK = (0, 0, 0)
 ORANGE = (230, 165, 0)
+
+BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREY = (100, 100, 100)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
+MAGENTA = (255, 0, 255)
+PURPLE = (128, 0, 128)
 
+
+
+PLAYER_COLORS = [0, BLACK, WHITE, BLUE, PURPLE, RED, GREEN, MAGENTA, CYAN, GREY]
 class GoGUI():
     """
     Graphical version class for GoUI
@@ -49,6 +59,8 @@ class GoGUI():
         self.game_started = False
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
+        self.player_colors = { player_int : PLAYER_COLORS[player_int] for\
+        player_int in range(1, go.num_players + 1)}
 
         self.button_pass_rect = pygame.Rect(5, WIDTH_DISPLAY//2, 50, 30)
         self. button_start_rect = pygame.Rect(WIDTH_DISPLAY//2 - 50,\
@@ -131,20 +143,13 @@ class GoGUI():
 
         self.all_pos[(x,y)] = (stone_x, stone_y)
 
-        if num_player == 1:
+        if num_player:
             pygame.draw.circle(
                 self.screen,
-                WHITE,
+                self.player_colors[num_player],
                 (stone_x, stone_y),
-                PLAYER_STONE_RADIUS
-            )
-        elif num_player == 2:
-            pygame.draw.circle(
-                self.screen,
-                BLACK,
-                (stone_x, stone_y),
-                PLAYER_STONE_RADIUS
-            )
+                PLAYER_STONE_RADIUS)
+
         elif num_player is None:
             self._hover_board_pos(pygame.mouse.get_pos())
 
@@ -176,7 +181,7 @@ class GoGUI():
                 return
 
     def display_texts(self, text : str, font : pygame.font.Font, pos_text : \
-        tuple[int, int] = (WIDTH_DISPLAY//4 , 30)) -> None:
+        tuple[int, int] = (BOARD_SIZE , 30)) -> None:
         """
         Displays important information such as current player turn, final winner
         and scores
@@ -209,11 +214,12 @@ class GoGUI():
             if self._go.done:
                 winner = self._go.outcome
 
-                text = f" The winner(s) is(are) {winner} \
-                Game Scores : {self._go.scores()}"
+                text = f" The winner(s) is(are) {winner} " + \
+                f" Game Scores : {self._go.scores()}"
             else:
-                text = f" Current turn: Player {self._go.turn}" + \
-                f"  Game Scores : {self._go.scores()}"
+                text = f" Current turn: Player {self._go.turn} " + \
+                f" Game Scores : {self._go.scores()}"
+                self._draw_player_stone(self._go.turn, (-1, -1))
 
             self.display_texts(text,self.FONT)
 
@@ -262,6 +268,6 @@ def play_sound(sound_path):
 
 if __name__ == "__main__":
     play_sound("src/bgm")
-    go = Go(19,2)
+    go = Go(19,9)
     goGUI = GoGUI(go)
     goGUI.gui_loop()
