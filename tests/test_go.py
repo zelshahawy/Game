@@ -341,12 +341,25 @@ def test_superko_1() -> None:
     violate the super ko rule. Checks that legal_move identifies the move as
     illegal.
     """
-    game: Go = Go(19, 2, True)                                                      #is this even right. i need to check this
-    moves: list[tuple[int, int]] = [(10, 5), (10, 9), (5, 6), (5, 5), (4, 7),
-                                    (4, 6), (6, 7),(6, 6), (5, 8), (5, 7)]
+    white_moves = [(9, 5), (9, 6), (9, 7), (9, 8), (8, 8), (7, 8), (7, 9),
+                   (6, 9), (5, 9), (7, 5), (6, 5), (5, 6)]
+    black_moves = [(8, 5), (8, 6), (8, 7), (7, 7), (6, 7), (6, 8), (5, 8),
+                   (6, 6)]
 
-    for move in moves:
-        game.apply_move(move)
+    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+    for pos in white_moves:
+        i, j = pos
+        initial_grid[i][j] = 1
+
+    for pos in black_moves:
+        i, j = pos
+        initial_grid[i][j] = 2
+
+    game: Go = Go(19, 2, True)
+    game.load_game(1, initial_grid)
+
+    game.apply_move((5, 7))
+    game.apply_move((5, 5))
 
     assert not game.legal_move((5, 6))
 
