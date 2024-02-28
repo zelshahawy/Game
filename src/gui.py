@@ -267,7 +267,7 @@ def play_sound(sound_path):
     my_sound.play(-1)
 
 if __name__ == "__main__":
-    play_sound("src/bgm")
-    go = Go(19,5)
+    play_sound("src/data/bgm")
+    go = Go(19,9)
     goGUI = GoGUI(go)
     goGUI.gui_loop()

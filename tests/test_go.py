@@ -23,25 +23,60 @@ def game_3() -> Go:
 ##################
 #Helper Functions#
 ##################
-def create_board_with_pieces(n: int, players: int, superko: bool = False) -> Go:
+def load_board_with_pieces(n: int, superko: bool = False) -> Go:
     """
-    Creates a board n x n and plays some moves in it
+    loads a n x n board with two players and sets some pieces on the sides of
+    the board
 
     Inputs:
         n [int]: the size of the board
-        players [int]: number of players
         superko [bool]: superko rule status
 
-    Returns Go: The game with some moves playes
+    Returns Go: loaded game with some moves played
     """
-    game = Go(n, players, superko)
     pieces_positions = [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
                         (0, n//2), (n-1, n//2), (n//2, n-1)]
 
-    for pos in pieces_positions:
-        game.apply_move(pos)
+    initial_grid = [[None for _ in range(n)] for _ in range(n)]
+
+    for p, pos in enumerate(pieces_positions):
+        i, j = pos
+        if p % 2 == 0:
+            initial_grid[i][j] = 1
+        else:
+            initial_grid[i][j] = 2
+
+    game = Go(n, 2)
+    game.load_game(1, initial_grid)
 
     return game
+
+
+def sets_grid(game: Go, lst: list[tuple[int, int]]) -> Go:
+    """
+    Loads a 19x19 2-player Go game with values at positions in the list provided
+
+    Input:
+        lst [lst[tuple]]: list of positions to be occupied with pieces
+
+    Returns: Go game set with pieces at the locations given
+    """
+    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+
+    for p, pos in enumerate(lst):
+        i, j = pos
+        if p % 2 == 0:
+            initial_grid[i][j] = 1
+        else:
+            initial_grid[i][j] = 2
+
+    if len(lst) % 2 == 0:
+        game.load_game(1, initial_grid)
+    else:
+        game.load_game(2, initial_grid)
+
+    return game
+
 
 ########
 ##Tests#
@@ -95,7 +130,7 @@ def test_piece_legal_1(n: int) -> None:
     Constructs a 9x9, 13x13 and 19x19 Go game and test the piece_at and
     legal move
     """
-    game = create_board_with_pieces(n, 2)
+    game = load_board_with_pieces(n)
 
     for i in range(n):
         for j in range(n):
@@ -128,18 +163,13 @@ def test_available_moves_1(n: int) -> None:
     """
     constructs a 19x19, 9x9 and 13x13 Go game and test the available_moves
     """
-    game = Go(n, 2)
+    game = load_board_with_pieces(n)
     expected_moves: list[tuple[int, int]] = []
     for i in range(game.size):
         for j in range(game.size):
-            expected_moves.append((i, j))
-
-    assert game.available_moves == expected_moves
-
-    for i in range(4):
-        for j in range(4):
-            game.apply_move((i, j))
-            expected_moves.remove((i, j))
+            if not (i, j) in [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
+                        (0, n//2), (n-1, n//2), (n//2, n-1)]:
+                expected_moves.append((i, j))
 
     assert game.available_moves == expected_moves
 
@@ -260,29 +290,31 @@ def test_pass_3(game: Go) -> None:
 
 def test_capture_1(game: Go) -> None:
     """
-    Makes moves that will result in one piece being captured. Verifies that the
+    Loads moves that will result in one piece being captured. Verifies that the
     piece is indeed captured.
     """
     moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6), (5, 7)]
+                                    (6, 6), (10, 6)]
 
-    for move in moves:
-        game.apply_move(move)
+    game = sets_grid(game, moves)
+
+    game.apply_move((5, 7))
 
     assert game.piece_at((5, 6)) == None
 
 
 def test_capture_2(game: Go) -> None:
     """
-    Makes moves that will result in multiple pieces being captured. Verifies
+    Loads moves that will result in multiple pieces being captured. Verifies
     that all the pieces were indeed captured.
     """
     moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
                                     (6, 6), (10, 6), (6, 7), (5, 7), (5, 8),
-                                    (10, 7), (4, 7)]
+                                    (10, 7)]
 
-    for move in moves:
-        game.apply_move(move)
+    game = sets_grid(game, moves)
+
+    game.apply_move((4, 7))
 
     assert game.piece_at((5, 6)) == None
     assert game.piece_at((5, 7)) == None
@@ -294,10 +326,11 @@ def test_ko_1(game: Go) -> None:
     violate the ko rule. Checks that legal_move identifies the move as illegal.
     """
     moves: list[tuple[int, int]] = [(5, 6), (5, 5), (4, 7), (4, 6), (6, 7),
-                                    (6, 6), (5, 8), (5, 7)]
+                                    (6, 6), (5, 8)]
 
-    for move in moves:
-        game.apply_move(move)
+    game = sets_grid(game, moves)
+
+    game.apply_move((5, 7))
 
     assert not game.legal_move((5, 6))
 
@@ -308,12 +341,25 @@ def test_superko_1() -> None:
     violate the super ko rule. Checks that legal_move identifies the move as
     illegal.
     """
-    game: Go = Go(19, 2, True)
-    moves: list[tuple[int, int]] = [(10, 5), (10, 9), (5, 6), (5, 5), (4, 7),
-                                    (4, 6), (6, 7),(6, 6), (5, 8), (5, 7)]
+    white_moves = [(9, 5), (9, 6), (9, 7), (9, 8), (8, 8), (7, 8), (7, 9),
+                   (6, 9), (5, 9), (7, 5), (6, 5), (5, 6)]
+    black_moves = [(8, 5), (8, 6), (8, 7), (7, 7), (6, 7), (6, 8), (5, 8),
+                   (6, 6)]
 
-    for move in moves:
-        game.apply_move(move)
+    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+    for pos in white_moves:
+        i, j = pos
+        initial_grid[i][j] = 1
+
+    for pos in black_moves:
+        i, j = pos
+        initial_grid[i][j] = 2
+
+    game: Go = Go(19, 2, True)
+    game.load_game(1, initial_grid)
+
+    game.apply_move((5, 7))
+    game.apply_move((5, 5))
 
     assert not game.legal_move((5, 6))
 
@@ -323,7 +369,7 @@ def test_scores_1() -> None:
     Makes several moves that don't result in any territories being created, and
     verifies that scores returns the correct values.
     """
-    game: Go = create_board_with_pieces(19, 2)
+    game: Go = load_board_with_pieces(19)
 
     assert game.scores() == {1: 4, 2: 4}
 
@@ -334,10 +380,11 @@ def test_scores_2(game: Go) -> None:
     verifies that scores returns the correct values.
     """
     moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6), (5, 7)]
+                                    (6, 6), (10, 6)]
 
-    for move in moves:
-        game.apply_move(move)
+    game = sets_grid(game, moves)
+
+    game.apply_move((5, 7))
 
     assert game.scores() == {1: 3, 2: 5}
 
@@ -348,10 +395,11 @@ def test_outcome_4(game: Go) -> None:
     the game and, verifies the outcome.
     """
     moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6), (5, 7)]
+                                    (6, 6), (10, 6)]
 
-    for move in moves:
-        game.apply_move(move)
+    game = sets_grid(game, moves)
+
+    game.apply_move((5, 7))
 
     game.pass_turn()
     game.pass_turn()
@@ -430,8 +478,7 @@ def test_simulate_move_2(game: Go) -> None:
         (13, 2),
     ]
 
-    for move in initial_moves:
-        game.apply_move(move)
+    game = sets_grid(game, initial_moves)
 
     new_go = game.simulate_move((5, 5))
 
@@ -554,8 +601,7 @@ def test_grid_3(game: Go) -> None:
         (12, 2),
     ]
 
-    for move in moves:
-        game.apply_move(move)
+    game = sets_grid(game, moves)
 
     grid = game.grid
 

@@ -58,7 +58,7 @@ class Go(GoBase):
         See GoBase.turn
         """
         return self._turn
-    
+
     @property
     def num_of_turns(self) -> int:
         """
@@ -154,7 +154,7 @@ class Go(GoBase):
             pos: The position of a stone in the group.
 
         Returns:
-            A boolean indicating whether the group has liberties.        
+            A boolean indicating whether the group has liberties.
         """
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos) and \
@@ -168,7 +168,7 @@ class Go(GoBase):
 
         Args:
             pos: The position of a stone in the group to capture.
-        
+
         Returns: nothing
         """
         color = self._board.get(*pos)
@@ -230,7 +230,7 @@ class Go(GoBase):
             pos: The position to start from.
             territory (optional): The territory found so far.
             borders (optional): The borders found so far.
-        
+
         Returns:
             A tuple containing the territory and borders, respectively.
         """
@@ -261,8 +261,9 @@ class Go(GoBase):
             raise ValueError("Invalid grid size")
         for _, row in enumerate(grid):
             for _, value in enumerate(row):
-                if value not in range(1, self._players+1):
-                    raise ValueError(f"Invalid value in grid: {value}")
+                if value != None:
+                    if value not in range(1, self._players+1):
+                        raise ValueError(f"Invalid value in grid: {value}")
 
         self._previous_boards = set()
         self._previous_board = None
