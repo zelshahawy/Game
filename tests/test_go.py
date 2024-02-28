@@ -54,7 +54,8 @@ def load_board_with_pieces(n: int, superko: bool = False) -> Go:
 
 def sets_grid(game: Go, lst: list[tuple[int, int]]) -> Go:
     """
-    Loads a 19x19 2-player Go game with values at positions in the list provided
+    Loads a 19x19 2-player Go game with values at positions in the list
+    provided. Follows the order/turn while setting the pieces
 
     Input:
         lst [lst[tuple]]: list of positions to be occupied with pieces
@@ -77,6 +78,36 @@ def sets_grid(game: Go, lst: list[tuple[int, int]]) -> Go:
 
     return game
 
+def sets_grid_no_order(white: list[tuple[int, int]], black:
+                       list[tuple[int, int]], super_ko: bool = False) -> Go:
+    """
+    Loads a 19x19 2-player Go game with values at positions in the lists
+    provided. Does not follow the order/turn in setting the pieces
+
+    Input:
+        white [lst[tuple]]: list of positions to be occupied with white pieces
+        black [lst[tuple]]: list of positions to be occupied with black pieces
+        super_ko [bool]: Status of the superko rule
+
+    Returns: Go game set with pieces at the locations given
+    """
+    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+    for pos in white:
+        i, j = pos
+        initial_grid[i][j] = 1
+
+    for pos in black:
+        i, j = pos
+        initial_grid[i][j] = 2
+
+    if super_ko:
+        game = Go(19, 2, True)
+    else:
+        game = Go(19, 2)
+
+    game.load_game(1, initial_grid)
+
+    return game
 
 ########
 ##Tests#
@@ -346,17 +377,7 @@ def test_superko_1() -> None:
     black_moves = [(8, 5), (8, 6), (8, 7), (7, 7), (6, 7), (6, 8), (5, 8),
                    (6, 6)]
 
-    initial_grid = [[None for _ in range(19)] for _ in range(19)]
-    for pos in white_moves:
-        i, j = pos
-        initial_grid[i][j] = 1
-
-    for pos in black_moves:
-        i, j = pos
-        initial_grid[i][j] = 2
-
-    game: Go = Go(19, 2, True)
-    game.load_game(1, initial_grid)
+    game: Go = sets_grid_no_order(white_moves, black_moves, True)
 
     game.apply_move((5, 7))
     game.apply_move((5, 5))
@@ -455,28 +476,10 @@ def test_simulate_move_2(game: Go) -> None:
     After making a few moves, check that simulating a move
     correctly creates a new game.
     """
-    initial_moves = [
-        (3, 3),
-        (6, 16),
-        (1, 1),
-        (13, 0),
-        (16, 1),
-        (18, 15),
-        (13, 14),
-        (2, 10),
-        (1, 17),
-        (3, 13),
-        (11, 2),
-        (2, 8),
-        (13, 11),
-        (11, 0),
-        (4, 17),
-        (3, 6),
-        (16, 2),
-        (5, 2),
-        (14, 8),
-        (13, 2),
-    ]
+    initial_moves = [(3, 3), (6, 16), (1, 1), (13, 0), (16, 1), (18, 15),
+                     (13, 14), (2, 10), (1, 17), (3, 13), (11, 2), (2, 8),
+                     (13, 11), (11, 0), (4, 17), (3, 6), (16, 2), (5, 2),
+                     (14, 8), (13, 2)]
 
     game = sets_grid(game, initial_moves)
 
@@ -578,28 +581,9 @@ def test_grid_3(game: Go) -> None:
     Check that grid returns a correct copy of the board after making
     a few moves (none of the moves will result in a capture)
     """
-    moves = [
-        (3, 3),
-        (6, 16),
-        (1, 1),
-        (13, 0),
-        (16, 1),
-        (18, 15),
-        (13, 14),
-        (2, 10),
-        (1, 17),
-        (3, 13),
-        (11, 2),
-        (2, 8),
-        (13, 11),
-        (11, 0),
-        (4, 17),
-        (3, 6),
-        (16, 2),
-        (5, 2),
-        (14, 8),
-        (12, 2),
-    ]
+    moves = [(3, 3), (6, 16), (1, 1), (13, 0), (16, 1), (18, 15), (13, 14),
+             (2, 10), (1, 17), (3, 13), (11, 2), (2, 8), (13, 11), (11, 0),
+             (4, 17), (3, 6), (16, 2), (5, 2), (14, 8), (12, 2)]
 
     game = sets_grid(game, moves)
 
@@ -608,3 +592,17 @@ def test_grid_3(game: Go) -> None:
     for row in range(game.size):
         for col in range(game.size):
             assert grid[row][col] == game.piece_at((row, col))
+
+def test_ten_capture() -> None:
+    """
+    Loads game and tests the capture of 10 pieces
+    """
+    white_moves = [(8, 7), (9, 7), (10, 7), (11, 8), (11, 10), (10, 11), (9, 11)
+                   , (8, 11), (7, 10), (7, 9), (7, 8)]
+    black_moves = [(8, 8), (8, 9), (8, 10), (9, 8), (9, 9), (9, 10), (10, 8),
+                   (10, 9), (10, 10), (11, 9)]
+
+    game = sets_grid_no_order(white_moves, black_moves)
+    game.apply_move((12, 9))
+
+    assert game.scores() == {1: 22, 2: 0}
