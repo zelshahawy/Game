@@ -605,4 +605,54 @@ def test_ten_capture() -> None:
     game = sets_grid_no_order(white_moves, black_moves)
     game.apply_move((12, 9))
 
+    for pos in black_moves:
+        assert game.piece_at(pos) == None
+
     assert game.scores() == {1: 22, 2: 0}
+
+def test_scores_6() -> None:
+    """
+    Loads two-player game that ends withone  territory per player, and one
+    neutral territory. The test must validate that the scores for each player
+    are as expected
+    """
+    white_moves = [(7, 6), (6, 7), (7, 8), (8, 7), (10, 8), (12, 8)]
+    black_moves = [(6, 10), (7, 9), (8, 10), (7, 11), (11, 7), (11, 9)]
+
+    game = sets_grid_no_order(white_moves, black_moves)
+
+    game.pass_turn()
+    game.pass_turn()
+
+    assert game.scores() == {1: 7, 2: 7}
+
+def test_scores_7(game_3: Go) -> None:
+    """
+    Loads 3-player game that ends with one territory per player, and one
+    neutral territory. The test must validate that the scores for each player
+    are as expected
+    """
+    white_moves = [(7, 5), (6, 6), (7, 7), (8, 6), (10, 9), (11, 10)]
+    black_moves = [(7, 8), (6, 9), (7, 10), (8, 9), (11, 8)]
+    red_moves = [(7, 11), (6, 12), (7, 13), (8, 12), (12, 9)]
+
+    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+
+    for pos in white_moves:
+        i, j = pos
+        initial_grid[i][j] = 1
+
+    for pos in black_moves:
+        i, j = pos
+        initial_grid[i][j] = 2
+
+    for pos in red_moves:
+        i, j = pos
+        initial_grid[i][j] = 3
+
+    game_3.load_game(1, initial_grid)
+    game_3.pass_turn()
+    game_3.pass_turn()
+    game_3.pass_turn()
+
+    assert game_3.scores() == {1: 7, 2: 6, 3: 6}
