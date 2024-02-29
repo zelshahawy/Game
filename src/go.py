@@ -143,6 +143,7 @@ class Go(GoBase):
                 if self.piece_at(adjacent_pos) not in {None, self._turn}:
                     if not self.has_liberties(adjacent_pos):
                         self.capture_group(adjacent_pos)
+
         self.pass_turn()
         self._consecutive_passes = 0
 
@@ -156,10 +157,23 @@ class Go(GoBase):
         Returns:
             A boolean indicating whether the group has liberties.
         """
-        for adjacent_pos in self._board.adjacent_positions(pos):
-            if self._board.valid_position(*adjacent_pos) and \
-                self.piece_at(adjacent_pos) is None:
-                return True
+        color = self._board.get(*pos)
+        if color is None:
+            return False
+
+        group = set()
+        stack = [pos]
+        while stack:
+            current_pos = stack.pop()
+            group.add(current_pos)
+
+            for adjacent_pos in self._board.adjacent_positions(current_pos):
+                if self._board.valid_position(*adjacent_pos):
+                    adjacent_piece = self._board.get(*adjacent_pos)
+                    if adjacent_piece is None:
+                        return True
+                    elif adjacent_piece == color and adjacent_pos not in group:
+                        stack.append(adjacent_pos)
         return False
 
     def capture_group(self, pos: tuple[int, int]) -> None:
@@ -196,6 +210,7 @@ class Go(GoBase):
         self._consecutive_passes += 1
         self._num_of_moves += 1
         self._turn = (self._turn % self._players) + 1
+
 
     def scores(self) -> dict[int, int]:
         """
