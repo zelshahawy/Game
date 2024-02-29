@@ -143,7 +143,8 @@ class Go(GoBase):
                 if self.piece_at(adjacent_pos) not in {None, self._turn}:
                     if not self.has_liberties(adjacent_pos):
                         self.capture_group(adjacent_pos)
-
+        if not self.has_liberties(pos):
+            self.capture_group(pos)
         self.pass_turn()
         self._consecutive_passes = 0
 
