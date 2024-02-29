@@ -21,13 +21,18 @@ class RandomBot(BaseBot):
         """
         Make a random legal move in the game.
         """
-        available_moves = [move for move in game.available_moves if move !=\
-            (0,0) and game.legal_move(move)]
+        PASS = (-1, -1)
+        available_moves = [move for move in game.available_moves if \
+            game.legal_move(move)]
         if not available_moves:
             game.pass_turn()
         else:
+            available_moves.append(PASS)
             move = random.choice(available_moves)
-            game.apply_move(move)
+            if move == PASS:
+                game.pass_turn()
+            else:
+                game.apply_move(move)
 
 
 class SmartBot(BaseBot):
@@ -39,18 +44,21 @@ class SmartBot(BaseBot):
     #init method inhereted
 
     #show player inhereted
+
+
     def make_move(self, game: Go) -> None:
+        PASS = (-1, -1)
         possible_moves = [
             move for move in game.available_moves if game.legal_move(move)
         ]
-        if len(possible_moves) == 1 and possible_moves[0] == (0,0):
+        if not possible_moves:
             game.pass_turn()
             return
         max_value: float | int = -1
         best_moves = []
-
+        possible_moves.append(PASS)
         for move in possible_moves:
-            if move == (0,0):
+            if move == PASS:
                 game_copy = game.simulate_move(None)
             else:
                 game_copy = game.simulate_move(move)
@@ -58,9 +66,10 @@ class SmartBot(BaseBot):
                 move for move in game_copy.available_moves if \
                 game.legal_move(move)
             ]
+            next_moves.append(PASS)
             total_pieces = 0
             for next_move in next_moves:
-                if next_move == (0,0):
+                if next_move == PASS:
                     game_copy2 = game_copy.simulate_move(None)
                 else:
                     game_copy2 = game_copy.simulate_move(next_move)
@@ -74,7 +83,8 @@ class SmartBot(BaseBot):
                 best_moves.append(move)
         if best_moves:
             best_move = random.choice(best_moves)
-            if best_move == (0,0):
+            if best_move == PASS:
+                print(f"{self.show_player()} passed turn")
                 game.pass_turn()
             else:
                 game.apply_move(best_move)
