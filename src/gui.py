@@ -275,7 +275,8 @@ class GoGUI():
 @click.option("-s", "--size", default=19, help="Size of the board")
 @click.option("--simple-ko", is_flag=True, help="Use simple ko rule")
 @click.option("--super-ko", is_flag=True, help="Use super ko rule")
-def create_game(num_players: int , size: int, simple_ko : bool, super_ko: bool):
+def create_game(num_players: int , size: int, simple_ko : bool, super_ko: bool)\
+    -> None:
     """
     Creates go game from click commands, initializes GUI
         Args:
