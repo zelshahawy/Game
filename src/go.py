@@ -68,6 +68,7 @@ class Go(GoBase):
         returns current number of turns of a Go object
         """
         return self._num_of_moves
+    
     @property
     def available_moves(self) -> ListMovesType:
         """
@@ -278,11 +279,17 @@ class Go(GoBase):
         if turn > self._players:
             raise ValueError("Invalid turn number")
         if len(grid) != self._side:
+            raise ValueError("Invalid column size")
+        for row in grid:
+            if len(row) != self._side:
+                raise ValueError("Invalid row size")
+        if len(grid) != self._side:
             raise ValueError("Invalid grid size")
         for _, row in enumerate(grid):
             for _, value in enumerate(row):
                 if value is not None:
-                    if value not in range(1, self._players+1):
+                    if value not in range(1, self._players+1) and \
+                        value is not None:
                         raise ValueError(f"Invalid value in grid: {value}")
 
         self._previous_boards = set()
