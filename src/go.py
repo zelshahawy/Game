@@ -76,7 +76,7 @@ class Go(GoBase):
         moves = []
         for row in range(self._side):
             for col in range(self._side):
-                if self._board.get(row, col) is None:
+                if self._board.get(row, col) is None and self.legal_move((row, col)):
                     moves.append((row, col))
         return moves
 

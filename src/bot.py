@@ -17,24 +17,30 @@ class RandomBot(BaseBot):
     #init method inherited
 
     #show player inherited
+    def get_move(self, game: Go) -> tuple[int, int]:
+        """
+        gets the move to be made by a random bot
+        """
+        available_moves = [move for move in game.available_moves if \
+            game.legal_move(move)]
+        if not available_moves:
+            return PASS
+        else:
+            available_moves.append(PASS)
+            move = random.choice(available_moves)
+            return move
 
     def make_move(self, game: Go) -> None:
         """
         Make a random legal move in the game.
         """
 
-        available_moves = [move for move in game.available_moves if \
-            game.legal_move(move)]
-        if not available_moves:
+        random_move = self.get_move(game)
+        if random_move == PASS:
+            print("random skipped")
             game.pass_turn()
         else:
-            available_moves.append(PASS)
-            move = random.choice(available_moves)
-            if move == PASS:
-                print("random skipped")
-                game.pass_turn()
-            else:
-                game.apply_move(move)
+            game.apply_move(random_move)
 
 
 class SmartBot(BaseBot):
@@ -48,13 +54,15 @@ class SmartBot(BaseBot):
     #show player inhereted
 
 
-    def make_move(self, game: Go) -> None:
+    def get_move(self, game: Go) -> tuple[int, int] | None:
+        """
+        returns the move to be made by the bot
+        """
         possible_moves = [
             move for move in game.available_moves if game.legal_move(move)
         ]
         if not possible_moves:
-            game.pass_turn()
-            return
+            return None
         max_value: float | int = -1
         best_moves = []
         possible_moves.append(PASS)
@@ -65,7 +73,7 @@ class SmartBot(BaseBot):
                 game_copy = game.simulate_move(move)
             next_moves = [
                 move for move in game_copy.available_moves if \
-                game.legal_move(move)
+                game_copy.legal_move(move)
             ]
             next_moves.append(PASS)
             total_pieces = 0
@@ -83,15 +91,17 @@ class SmartBot(BaseBot):
             elif value == max_value:
                 best_moves.append(move)
         if best_moves:
-            best_move = random.choice(best_moves)
-            if best_move == PASS:
-                print(f"smart passed turn")
-                game.pass_turn()
-            else:
-                game.apply_move(best_move)
+            return random.choice(best_moves)
         else:
-            print("skipped move because no moves are available- smart")
+            return None
+
+    def make_move(self, game: Go) -> None:
+        best_move = self.get_move(game)
+        if best_move is None or best_move == PASS:
+            print(f"smart passed turn")
             game.pass_turn()
+        else:
+            game.apply_move(best_move)
 
 class Simulation(SimulateBots):
     """Simulates a number of games between two RandomBots."""
@@ -135,6 +145,8 @@ class Simulation(SimulateBots):
                     if self._game.turn == bot.show_player():
                         bot.make_move(self._game)
                         self.total_moves += 1
+                    if self._game.done:
+                        break
             self.update_results(self._game.outcome)
             self.reset_game()
         return self.calculate_percentages(num_of_games)
@@ -196,8 +208,8 @@ class Simulation(SimulateBots):
 def main(
     num_games: int,
     size: int,
-    player1: BaseBot,
-    player2: BaseBot) -> None:
+    player1: str,
+    player2: str) -> None:
     """
     Run the simulation and print the results.
 
