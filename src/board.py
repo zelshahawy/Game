@@ -38,6 +38,13 @@ class Board:
         get a copy of the grid of the board.
         """
         return deepcopy(self._grid)
+    
+    @grid.setter
+    def grid(self, new_grid: BoardGridType) -> None:
+        """
+        sets a grid to a new grid
+        """
+        self._grid = new_grid
 
     def set(self, row: int, col: int, value: int | None) -> None:
         """

@@ -277,7 +277,7 @@ class Go(GoBase):
             raise ValueError("Invalid grid size")
         for _, row in enumerate(grid):
             for _, value in enumerate(row):
-                if value != None:
+                if value is not None:
                     if value not in range(1, self._players+1):
                         raise ValueError(f"Invalid value in grid: {value}")
 
@@ -285,7 +285,7 @@ class Go(GoBase):
         self._previous_board = None
         self._consecutive_passes = 0
         self._turn = turn
-        self._board._grid = grid
+        self._board.grid = grid
 
     def simulate_move(self, pos: tuple[int, int] | None) -> "GoBase":
         """
