@@ -323,6 +323,12 @@ def play_sound(sound_path : any) -> None:
     my_sound.set_volume(1.0)
     my_sound.play(-1)
 
-if __name__ == "__main__":
+def main() -> None:
+    """
+    Main function for running GUI
+    """
     play_sound("src/data/bgm")
     create_game()
+
+if __name__ == "__main__":
+    main()

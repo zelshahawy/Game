@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "go_cmsc14200"
+version = "2024.0.0"
+authors = [
+    {name="Esslam Ashour", email="esslamashour@uchicago.edu"},
+    {name="Ziad Elshahawy", email="zelshahawy@uchicago.edu"},
+    {name="John Rugemalila", email="johnruge@uchicago.edu"},
+    {name="Ray Simbiri", email="simbiri@uchicago.edu"},
+]
+description = "University of Chicago CMSC 14200 Winter 2024 Project - Go"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+
+[project.scripts]
+go-tui = "tui:main"
+go-gui = "gui:main"
+go-bot = "bot:main"
+
+
