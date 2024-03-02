@@ -324,5 +324,5 @@ def play_sound(sound_path : any) -> None:
     my_sound.play(-1)
 
 if __name__ == "__main__":
-    #play_sound("src/data/bgm")
+    play_sound("src/data/bgm")
     create_game()
