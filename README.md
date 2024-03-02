@@ -9,3 +9,5 @@ Team members:
 Enhancements:
 - GUI title screen
 - GUI background music
+- GUI animation
+- Added pyproject.toml
