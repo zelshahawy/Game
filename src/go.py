@@ -76,8 +76,7 @@ class Go(GoBase):
         moves = []
         for row in range(self._side):
             for col in range(self._side):
-                if self._board.get(row, col) is None and self.legal_move((row,
-                                                                          col)):
+                if self.legal_move((row, col)):
                     moves.append((row, col))
         return moves
 
@@ -144,9 +143,8 @@ class Go(GoBase):
 
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
-                if self.piece_at(adjacent_pos) not in {None, self._turn}:
-                    if not self.has_liberties(adjacent_pos):
-                        self.capture_group(adjacent_pos)
+                if not self.has_liberties(adjacent_pos):
+                    self.capture_group(adjacent_pos)
         if not self.has_liberties(pos):
             self.capture_group(pos)
         self.pass_turn()

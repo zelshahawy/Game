@@ -37,7 +37,6 @@ class RandomBot(BaseBot):
 
         random_move = self.get_move(game)
         if random_move == PASS:
-            print("random skipped")
             game.pass_turn()
         else:
             game.apply_move(random_move)
@@ -98,7 +97,6 @@ class SmartBot(BaseBot):
     def make_move(self, game: Go) -> None:
         best_move = self.get_move(game)
         if best_move is None or best_move == PASS:
-            print(f"smart passed turn")
             game.pass_turn()
         else:
             game.apply_move(best_move)
