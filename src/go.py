@@ -11,6 +11,8 @@ class Go(GoBase):
     """
     Class representing the game Go
     """
+    captured_pos_color: dict[tuple[int, int], int]
+    
     def __init__(self, side: int, players: int, superko: bool = False):
         """
         See GoBase.__init__
