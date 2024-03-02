@@ -23,6 +23,7 @@ class Go(GoBase):
         self._turn = 1
         self._num_of_moves = 0
         self._consecutive_passes = 0
+        self.captured_pos_color = {}
 
         if self._superko:
             self._previous_boards: set[tuple[tuple[int | None, ...], ...]] = \
@@ -201,7 +202,9 @@ class Go(GoBase):
                     self._board.get(*adjacent_pos) == color \
                     and adjacent_pos not in group:
                     stack.append(adjacent_pos)
+
         for position in group:
+            self.captured_pos_color[position] = self._board.get(*position)
             self._board.set(*position, None)
 
     def pass_turn(self) -> None:

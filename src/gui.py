@@ -1,6 +1,7 @@
 """
 GUI implementation for Go
 """
+import math
 import sys
 from typing import Optional
 import click
@@ -46,6 +47,7 @@ class GoGUI():
         self.game_started = False
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
+        self.captured_pos_color = {}
         self.player_colors = { player_int : PLAYER_COLORS[player_int] for\
         player_int in range(1, go.num_players + 1)}
 
@@ -112,6 +114,7 @@ class GoGUI():
 
             if euclid_dist <= self.PLAYER_STONE_RADIUS and \
             self._go.legal_move(board_pos):
+                self.captured_pos_color = self._go.captured_pos_color
                 self._go.apply_move(board_pos)
 
     def _draw_button(self, font: pygame.font.Font, rect: \
@@ -146,14 +149,34 @@ class GoGUI():
                 draw all stones on the board or an outline of the position one
                 can place the next stone
         """
-        if board_pos is None:
-            return
         x, y = board_pos
 
         stone_x = x * self.CELL_SIZE + self.BOARD_PADDING
         stone_y = y * self.CELL_SIZE + self.BOARD_PADDING
 
         self.all_pos[(x,y)] = (stone_x, stone_y)
+
+        if board_pos in self.captured_pos_color and num_player is None:
+            arc_rect = self.PLAYER_STONE_RADIUS//2
+            player_num_captured = self.captured_pos_color[board_pos]
+
+            start_angle = 0 
+            end_angle = 360  
+            while end_angle > 0: 
+                end_angle -= 20
+                start_angle_rad = math.radians(start_angle)
+                end_angle_rad = math.radians(end_angle)
+
+                pygame.draw.arc(
+                    self.screen,
+                    self.player_colors[player_num_captured],
+                    (stone_x, stone_y, self.CELL_SIZE, self.CELL_SIZE), 
+                    start_angle_rad,
+                    end_angle_rad,
+                    arc_rect  
+                )
+
+            del self.captured_pos_color[board_pos]
 
         if num_player:
             pygame.draw.circle(
@@ -301,5 +324,5 @@ def play_sound(sound_path : any) -> None:
     my_sound.play(-1)
 
 if __name__ == "__main__":
-    play_sound("src/data/bgm")
+    #play_sound("src/data/bgm")
     create_game()
