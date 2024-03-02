@@ -195,7 +195,7 @@ def test_available_moves_1(n: int) -> None:
     constructs a 19x19, 9x9 and 13x13 Go game and test the available_moves
     """
     game = load_board_with_pieces(n)
-    expected_moves: list[tuple[int, int]] = []
+    expected_moves = []
     for i in range(game.size):
         for j in range(game.size):
             if not (i, j) in [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
@@ -272,10 +272,13 @@ def test_legal_2(game: Go) -> None:
     constructs a 19x19 Go game and verifies that legal_move and available_moves
     allow moves in any position of the board.
     """
+    expected_moves = []
     for i in range(19):
         for j in range(19):
             assert game.legal_move((i, j))
-            assert (i, j) in game.available_moves
+            expected_moves.append((i, j))
+
+    assert game.available_moves == expected_moves
 
 
 def test_moves_19(game: Go) -> None:
@@ -324,8 +327,7 @@ def test_capture_1(game: Go) -> None:
     Loads moves that will result in one piece being captured. Verifies that the
     piece is indeed captured.
     """
-    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6)]
+    moves = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5), (6, 6), (10, 6)]
 
     game = sets_grid(game, moves)
 
@@ -339,9 +341,8 @@ def test_capture_2(game: Go) -> None:
     Loads moves that will result in multiple pieces being captured. Verifies
     that all the pieces were indeed captured.
     """
-    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6), (6, 7), (5, 7), (5, 8),
-                                    (10, 7)]
+    moves = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5), (6, 6), (10, 6), (6, 7),
+             (5, 7), (5, 8), (10, 7)]
 
     game = sets_grid(game, moves)
 
@@ -356,8 +357,7 @@ def test_ko_1(game: Go) -> None:
     Makes moves in such a way that there will end up being a move that would
     violate the ko rule. Checks that legal_move identifies the move as illegal.
     """
-    moves: list[tuple[int, int]] = [(5, 6), (5, 5), (4, 7), (4, 6), (6, 7),
-                                    (6, 6), (5, 8)]
+    moves= [(5, 6), (5, 5), (4, 7), (4, 6), (6, 7), (6, 6), (5, 8)]
 
     game = sets_grid(game, moves)
 
@@ -400,8 +400,7 @@ def test_scores_2(game: Go) -> None:
     Makes several moves that will result in one territory being created, and
     verifies that scores returns the correct values.
     """
-    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6)]
+    moves = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5), (6, 6), (10, 6)]
 
     game = sets_grid(game, moves)
 
@@ -415,8 +414,7 @@ def test_outcome_4(game: Go) -> None:
     Makes several moves that will result in one territory being created. Ends
     the game and, verifies the outcome.
     """
-    moves: list[tuple[int, int]] = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5),
-                                    (6, 6), (10, 6)]
+    moves = [(5, 6), (4, 6), (10, 4), (5, 5), (10, 5), (6, 6), (10, 6)]
 
     game = sets_grid(game, moves)
 

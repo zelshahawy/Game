@@ -12,7 +12,7 @@ class Go(GoBase):
     Class representing the game Go
     """
     captured_pos_color: dict[tuple[int, int], int]
-    
+
     def __init__(self, side: int, players: int, superko: bool = False):
         """
         See GoBase.__init__
@@ -76,7 +76,8 @@ class Go(GoBase):
         moves = []
         for row in range(self._side):
             for col in range(self._side):
-                if self._board.get(row, col) is None and self.legal_move((row, col)):
+                if self._board.get(row, col) is None and self.legal_move((row,
+                                                                          col)):
                     moves.append((row, col))
         return moves
 
