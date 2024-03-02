@@ -142,6 +142,7 @@ class Go(GoBase):
             self._previous_board = tuple(tuple(row) for row in self.grid)
         self._board.set(*pos, self._turn)
 
+
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
                 if self.piece_at(adjacent_pos) not in {None, self._turn}:
