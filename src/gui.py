@@ -19,7 +19,7 @@ CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 PURPLE = (128, 0, 128)
 
-PLAYER_COLORS = [0, BLACK, WHITE, BLUE, PURPLE, RED, GREEN, MAGENTA, CYAN, GREY]
+PLAYER_COLORS = [BLACK, WHITE, BLUE, PURPLE, RED, GREEN, MAGENTA, CYAN, GREY]
 
 class GoGUI():
     """
@@ -48,7 +48,7 @@ class GoGUI():
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
         self.captured_pos_color = {}
-        self.player_colors = { player_int : PLAYER_COLORS[player_int] for\
+        self.player_colors = { player_int : PLAYER_COLORS[player_int - 1] for\
         player_int in range(1, go.num_players + 1)}
 
         self.BOARD_SIZE = go.size
