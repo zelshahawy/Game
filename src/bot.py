@@ -8,6 +8,7 @@ from go import Go
 from botbase import BaseBot, SimulateBots
 from botbase import Players
 
+PASS = (-1, -1)
 class RandomBot(BaseBot):
     """Bot that makes random legal moves in a Go game."""
 
@@ -21,7 +22,7 @@ class RandomBot(BaseBot):
         """
         Make a random legal move in the game.
         """
-        PASS = (-1, -1)
+
         available_moves = [move for move in game.available_moves if \
             game.legal_move(move)]
         if not available_moves:
@@ -30,6 +31,7 @@ class RandomBot(BaseBot):
             available_moves.append(PASS)
             move = random.choice(available_moves)
             if move == PASS:
+                print("random skipped")
                 game.pass_turn()
             else:
                 game.apply_move(move)
@@ -47,7 +49,6 @@ class SmartBot(BaseBot):
 
 
     def make_move(self, game: Go) -> None:
-        PASS = (-1, -1)
         possible_moves = [
             move for move in game.available_moves if game.legal_move(move)
         ]
@@ -73,7 +74,7 @@ class SmartBot(BaseBot):
                     game_copy2 = game_copy.simulate_move(None)
                 else:
                     game_copy2 = game_copy.simulate_move(next_move)
-                    total_pieces += game_copy2.scores()[self.show_player()]
+                total_pieces += game_copy2.scores()[self.show_player()]
 
             value = total_pieces / len(next_moves) if next_moves else 0
             if value > max_value:
@@ -84,11 +85,12 @@ class SmartBot(BaseBot):
         if best_moves:
             best_move = random.choice(best_moves)
             if best_move == PASS:
-                print(f"{self.show_player()} passed turn")
+                print(f"smart passed turn")
                 game.pass_turn()
             else:
                 game.apply_move(best_move)
         else:
+            print("skipped move because no moves are available- smart")
             game.pass_turn()
 
 class Simulation(SimulateBots):
