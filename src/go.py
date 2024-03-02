@@ -236,7 +236,7 @@ class Go(GoBase):
                     visited.update(territory)
                     if len(borders) == 1:
                         player = borders.pop()
-                        scores[player] += 1
+                        scores[player] += len(territory)
         return scores
 
     def find_territory(
