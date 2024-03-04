@@ -13,12 +13,16 @@ Enhancements:
 - Added `pyproject.toml`
 
 Improvements:
-Game logic:
+* **Game logic**
 
-* GUI:
+* **GUI**
+  This component received two S's in Milestone 2
   
-* TUI:
+* **TUI**:
+  This component received two S's in Milestone 2
 
-* Bot:
+* **Bot**:
+  This component received two S's in Milestone 2
 
-* QA:
+* **QA**:
+  This component received two S's in Milestone 2
