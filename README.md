@@ -15,7 +15,7 @@ Enhancements:
 Improvements:
 * **Game logic**
 
-* **GUI**
+* **GUI**:
   This component received two S's in Milestone 2
   
 * **TUI**:
