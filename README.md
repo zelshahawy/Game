@@ -15,8 +15,9 @@ Enhancements:
 Improvements:
 * **Game logic**:
   
-  ```Should check if move is legal using legal_move method before adding it to the list```
+<img width="937" alt="image" src="https://github.com/uchicago-cmsc14200-win-2024/project-esslamashur-zelshahawy-johnruge-simbiri/assets/61587419/79eb3106-f870-4dc4-a00d-ba9329f48b93">
   - ``go.py:80``: modified ``available_moves`` method to check if move is legal using ``legal_move`` before adding it to ``moves``
+ 
   
 
 * **GUI**:
