@@ -19,7 +19,7 @@ Improvements:
   Should check if move is legal using legal_move method before adding it to the list:
   ```
   
-  ``go.py:80``: modified ``available_moves`` method to check if move is legal using ``legal_move`` before adding it to ``moves``
+  ``go.py:80`` modified ``available_moves`` method to check if move is legal using ``legal_move`` before adding it to ``moves``
 
 
   ```
@@ -31,6 +31,14 @@ Improvements:
   ·  B  B  B  ·
   ·  ·  ·  ·  ·
   ```
+
+  ``ZIAD COMMENT``
+
+  ```
+  Shouldn't check if piece is not self._turn, you're allowed to have self-captures per the writeup on canvas.
+  ```
+
+  ``go.py:148`` modified line to no longer check if piece is not `self._turn` but only if piece is not `None`
   
 
 * **GUI**:
