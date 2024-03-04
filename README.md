@@ -40,37 +40,37 @@ Improvements:
 
   ``go.py:148`` modified line to no longer check if piece is not `self._turn` but only if piece is not `None`, allowing self-capture
 
-```
-  Also, there are some issues with scoring logic. I tried setting up a couple random board and testing your function on them and it didn't return the correct score. 
-
-·  ·  ·  ·  ·  ·  ·  ·  ·
-·  ·  B  ·  ·  ·  W  ·  ·
-·  B  ·  B  ·  W  ·  W  ·
-·  B  ·  B  ·  ·  W  ·  ·
-·  ·  B  ·  ·  ·  ·  W  ·
-
-This returns player 1's score as 7 when in fact it should be 8. 
-
-Similarly, when I set up the following board, it also miscalculated the score:
-·  ·  B  ·  W  ·
-.  B  ·  ·  ·  W
-B  ·  ·  ·  ·  ·
-
-I suggest working through these examples as a starting point to debug the function (note that these are not exhaustive and it is suggested to try to come up with more examples to test).
-```
-
-``ZIAD COMMENT``
-
-```
-This only checks if we have enough rows in our board, but you should check that each row has enough columns too.
-```
-
-``go.py:285`` modified `load_game` to check for individual row length as follows:
-```python
-for row in grid:
-    if len(row) != self._side:
-        raise ValueError("Invalid grid size")
-```
+  ```
+    Also, there are some issues with scoring logic. I tried setting up a couple random board and testing your function on them and it didn't return the correct score. 
+  
+  ·  ·  ·  ·  ·  ·  ·  ·  ·
+  ·  ·  B  ·  ·  ·  W  ·  ·
+  ·  B  ·  B  ·  W  ·  W  ·
+  ·  B  ·  B  ·  ·  W  ·  ·
+  ·  ·  B  ·  ·  ·  ·  W  ·
+  
+  This returns player 1's score as 7 when in fact it should be 8. 
+  
+  Similarly, when I set up the following board, it also miscalculated the score:
+  ·  ·  B  ·  W  ·
+  .  B  ·  ·  ·  W
+  B  ·  ·  ·  ·  ·
+  
+  I suggest working through these examples as a starting point to debug the function (note that these are not exhaustive and it is suggested to try to come up with more examples to test).
+  ```
+  
+  ``ZIAD COMMENT``
+  
+  ```
+  This only checks if we have enough rows in our board, but you should check that each row has enough columns too.
+  ```
+  
+  ``go.py:285`` modified `load_game` to check for individual row length as follows:
+  ```python
+  for row in grid:
+      if len(row) != self._side:
+          raise ValueError("Invalid grid size")
+  ```
   
 
 * **GUI**:
