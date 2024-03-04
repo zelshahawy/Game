@@ -67,9 +67,9 @@ This only checks if we have enough rows in our board, but you should check that 
 
 ``go.py:285`` modified `load_game` to check for individual row length as follows:
 ```python
-        for row in grid:
-            if len(row) != self._side:
-                raise ValueError("Invalid grid size")
+for row in grid:
+  if len(row) != self._side:
+    raise ValueError("Invalid grid size")
 ```
   
 
