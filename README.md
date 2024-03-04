@@ -15,10 +15,10 @@ Enhancements:
 Improvements:
 Game logic:
 
-GUI:
+* GUI:
+  
+* TUI:
 
-TUI:
+* Bot:
 
-Bot:
-
-QA:
+* QA:
