@@ -11,3 +11,14 @@ Enhancements:
 - GUI background music
 - GUI animation
 - Added `pyproject.toml`
+
+Improvements:
+Game logic:
+
+GUI:
+
+TUI:
+
+Bot:
+
+QA:
