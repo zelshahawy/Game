@@ -305,6 +305,7 @@ class Go(GoBase):
         else:
             new_game.pass_turn()
         return new_game
+<<<<<<< HEAD
 
 """
 Module providing the Go class
@@ -613,3 +614,5 @@ class Go(GoBase):
         else:
             new_game.pass_turn()
         return new_game
+=======
+>>>>>>> 1315b8c82af843d47ca5f8b548285aeb7ad14161
