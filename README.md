@@ -14,10 +14,19 @@ Enhancements:
 
 Improvements:
 * **Game logic**:
-  
-<img width="937" alt="image" src="https://github.com/uchicago-cmsc14200-win-2024/project-esslamashur-zelshahawy-johnruge-simbiri/assets/61587419/79eb3106-f870-4dc4-a00d-ba9329f48b93">
+
+  ``Should check if move is legal using legal_move method before adding it to the list``
   - ``go.py:80``: modified ``available_moves`` method to check if move is legal using ``legal_move`` before adding it to ``moves``
- 
+
+```
+Issues with capture logic. I attempted to set up the following board to see if a simple capture works. I would suggest you implement it and try to debug why captures are not working as expected:
+
+·  ·  ·  ·  ·
+ ·  B  B  B  ·
+B  W  W  W  ·
+·  B  B  B  ·
+·  ·  ·  ·  ·
+```
   
 
 * **GUI**:
