@@ -75,7 +75,17 @@ Improvements:
       if len(row) != self._side:
           raise ValueError("Invalid grid size")
   ```
+  ______________
   
+
+  ```
+  A value can be None which is technically not in this range but a completely valid value
+  ```
+  
+  ``go.py:290`` modified line in `load_game` to not only check if value is not in range, but also not `None` as follows:
+  ```python
+  if piece not in range(1, self._players+1) and piece is not None
+  ```
 
 * **GUI**:
   This component received two S's in Milestone 2
