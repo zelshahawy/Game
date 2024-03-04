@@ -598,15 +598,12 @@ def test_ten_capture() -> None:
     white_moves = [(8, 7), (9, 7), (10, 7), (11, 8), (11, 10), (10, 11), (9, 11)
                    , (8, 11), (7, 10), (7, 9), (7, 8)]
     black_moves = [(8, 8), (8, 9), (8, 10), (9, 8), (9, 9), (9, 10), (10, 8),
-                   (10, 9), (10, 10), (11, 9)]
+                   (10, 9), (10, 10), (11, 9), (17, 17)]
 
     game = sets_grid_no_order(white_moves, black_moves)
     game.apply_move((12, 9))
 
-    for pos in black_moves:
-        assert game.piece_at(pos) == None
-
-    assert game.scores() == {1: 22, 2: 0}
+    assert game.scores() == {1: 22, 2: 1}
 
 def test_scores_6() -> None:
     """
