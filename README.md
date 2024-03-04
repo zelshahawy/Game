@@ -51,7 +51,8 @@ Improvements:
 
   ______________
   ```
-    Also, there are some issues with scoring logic. I tried setting up a couple random board and testing your function on them and it didn't return the correct score. 
+  Also, there are some issues with scoring logic. I tried setting up a couple random board and testing your function on them and it didn't
+  return the correct score. 
   
   ·  ·  ·  ·  ·  ·  ·  ·  ·
   ·  ·  B  ·  ·  ·  W  ·  ·
@@ -66,7 +67,8 @@ Improvements:
   .  B  ·  ·  ·  W
   B  ·  ·  ·  ·  ·
   
-  I suggest working through these examples as a starting point to debug the function (note that these are not exhaustive and it is suggested to try to come up with more examples to test).
+  I suggest working through these examples as a starting point to debug the function (note that these are not exhaustive and it is suggested to
+  try to come up with more examples to test).
   ```
   
   ``ZIAD COMMENT``
