@@ -34,6 +34,7 @@ Improvements:
   ```
 
   ``ZIAD COMMENT``
+  ______________
 
   ```
   Shouldn't check if piece is not self._turn, you're allowed to have self-captures per the writeup on canvas.
@@ -41,6 +42,7 @@ Improvements:
 
   ``go.py:148`` modified line to no longer check if piece is not `self._turn` but only if piece is not `None`, allowing self-capture
 
+  ______________
   ```
     Also, there are some issues with scoring logic. I tried setting up a couple random board and testing your function on them and it didn't return the correct score. 
   
@@ -61,7 +63,8 @@ Improvements:
   ```
   
   ``ZIAD COMMENT``
-  
+
+  ______________
   ```
   This only checks if we have enough rows in our board, but you should check that each row has enough columns too.
   ```
