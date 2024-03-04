@@ -2,7 +2,6 @@
 A class to represent a board.
 """
 from copy import deepcopy
-from typing import Optional
 from base import BoardGridType
 
 class Board:
@@ -38,7 +37,7 @@ class Board:
         get a copy of the grid of the board.
         """
         return deepcopy(self._grid)
-    
+
     @grid.setter
     def grid(self, new_grid: BoardGridType) -> None:
         """
@@ -52,7 +51,7 @@ class Board:
         """
         self._grid[row][col] = value
 
-    def get(self, row: int, col: int) -> Optional[int]:
+    def get(self, row: int, col: int) -> int | None:
         """
         Get the value of the board at a given position.
         """

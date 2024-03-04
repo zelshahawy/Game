@@ -11,7 +11,7 @@ class Go(GoBase):
     """
     Class representing the game Go
     """
-    captured_pos_color: dict[tuple[int, int], int]
+    captured_pos_color: dict[tuple[int, int], int | None]
 
     def __init__(self, side: int, players: int, superko: bool = False):
         """
@@ -69,6 +69,7 @@ class Go(GoBase):
         """
         return self._num_of_moves
     @property
+
     def available_moves(self) -> ListMovesType:
         """
         See GoBase.available_moves
@@ -125,7 +126,7 @@ class Go(GoBase):
         if not self._superko and resulting_board == self._previous_board:
             return False
 
-        if self._board.get(*pos) is not None:
+        if self.piece_at(pos) is not None:
             return False
         return True
 
@@ -144,7 +145,7 @@ class Go(GoBase):
 
         for adjacent_pos in self._board.adjacent_positions(pos):
             if self._board.valid_position(*adjacent_pos):
-                if self.piece_at(adjacent_pos) not in {None, self._turn}:
+                if self.piece_at(adjacent_pos) is not None:
                     if not self.has_liberties(adjacent_pos):
                         self.capture_group(adjacent_pos)
         if not self.has_liberties(pos):
@@ -162,7 +163,7 @@ class Go(GoBase):
         Returns:
             A boolean indicating whether the group has liberties.
         """
-        color = self._board.get(*pos)
+        color = self.piece_at(pos)
         if color is None:
             return False
 
@@ -174,10 +175,10 @@ class Go(GoBase):
 
             for adjacent_pos in self._board.adjacent_positions(current_pos):
                 if self._board.valid_position(*adjacent_pos):
-                    adjacent_piece = self._board.get(*adjacent_pos)
+                    adjacent_piece = self.piece_at(adjacent_pos)
                     if adjacent_piece is None:
                         return True
-                    elif adjacent_piece == color and adjacent_pos not in group:
+                    if adjacent_piece == color and adjacent_pos not in group:
                         stack.append(adjacent_pos)
         return False
 
@@ -190,7 +191,7 @@ class Go(GoBase):
 
         Returns: nothing
         """
-        color = self._board.get(*pos)
+        color = self.piece_at(pos)
         if color is None:
             return
 
@@ -202,12 +203,12 @@ class Go(GoBase):
 
             for adjacent_pos in self._board.adjacent_positions(current_pos):
                 if self._board.valid_position(*adjacent_pos) and \
-                    self._board.get(*adjacent_pos) == color \
+                    self.piece_at(adjacent_pos) == color \
                     and adjacent_pos not in group:
                     stack.append(adjacent_pos)
 
         for position in group:
-            self.captured_pos_color[position] = self._board.get(*position)
+            self.captured_pos_color[position] = self.piece_at(position)
             self._board.set(*position, None)
 
     def pass_turn(self) -> None:
@@ -281,11 +282,13 @@ class Go(GoBase):
             raise ValueError("Invalid turn number")
         if len(grid) != self._side:
             raise ValueError("Invalid grid size")
-        for _, row in enumerate(grid):
-            for _, value in enumerate(row):
-                if value is not None:
-                    if value not in range(1, self._players+1):
-                        raise ValueError(f"Invalid value in grid: {value}")
+        for row in grid:
+            if len(row) != self._side:
+                raise ValueError("Invalid grid size")
+        for row in grid:
+            for value in row:
+                if value not in range(1, self._players+1) and value is not None:
+                    raise ValueError(f"Invalid value in grid: {value}")
 
         self._previous_boards = set()
         self._previous_board = None
