@@ -44,7 +44,10 @@ Improvements:
   Shouldn't check if piece is not self._turn, you're allowed to have self-captures per the writeup on canvas.
   ```
 
-  ``go.py:148`` modified line to no longer check if piece is not `self._turn` but only if piece is not `None`, allowing self-capture
+  ``go.py:148`` modified line to no longer check if piece is not `self._turn` but only if piece is not `None`, allowing self-capture as follows:
+  ```python
+  if self.piece_at(adjacent_pos) is not None:
+  ```
 
   ______________
   ```
