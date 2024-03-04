@@ -13,7 +13,8 @@ Enhancements:
 - Added `pyproject.toml`
 
 Improvements:
-* **Game logic**
+* **Game logic**:
+  ``Should check if move is legal using legal_move method before adding it to the list``
 
 * **GUI**:
   This component received two S's in Milestone 2
