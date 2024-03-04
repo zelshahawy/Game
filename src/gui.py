@@ -239,7 +239,7 @@ class GoGUI():
             for j, _ in enumerate(grid_state[i]):
                 piece_at_pos = self._go.piece_at((i, j))
                 self._draw_player_stone(piece_at_pos, (i, j))
- 
+
     def _draw_window(self) -> None:
         """
         Displays pygame's interactive window
