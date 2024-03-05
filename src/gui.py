@@ -60,9 +60,9 @@ class GoGUI():
 
         self.button_pass_rect = pygame.Rect(5, self.WIDTH_DISPLAY//2, 50, 30)
         self. button_start_rect = pygame.Rect(self.WIDTH_DISPLAY//2 - 50,\
-        self.WIDTH_DISPLAY//2 + 100, 200, 50)
+        self.WIDTH_DISPLAY//2 + 50, 200, 50)
 
-        self.FONT = pygame.font.SysFont("Arial", 25)
+        self.FONT = pygame.font.SysFont("Arial", 18)
 
         pygame.display.set_caption("GoGUI")
         self.screen = pygame.display.set_mode(
@@ -263,11 +263,11 @@ class GoGUI():
             self.display_texts(text,self.FONT)
 
         else:
-            START_FONT = pygame.font.SysFont("Arial", 40)
-            GO_FONT = pygame.font.SysFont("Arial", 100)
+            START_FONT = pygame.font.SysFont("Arial", 20)
+            GO_FONT = pygame.font.SysFont("Arial", 50)
 
             self.display_texts("GO",GO_FONT, \
-            (self.WIDTH_DISPLAY//2, self.WIDTH_DISPLAY//2))
+            (self.WIDTH_DISPLAY//2 + 20, self.WIDTH_DISPLAY//2))
             self._draw_button(START_FONT, self.button_start_rect,"START GAME")
 
     def gui_loop(self) -> None:
