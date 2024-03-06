@@ -19,22 +19,22 @@ CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 PURPLE = (128, 0, 128)
 
-PLAYER_COLORS = [BLACK, WHITE, BLUE, PURPLE, RED, GREEN, MAGENTA, CYAN, GREY]
+PLAYER_COLORS = [WHITE, BLACK, BLUE, PURPLE, RED, GREEN, MAGENTA, CYAN, GREY]
+BOARD_PADDING = 100
 
 class GoGUI():
     """
     Class for presenting GUI for a game of Go
     """
     go: Go
-    buttons: dict[str, tuple[int, int]]
     screen: pygame.surface.Surface
     clock_timer: pygame.time.Clock
-    board_padding: int
     all_pos: dict[tuple[int,int], tuple[int,int]]
-    FONT: pygame.font.Font
     game_started : bool
     captured_pos_color : dict[tuple[int,int], int | None]
-    player_colors: dict[int | None, tuple[int, int, int]]
+    cell_size : int
+    stone_rad : int
+    buttons : dict[str, pygame.rect.Rect]
 
     def __init__(self, go: Go) -> None:
         """
@@ -50,44 +50,36 @@ class GoGUI():
         self.clock_timer= pygame.time.Clock()
         self.all_pos = {}
         self.captured_pos_color = {}
-        self.player_colors = { player_int : PLAYER_COLORS[player_int - 1] for\
-        player_int in range(1, go.num_players + 1)}
 
-        self.BOARD_SIZE = go.size
-        self.CELL_SIZE = 700 // self.BOARD_SIZE
-        self.PLAYER_STONE_RADIUS = self.CELL_SIZE // 4
-        self.BOARD_PADDING = 100
-        self.WIDTH_DISPLAY = self.BOARD_SIZE * self.CELL_SIZE
-        self.REFRESH_RATE = 24
+        self.cell_size = 700 // self._go.size
+        self.stone_rad = self.cell_size // 4
 
-        self.button_pass_rect = pygame.Rect(5, self.WIDTH_DISPLAY//2, 50, 30)
-        self. button_start_rect = pygame.Rect(self.WIDTH_DISPLAY//2 - 50,\
-        self.WIDTH_DISPLAY//2 + 50, 200, 50)
-
-        self.FONT = pygame.font.SysFont("Arial", 18)
+        display_width = self._go.size * self.cell_size
+        self.buttons = \
+        {"pass_rect" : pygame.rect.Rect(5, display_width//2, 50, 30),\
+        "start_rect" :pygame.rect.Rect(display_width//2 - 50,\
+        display_width//2 + 50, 200, 50)}
 
         pygame.display.set_caption("GoGUI")
         self.screen = pygame.display.set_mode(
-            (self.WIDTH_DISPLAY + self.BOARD_PADDING, self.WIDTH_DISPLAY + \
-            self.BOARD_PADDING)
-        )
+        (display_width + BOARD_PADDING, display_width + BOARD_PADDING))
 
     def display_board(self) -> None:
         """
         Displays the current state of the board in the GUI
         """
 
-        for i in range(0, self.BOARD_SIZE):
-            start_hori = (self.BOARD_PADDING, i * self.CELL_SIZE + \
-            self.BOARD_PADDING)
-            end_hori = ((self.BOARD_SIZE - 1) * self.CELL_SIZE + \
-            self.BOARD_PADDING, i * self.CELL_SIZE + self.BOARD_PADDING)
+        for i in range(0, self._go.size):
+            start_hori = (BOARD_PADDING, i * self.cell_size + \
+            BOARD_PADDING)
+            end_hori = ((self._go.size - 1) * self.cell_size + \
+            BOARD_PADDING, i * self.cell_size + BOARD_PADDING)
             pygame.draw.aaline(self.screen, GREY, start_hori, end_hori, 3)
 
-            start_vert = (i * self.CELL_SIZE + self.BOARD_PADDING, \
-            self.BOARD_PADDING)
-            end_vert = (i * self.CELL_SIZE + self.BOARD_PADDING,\
-            (self.BOARD_SIZE - 1) * self.CELL_SIZE + self.BOARD_PADDING)
+            start_vert = (i * self.cell_size + BOARD_PADDING, \
+            BOARD_PADDING)
+            end_vert = (i * self.cell_size + BOARD_PADDING,\
+            (self._go.size - 1) * self.cell_size + BOARD_PADDING)
             pygame.draw.aaline(self.screen, GREY, start_vert, end_vert, 3)
 
     def _on_click(self, pos_click: tuple[int, int]) -> None:
@@ -98,12 +90,12 @@ class GoGUI():
                 display window where the click occured
         """
 
-        if self.button_pass_rect.collidepoint(pos_click):
+        if self.buttons["pass_rect"].collidepoint(pos_click):
             self._go.pass_turn()
             return
 
-        elif self.button_start_rect.collidepoint(pos_click):
-            self. button_start_rect = pygame.Rect(0,0,0,0)
+        if self.buttons["start_rect"].collidepoint(pos_click):
+            self.buttons["start_rect"] = pygame.rect.Rect(0,0,0,0)
             self.game_started = True
             return
 
@@ -114,7 +106,7 @@ class GoGUI():
             euclid_sq = (x_click - x_center ) ** 2 + (y_click - y_center) ** 2
             euclid_dist = euclid_sq ** 0.5
 
-            if euclid_dist <= self.PLAYER_STONE_RADIUS and \
+            if euclid_dist <= self.stone_rad and \
             self._go.legal_move(board_pos):
                 self.captured_pos_color = self._go.captured_pos_color
                 self._go.apply_move(board_pos)
@@ -154,42 +146,55 @@ class GoGUI():
         if board_pos is not None:
             x, y = board_pos
 
-        stone_x = x * self.CELL_SIZE + self.BOARD_PADDING
-        stone_y = y * self.CELL_SIZE + self.BOARD_PADDING
+        stone_x = x * self.cell_size + BOARD_PADDING
+        stone_y = y * self.cell_size + BOARD_PADDING
 
         self.all_pos[(x,y)] = (stone_x, stone_y)
 
         if board_pos in self.captured_pos_color and num_player is None:
-            arc_rect = self.PLAYER_STONE_RADIUS//2
-            player_num_captured = self.captured_pos_color[board_pos]
-
-            start_angle = 0 
-            end_angle = 360  
-            while end_angle > 0: 
-                end_angle -= 20
-                start_angle_rad = math.radians(start_angle)
-                end_angle_rad = math.radians(end_angle)
-
-                pygame.draw.arc(
-                    self.screen,
-                    self.player_colors[player_num_captured],
-                    (stone_x, stone_y, self.CELL_SIZE, self.CELL_SIZE), 
-                    start_angle_rad,
-                    end_angle_rad,
-                    arc_rect  
-                )
-
-            del self.captured_pos_color[board_pos]
+            self.animate_captured(board_pos, (stone_x, stone_y))
 
         if num_player:
             pygame.draw.circle(
                 self.screen,
-                self.player_colors[num_player],
+                PLAYER_COLORS[num_player - 1],
                 (stone_x, stone_y),
-                self.PLAYER_STONE_RADIUS)
+                self.stone_rad)
 
         elif num_player is None and not self._go.done:
             self._hover_board_pos(pygame.mouse.get_pos())
+    
+    def animate_captured(self, board_pos :tuple[int, int],\
+        display_pos : tuple[int,int]) -> None:
+        """
+        Animates the capture of stones into the centre of the cell as
+        an arc that grows smaller and eventually disappears
+        
+        Args:
+            board_pos (tuple[int, int]|None) - the position on the board to
+            capture
+            display_pos (tuple[int, int]) - the position on the pygame surface 
+            to start the animation
+        """
+        stone_x, stone_y = display_pos
+        arc_rect = self.stone_rad//2
+        player_num_captured = self.captured_pos_color[board_pos]
+        start_angle = 0
+        end_angle = 360
+        assert isinstance(player_num_captured, int)
+
+        while end_angle > 0:
+            end_angle -= 20
+            start_angle_rad = math.radians(start_angle)
+            end_angle_rad = math.radians(end_angle)
+            pygame.draw.arc(
+                self.screen,
+                PLAYER_COLORS[player_num_captured - 1],
+                (stone_x, stone_y, self.cell_size, self.cell_size),
+                start_angle_rad,
+                end_angle_rad,
+                arc_rect)
+        del self.captured_pos_color[board_pos]
 
     def _hover_board_pos(self, pos_hover: tuple[int,int]) -> None:
         """
@@ -207,13 +212,13 @@ class GoGUI():
             euclid_sq = (x_hover - x_center )**2 + (y_hover - y_center)**2
             euclid_dist = euclid_sq**0.5
 
-            if euclid_dist <= self.PLAYER_STONE_RADIUS:
+            if euclid_dist <= self.stone_rad:
 
                 pygame.draw.circle(
                 self.screen,
                 GREY,
                 (x_center, y_center),
-                self.PLAYER_STONE_RADIUS,
+                self.stone_rad,
                 width = 1)
 
                 return
@@ -248,10 +253,11 @@ class GoGUI():
         Displays pygame's interactive window
         """
         self.screen.fill(ORANGE)
+        font = pygame.font.SysFont("Arial", 18)
 
         if self.game_started:
-            self.display_board()           
-            self._draw_button(self.FONT, self.button_pass_rect, "PASS")
+            self.display_board()
+            self._draw_button(font, self.buttons["pass_rect"], "PASS")
             self._draw_board_state()
 
             if self._go.done:
@@ -263,15 +269,17 @@ class GoGUI():
                 text = f" Current turn: Player {self._go.turn} " + \
                 f" Game Scores : {self._go.scores()}"
 
-            self.display_texts(text,self.FONT)
+            self.display_texts(text,font)
 
         else:
-            START_FONT = pygame.font.SysFont("Arial", 20)
-            GO_FONT = pygame.font.SysFont("Arial", 50)
+            start_font = pygame.font.SysFont("Arial", 20)
+            go_font = pygame.font.SysFont("Arial", 50)
+            disp_width = self._go.size * self.cell_size
 
-            self.display_texts("GO",GO_FONT, \
-            (self.WIDTH_DISPLAY//2 + 20, self.WIDTH_DISPLAY//2))
-            self._draw_button(START_FONT, self.button_start_rect,"START GAME")
+            self.display_texts("GO",go_font, \
+            (disp_width//2 + 20, disp_width//2))
+            self._draw_button(start_font, self.buttons["start_rect"],\
+            "START GAME")
 
     def gui_loop(self) -> None:
         """
@@ -283,7 +291,6 @@ class GoGUI():
             for event in py_events:
                 if event.type == pygame.QUIT:
                     loop = False
-                    pygame.quit()
                     sys.exit()
 
                 elif self._go.done:
@@ -294,15 +301,15 @@ class GoGUI():
 
             self._draw_window()
             pygame.display.update()
-            self.clock_timer.tick(self.REFRESH_RATE)
+            self.clock_timer.tick(24)
 
 @click.command()
 @click.option("-n", "--num-players", default=2, help="Number of players")
 @click.option("-s", "--size", default=19, help="Size of the board")
 @click.option("--simple-ko", is_flag=True, help="Use simple ko rule")
 @click.option("--super-ko", is_flag=True, help="Use super ko rule")
-def create_game(num_players: int , size: int, simple_ko : bool, super_ko: bool)\
-    -> None:
+def create_game(num_players: int = 2 , size: int = 19, simple_ko : bool = True,\
+    super_ko: bool = False) -> None:
     """
     Creates go game from click commands, initializes GUI
         Args:
@@ -313,8 +320,8 @@ def create_game(num_players: int , size: int, simple_ko : bool, super_ko: bool)\
             super_ko - property that sets super_ko rule
     """
     go = Go(size, num_players, super_ko)
-    goGUI = GoGUI(go)
-    goGUI.gui_loop()
+    go_gui = GoGUI(go)
+    go_gui.gui_loop()
 
 def play_sound(sound_path: str) -> None:
     """
