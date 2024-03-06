@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "go_cmsc14200"
+name = "go142"
 version = "2024.0.0"
 authors = [
     {name="Esslam Ashour", email="esslamashour@uchicago.edu"},
