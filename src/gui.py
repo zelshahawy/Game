@@ -33,7 +33,8 @@ class GoGUI():
     all_pos: dict[tuple[int,int], tuple[int,int]]
     FONT: pygame.font.Font
     game_started : bool
-    
+    captured_pos_color : dict[tuple[int,int], int | None]
+    player_colors: dict[int | None, tuple[int, int, int]]
 
     def __init__(self, go: Go) -> None:
         """
@@ -137,7 +138,7 @@ class GoGUI():
             self.screen.blit(text_surf, text_rect)
 
     def _draw_player_stone(self, num_player: Optional[int], board_pos: \
-        Optional[tuple[int,int]]) -> None:
+        Optional[tuple[int, int]]) -> None:
         """
         Draws a specific player stone on the board
 
@@ -150,7 +151,8 @@ class GoGUI():
                 draw all stones on the board or an outline of the position one
                 can place the next stone
         """
-        x, y = board_pos
+        if board_pos is not None:
+            x, y = board_pos
 
         stone_x = x * self.CELL_SIZE + self.BOARD_PADDING
         stone_y = y * self.CELL_SIZE + self.BOARD_PADDING
@@ -314,9 +316,9 @@ def create_game(num_players: int , size: int, simple_ko : bool, super_ko: bool)\
     goGUI = GoGUI(go)
     goGUI.gui_loop()
 
-def play_sound(sound_path : any) -> None:
+def play_sound(sound_path: str) -> None:
     """
-    given a path to a an audio file, plays it.
+    Given a path to a an audio file, plays it.
     """
     my_sound_mixer = pygame.mixer
     my_sound_mixer.init()
