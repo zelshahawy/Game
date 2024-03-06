@@ -18,7 +18,7 @@ Improvements:
   ```
   Should check if move is legal using legal_move method before adding it to the list:
   ```
-  
+
   ``go.py:80`` modified ``available_moves`` method to check if move is legal using ``legal_move`` before adding it to ``moves`` as follows:
   ```python
   if self.legal_move((row, col)):
@@ -38,9 +38,9 @@ Improvements:
   ```
 
   Our capture method at first did not allow captures until ones in that player
-  turn, which resulted in errors and captures. after removing `self._turn` and only checking if piece is not `None`, the captures worked as expected. 
+  turn, which resulted in errors and captures. after removing `self._turn` and only checking if piece is not `None`, the captures worked as expected.
   we also changed territory from a set to a list, allowing territoies to be appended
-  into a sorted data strcture, not an unsorted one. this was curcial espically because
+  into a sorted data structure, not an unsorted one. this was curcial espically because
   we needed a data structure to append values into
   ```python
   if self.piece_at(adjacent_pos) is not None:
@@ -64,34 +64,34 @@ Improvements:
   ______________
   ```
   Also, there are some issues with scoring logic. I tried setting up a couple random board and testing your function on them and it didn't
-  return the correct score. 
-  
+  return the correct score.
+
   ·  ·  ·  ·  ·  ·  ·  ·  ·
   ·  ·  B  ·  ·  ·  W  ·  ·
   ·  B  ·  B  ·  W  ·  W  ·
   ·  B  ·  B  ·  ·  W  ·  ·
   ·  ·  B  ·  ·  ·  ·  W  ·
-  
-  This returns player 1's score as 7 when in fact it should be 8. 
-  
+
+  This returns player 1's score as 7 when in fact it should be 8.
+
   Similarly, when I set up the following board, it also miscalculated the score:
   ·  ·  B  ·  W  ·
   .  B  ·  ·  ·  W
   B  ·  ·  ·  ·  ·
-  
+
   I suggest working through these examples as a starting point to debug the function (note that these are not exhaustive and it is suggested to
   try to come up with more examples to test).
   ```
-  
+
   Our previous implmentation only added one if a territory was being controlled
-  not the length of that territory. So we changed this: 
+  not the length of that territory. So we changed this:
 
 ```python
     if len(borders) == 1:
         player = borders.pop()
         scores[player] += 1
 ```
-to 
+to
 ```python
     if len(borders) == 1:
         player = borders.pop()
@@ -101,7 +101,7 @@ to
   ```
   This only checks if we have enough rows in our board, but you should check that each row has enough columns too.
   ```
-  
+
   ``go.py:285`` modified `load_game` to check for individual row length as follows:
   ```python
   for row in grid:
@@ -109,12 +109,12 @@ to
           raise ValueError("Invalid grid size")
   ```
   ______________
-  
+
 
   ```
   A value can be None which is technically not in this range but a completely valid value
   ```
-  
+
   ``go.py:290`` modified line in `load_game` to not only check if value is not in range, but also not `None` as follows:
   ```python
   if piece not in range(1, self._players+1) and piece is not None
@@ -122,7 +122,7 @@ to
 
 * **GUI**:
   This component received two S's in Milestone 2
-  
+
 * **TUI**:
   This component received two S's in Milestone 2
 
