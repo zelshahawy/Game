@@ -34,6 +34,12 @@ class BaseBot(ABC):
         """
         return self._player
 
+    @abstractmethod
+    def get_move(self, game: Go) -> tuple[int, int] | None:
+        """
+        gets the move to be made by a random bot
+        """
+        raise NotImplementedError
 
     @abstractmethod
     def make_move(self, game: Go) -> None:

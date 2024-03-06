@@ -95,6 +95,9 @@ class SmartBot(BaseBot):
             return None
 
     def make_move(self, game: Go) -> None:
+        """
+        Make a legal smart (MinMax) move in the game.
+        """
         best_move = self.get_move(game)
         if best_move is None or best_move == PASS:
             game.pass_turn()
@@ -197,7 +200,8 @@ class Simulation(SimulateBots):
         )
 
 @click.command()
-@click.option('-n', '--num-games', default=20, help='Number of games to simulate.')
+@click.option('-n', '--num-games', default=20,
+              help='Number of games to simulate.')
 @click.option('-s', '--size', default=6, help='Board size.')
 @click.option('-1', '--player1', default='random',
               help='Strategy for player 1 (random or smart).')
@@ -214,8 +218,10 @@ def main(
     num_games: The number of games to simulate.
     """
     current_game = Go(size, 2)
-    bot_white = RandomBot(Players.WHITE) if player1 == 'random' else SmartBot(Players.WHITE)
-    bot_black = RandomBot(Players.BLACK) if player2 == 'random' else SmartBot(Players.BLACK)
+    bot_white = RandomBot(Players.WHITE) if player1 == 'random' else\
+        SmartBot(Players.WHITE) #in this simulation, white plays first.
+    bot_black = RandomBot(Players.BLACK) if player2 == 'random' else \
+        SmartBot(Players.BLACK)
     random_simulation = Simulation(current_game, [bot_white, bot_black])
     player_white_win_percentage, player_black_win_percentage, ties_percentage, \
         average_moves_per_game = random_simulation.simulate_games(num_games)
