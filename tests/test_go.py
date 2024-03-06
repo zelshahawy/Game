@@ -634,7 +634,8 @@ def test_scores_7(game_3: Go) -> None:
     black_moves = [(7, 8), (6, 9), (7, 10), (8, 9), (11, 8)]
     red_moves = [(7, 11), (6, 12), (7, 13), (8, 12), (12, 9)]
 
-    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+    initial_grid: list[list[Union[int, None]]] = [[None for _ in range(19)]
+                                                  for _ in range(19)]
 
     for pos in white_moves:
         i, j = pos
