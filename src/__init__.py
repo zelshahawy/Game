@@ -1,3 +1,3 @@
-from gui import *
-from tui import *
-from bot import *
+from .gui import *
+from .tui import *
+from .bot import *

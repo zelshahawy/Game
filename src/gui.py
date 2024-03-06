@@ -23,7 +23,7 @@ PLAYER_COLORS = [BLACK, WHITE, BLUE, PURPLE, RED, GREEN, MAGENTA, CYAN, GREY]
 
 class GoGUI():
     """
-    Graphical version class for GoUI
+    Class for presenting GUI for a game of Go
     """
     go: Go
     buttons: dict[str, tuple[int, int]]
@@ -33,6 +33,7 @@ class GoGUI():
     all_pos: dict[tuple[int,int], tuple[int,int]]
     FONT: pygame.font.Font
     game_started : bool
+    
 
     def __init__(self, go: Go) -> None:
         """
