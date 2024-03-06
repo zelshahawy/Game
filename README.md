@@ -37,7 +37,19 @@ Improvements:
   ·  ·  ·  ·  ·
   ```
 
-  ``ZIAD COMMENT``
+  Our capture method at first did not allow captures until ones in that player
+  turn, which resulted in errors and captures. after removing `self._turn` and only checking if piece is not `None`, the captures worked as expected. 
+  we also changed territory from a set to a list, allowing territoies to be appended
+  into a sorted data strcture, not an unsorted one. this was curcial espically because
+  we needed a data structure to append values into
+  ```python
+  if self.piece_at(adjacent_pos) is not None:
+  ```
+
+  ```python
+    if territory is None:
+        territory = []
+  ```
   ______________
 
   ```
@@ -71,8 +83,20 @@ Improvements:
   try to come up with more examples to test).
   ```
   
-  ``ZIAD COMMENT``
+  Our previous implmentation only added one if a territory was being controlled
+  not the length of that territory. So we changed this: 
 
+```python
+    if len(borders) == 1:
+        player = borders.pop()
+        scores[player] += 1
+```
+to 
+```python
+    if len(borders) == 1:
+        player = borders.pop()
+        scores[player] += len(territory)
+```
   ______________
   ```
   This only checks if we have enough rows in our board, but you should check that each row has enough columns too.
