@@ -3,7 +3,7 @@ Tests for Go
 """
 import pytest
 from go import Go
-
+from typing import Union
 
 ####Fixtures####
 @pytest.fixture
@@ -23,7 +23,7 @@ def game_3() -> Go:
 ##################
 #Helper Functions#
 ##################
-def load_board_with_pieces(n: int, superko: bool = False) -> Go:
+def load_board_with_pieces(n: int) -> Go:
     """
     loads a n x n board with two players and sets some pieces on the sides of
     the board
@@ -37,7 +37,8 @@ def load_board_with_pieces(n: int, superko: bool = False) -> Go:
     pieces_positions = [(0, 0), (0, n-1), (n-1, 0), (n-1, n-1), (n//2, 0),
                         (0, n//2), (n-1, n//2), (n//2, n-1)]
 
-    initial_grid = [[None for _ in range(n)] for _ in range(n)]
+    initial_grid: list[list[Union[int, None]]] = [[None for _ in range(n)]
+                                               for _ in range(n)]
 
     for p, pos in enumerate(pieces_positions):
         i, j = pos
@@ -62,7 +63,8 @@ def sets_grid(game: Go, lst: list[tuple[int, int]]) -> Go:
 
     Returns: Go game set with pieces at the locations given
     """
-    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+    initial_grid: list[list[Union[int, None]]] = [[None for _ in range(19)]
+                                                  for _ in range(19)]
 
     for p, pos in enumerate(lst):
         i, j = pos
@@ -91,7 +93,8 @@ def sets_grid_no_order(white: list[tuple[int, int]], black:
 
     Returns: Go game set with pieces at the locations given
     """
-    initial_grid = [[None for _ in range(19)] for _ in range(19)]
+    initial_grid: list[list[Union[int, None]]] = [[None for _ in range(19)]
+                                                  for _ in range(19)]
     for pos in white:
         i, j = pos
         initial_grid[i][j] = 1
