@@ -135,8 +135,8 @@ class Simulation(SimulateBots):
         """
         Simulate a number of games and return the win percentages.
 
-        :param num_of_games: The number of games to simulate.
-        :return: A tuple of the win percentages for bot1, bot2, and ties.
+        param num_of_games: The number of games to simulate.
+        return: A tuple of the win percentages for bot1, bot2, and ties.
         """
         for _ in range(num_of_games):
             while not self._game.done:

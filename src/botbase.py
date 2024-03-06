@@ -54,7 +54,8 @@ class SimulateBots(ABC):
     """
 
     @abstractmethod
-    def simulate_games(self, num_of_games: int) -> tuple[float, float, float, float]:
+    def simulate_games(self, num_of_games: int) -> \
+        tuple[float, float, float, float]:
         """
         sunulate a game between a list of robots
         """
