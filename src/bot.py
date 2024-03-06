@@ -225,8 +225,8 @@ def main(
     random_simulation = Simulation(current_game, [bot_white, bot_black])
     player_white_win_percentage, player_black_win_percentage, ties_percentage, \
         average_moves_per_game = random_simulation.simulate_games(num_games)
-    print(f"Player one ({player1}) wins: {player_white_win_percentage:.2f}%")
-    print(f"Player two ({player2}) wins: {player_black_win_percentage:.2f}%")
+    print(f"Player 1 ({player1}) wins: {player_white_win_percentage:.2f}%")
+    print(f"Player 2 ({player2}) wins: {player_black_win_percentage:.2f}%")
     print(f"Ties: {ties_percentage:.2f}%")
     print(f"Average moves: {average_moves_per_game:.1f}")
 
