@@ -47,8 +47,8 @@ Improvements:
   ```
 
   ```python
-    if territory is None:
-        territory = []
+  if territory is None:
+      territory = []
   ```
   ______________
 
@@ -84,20 +84,19 @@ Improvements:
   ```
 
   Our previous implmentation only incremented the score by 1 regardless of the number of intersections in a territory that is controlled by a given player,
-  instead of incrementing it by the number of intersections within the territory. So we changed this (`go.py:239`):
+  instead of incrementing it by the number of intersections within the territory. So we implemented the following changes in the `scores` method (`go.py:239`):
 
   ```python
-      if len(borders) == 1:
-          player = borders.pop()
-          scores[player] += 1
+  if len(borders) == 1:
+      scores[borders[0]] += 1
   ```
   
   to
   
   ```python
-      if len(borders) == 1:
-          player = borders.pop()
-          scores[player] += len(territory)
+  if len(borders) == 1:
+      player = borders.pop()
+      scores[player] += len(territory)
   ```
   ______________
   ```
