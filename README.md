@@ -42,10 +42,12 @@ Improvements:
   We also changed territory from a set to a list, allowing territories to be appended
   into a sorted data structure, not an unsorted one. This was crucial especially because
   we needed a data structure to append values into.
+  `go.py:148`
   ```python
   if self.piece_at(adjacent_pos) is not None:
   ```
 
+  `go.py:260`
   ```python
   if territory is None:
       territory = []
@@ -84,8 +86,10 @@ Improvements:
   ```
 
   Our previous implmentation only incremented the score by 1 regardless of the number of intersections in a territory that is controlled by a given player,
-  instead of incrementing it by the number of intersections within the territory. So we implemented the following changes in the `scores` method (`go.py:239`):
+  instead of incrementing it by the number of intersections within the territory. So we implemented the following change in the `scores` method (`go.py:239`):
 
+  Changed
+  
   ```python
   if len(borders) == 1:
       scores[borders[0]] += 1
