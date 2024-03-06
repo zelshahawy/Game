@@ -9,7 +9,7 @@ Team members:
 Enhancements:
 - GUI title screen
 - GUI background music
-- GUI animation
+- GUI animation - occurs when pieces are captured
 - Added `pyproject.toml`
 
 Improvements:
