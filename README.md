@@ -42,6 +42,7 @@ Improvements:
   We also changed territory from a set to a list, allowing territories to be appended
   into a sorted data structure, not an unsorted one. This was crucial especially because
   we needed a data structure to append values into.
+  
   `go.py:148`
   ```python
   if self.piece_at(adjacent_pos) is not None:
