@@ -11,7 +11,7 @@ from go import Go
 class Players(IntEnum):
     """Enumeration for Player 1 and Player 2."""
     WHITE = 1
-    BLACK = 2
+    BLACK = 3
 
 
 class BaseBot(ABC):
