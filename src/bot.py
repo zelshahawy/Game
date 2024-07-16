@@ -231,4 +231,5 @@ def main(
     print(f"Average moves: {average_moves_per_game:.1f}")
 
 if __name__ == "__main__":
+    print("hi")
     main()
